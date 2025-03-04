@@ -1,0 +1,9 @@
+/* src/view/ReactView.css */
+.ReactViewTable table {
+  border-collapse: collapse;
+  border: 1px solid #000;
+}
+.ReactViewTable tr {
+  border-bottom: #000 1px solid;
+}
+/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3JjL3ZpZXcvUmVhY3RWaWV3LmNzcyJdLAogICJzb3VyY2VzQ29udGVudCI6IFsiLlJlYWN0Vmlld1RhYmxlIHRhYmxle1xyXG4gICAgYm9yZGVyLWNvbGxhcHNlOiBjb2xsYXBzZTtcclxuICAgIGJvcmRlcjogMXB4IHNvbGlkICMwMDA7XHJcblxyXG59XHJcblxyXG4uUmVhY3RWaWV3VGFibGUgdHJ7XHJcbiAgICBib3JkZXItYm90dG9tOiAjMDAwIDFweCBzb2xpZDtcclxufSJdLAogICJtYXBwaW5ncyI6ICI7QUFBQTtBQUNJO0FBQ0E7QUFBQTtBQUlKO0FBQ0k7QUFBQTsiLAogICJuYW1lcyI6IFtdCn0K */

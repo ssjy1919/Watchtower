@@ -1,8 +1,10 @@
-/*
+.ReactViewTable table{
+    /* 1像素黑色边框 */
+    border: 1px solid #000;
+    border-collapse: collapse;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+.ReactViewTable th,
+.ReactViewTable td{
+    border: 1px solid #000;
+}

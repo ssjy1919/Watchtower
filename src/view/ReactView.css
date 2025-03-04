@@ -1,0 +1,9 @@
+.ReactViewTable table{
+    border-collapse: collapse;
+    border: 1px solid #000;
+
+}
+
+.ReactViewTable tr{
+    border-bottom: #000 1px solid;
+}
