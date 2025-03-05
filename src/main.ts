@@ -1,17 +1,30 @@
 import { Plugin, TAbstractFile, WorkspaceLeaf } from "obsidian";
 import { ExampleView, VIEW_TYPE_EXAMPLE } from "./view/leafView";
-import { DEFAULT_SETTINGS, EFileStats, WatchtowerSettings } from "./types";
+import {
+	DEFAULT_SETTINGS,
+	settingsFileStats,
+	WatchtowerSettings,
+} from "./types";
 import { WatchtowerSettingTab } from "./view/settingTab";
-import { fileInfo } from "./functions";
-import { setFileChange, store } from "./store";
+import { fileInfo, compareFileStats } from "./functions";
+import { setFileChange, setSettings, setDifferentFiles, store } from "./store";
 
 export default class WatchtowerPlugin extends Plugin {
 	settings: WatchtowerSettings;
 	async onload() {
 		// 加载设置
 		await this.loadSettings();
-		// 加载文件信息
-		this.loadInfo();
+		store.dispatch(setSettings(this.settings));
+		//等待应用初始化完成
+		this.app.workspace.onLayoutReady(async () => {
+			// 加载并比较文件信息
+			const differentFiles = await compareFileStats(
+				this.app,
+				this.settings
+			);
+			store.dispatch(setDifferentFiles(differentFiles));
+		});
+
 		this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new ExampleView(leaf));
 		this.addRibbonIcon("dice", "文件状态", () => {
 			this.activateView();
@@ -21,9 +34,7 @@ export default class WatchtowerPlugin extends Plugin {
 			id: "WatchtowerLeafView",
 			//设置这个命令的名字
 			name: "打开Watchtower侧边视图",
-			callback: async () => {
-				this.activateView();
-			},
+			callback: async () => {},
 		});
 
 		this.addCommand({
@@ -32,8 +43,11 @@ export default class WatchtowerPlugin extends Plugin {
 			//设置这个命令的名字
 			name: "保存文件信息",
 			callback: async () => {
+				// 加载文件信息
+				this.loadFileInfo();
 				this.settings.markTime = new Date().toLocaleString();
 				await this.saveSettings();
+				store.dispatch(setSettings(this.settings));
 				store.dispatch(setFileChange(true)); // 触发 setFileChange action
 			},
 		});
@@ -53,7 +67,7 @@ export default class WatchtowerPlugin extends Plugin {
 		 */
 		// this.registerInterval(
 		//   window.setInterval(() =>{
-		//     this.loadInfo();
+		//     this.loadFileInfo();
 		//     console.log(this.settings)}, 5 * 1000)
 		// );
 
@@ -62,7 +76,7 @@ export default class WatchtowerPlugin extends Plugin {
 	}
 	// 注册文件事件处理程序
 	registerFileEventHandlers() {
-		const fileEventHandler = (
+		const fileEventHandler = async (
 			event: string,
 			file: TAbstractFile,
 			oldPath?: string
@@ -71,6 +85,13 @@ export default class WatchtowerPlugin extends Plugin {
 			// console.log(
 			// 	`File ${event}: ${oldPath ? `${oldPath} -> ` : ""}${file.path}`
 			// );
+			// 加载并比较文件信息
+			const differentFiles = await compareFileStats(
+				this.app,
+				this.settings
+			);
+			store.dispatch(setDifferentFiles(differentFiles));
+			this.activateView();
 		};
 		this.app.vault.on("modify", (file) =>
 			fileEventHandler("modified", file)
@@ -127,9 +148,9 @@ export default class WatchtowerPlugin extends Plugin {
 			workspace.revealLeaf(leaf);
 		}
 	}
-	loadInfo(): void {
+	loadFileInfo(): void {
 		const fileInfoData = fileInfo(this.app);
-		const fileStats: EFileStats[] = fileInfoData.map((file) => ({
+		const fileStats: settingsFileStats[] = fileInfoData.map((file) => ({
 			basename: file.basename,
 			extension: file.basename,
 			name: file.basename,

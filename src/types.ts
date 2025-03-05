@@ -12,7 +12,7 @@
 import { FileStats } from "obsidian";
 
 // 定义 FileStatus 接口，用于储存文件路径和字节数
-export interface EFileStats {
+export interface settingsFileStats {
 		basename: string;
 		extension: string;
 		name: string;
@@ -23,13 +23,17 @@ export interface EFileStats {
 // 定义 WatchtowerSettings 接口，它包含有`FileStatus`接口，新增一个`markTime`用于储存记录时间。
 export interface WatchtowerSettings {
 	markTime: string;
-	fileStats: EFileStats[];
+	fileStats: settingsFileStats[];
 	filePrefix: boolean;
 	leafView: string;
 }
 
+
+
+
+
 // 定义默认的 FileStatus 值
-const defaultFileStatus: EFileStats = {
+export const defaultFileStatus: settingsFileStats = {
 	basename: "",
 	extension: "",
 	name: "",
@@ -48,7 +52,3 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	filePrefix: false,
 	leafView:""
 };
-
-
-
-

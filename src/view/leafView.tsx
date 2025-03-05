@@ -1,7 +1,7 @@
 
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { Root, createRoot } from 'react-dom/client';
-import { ReactView } from './ReactView';
+import ReactView from "./ReactView"
 import { AppContext } from '../context';
 import { Provider } from 'react-redux';
 import { store } from '../store';
