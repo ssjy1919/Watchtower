@@ -9,30 +9,42 @@
 //   }
 // }
 
+import { FileStats } from "obsidian";
+
 // 定义 FileStatus 接口，用于储存文件路径和字节数
-export interface FileStatus {
-	path: string;
-	size: number;
+export interface EFileStats {
+		basename: string;
+		extension: string;
+		name: string;
+		path: string;
+		stat: FileStats;
 }
 
 // 定义 WatchtowerSettings 接口，它包含有`FileStatus`接口，新增一个`markTime`用于储存记录时间。
 export interface WatchtowerSettings {
 	markTime: string;
-	fileStatus: FileStatus[];
+	fileStats: EFileStats[];
 	filePrefix: boolean;
 	leafView: string;
 }
 
 // 定义默认的 FileStatus 值
-const defaultFileStatus: FileStatus = {
-	path: '',
-	size: 0
-};
+const defaultFileStatus: EFileStats = {
+	basename: "",
+	extension: "",
+	name: "",
+	path: "",
+	stat: {
+		size: 0,
+		ctime: 0,
+		mtime: 0,
+	},
+}
 
 // 定义默认的 WatchtowerSettings 值
 export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: '1970-01-01 00:00:00',
-	fileStatus: [defaultFileStatus],
+	fileStats: [defaultFileStatus],
 	filePrefix: false,
 	leafView:""
 };

@@ -38,6 +38,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 
 export class WatchtowerSettingTab extends PluginSettingTab {
   plugin: WatchtowerPlugin;
+  root: ReactDOM.Root | null = null;
 
   constructor(app: App, plugin: WatchtowerPlugin) {
     super(app, plugin);
@@ -46,10 +47,12 @@ export class WatchtowerSettingTab extends PluginSettingTab {
 
   display(): void {
     const { containerEl } = this;
-    containerEl.empty();
 
-    const root = ReactDOM.createRoot(containerEl);
-    root.render(
+    if (!this.root) {
+      this.root = ReactDOM.createRoot(containerEl);
+    }
+
+    this.root.render(
       <React.StrictMode>
         <SettingComponent plugin={this.plugin} />
       </React.StrictMode>

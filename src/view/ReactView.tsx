@@ -1,28 +1,27 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useApp, sharedVariable } from '../context';
-import { RootState, increment, decrement } from '../store';
+import { useApp } from '../context';
+import { RootState, setFileChange } from '../store';
 import { fileInfo, timestampToDate } from 'src/functions';
 import "./ReactView.css"
 export const ReactView = () => {
   const app = useApp();
-  const count = useSelector((state: RootState) => state.counter.count);
+  const fileCreated = useSelector((state: RootState) => state.counter.fileCreated); // 获取 fileCreated 状态
+
   const dispatch = useDispatch();
 
   if (!app) {
     return <h4>Loading...</h4>;
   }
-
+  // 当 fileCreated 状态为 true 时，刷新组件
+  if (fileCreated) {
+    // 这里可以添加刷新组件的逻辑，例如重新获取文件信息等
+    // console.log('File created, refreshing component...');
+    // 重置 fileCreated 状态
+    dispatch(setFileChange(false));
+  }
   
   return (
     <div>
-      <h3>{app.vault.getName()}</h3>
-      <h5>{app.workspace.getActiveFile()?.name}</h5>
-      <div>{sharedVariable}</div>
-      <div>
-        <p>计数器: {count}</p>
-        <button onClick={() => dispatch(decrement())}>减少</button>
-        <button onClick={() => dispatch(increment())}>增加</button>
-      </div>
       <div className='ReactViewTable'>
         <table>
           <thead>
@@ -35,7 +34,7 @@ export const ReactView = () => {
             </tr>
           </thead>
           <tbody>
-          {fileInfo().map((file, index) => (
+          {fileInfo(app).map((file, index) => (
             <tr key={index}>
               <td>{index}</td>
               {/* openFile(file: TFile, openState?: OpenViewState): Promise<void>; */}

@@ -3,6 +3,7 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 // 定义初始状态
 const initialState = {
   count: 0,
+  fileCreated: false, // 新增 fileCreated 状态
 };
 
 // 创建一个 slice
@@ -10,17 +11,15 @@ const counterSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
-    increment: (state) => {
-      state.count += 1;
-    },
-    decrement: (state) => {
-      state.count -= 1;
+    setFileChange: (state, action) => { // 新增 setFileCreated reducer
+      state.fileCreated = action.payload;
     },
   },
 });
 
+
 // 导出 actions
-export const { increment, decrement } = counterSlice.actions;
+export const { setFileChange} = counterSlice.actions;
 
 // 创建 Redux store
 export const store = configureStore({
