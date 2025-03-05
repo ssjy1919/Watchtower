@@ -4,8 +4,9 @@ import {
 	DEFAULT_SETTINGS,
 	settingsFileStats,
 	defaultFileStatus,
+	differentInfos,
 } from "./types";
-import { setDifferentFiles, store } from "./store";
+import { setDifferentFiles, setFileChange, setSettings, store } from "./store";
 
 /**
  * 获取文件信息
@@ -77,43 +78,49 @@ export function settingInfo(settings: WatchtowerSettings = DEFAULT_SETTINGS): {
  *         - stat: 文件状态，包括大小、创建时间和修改时间
  */
 export async function compareFileStats(
-    app: App,
-    settings: WatchtowerSettings = DEFAULT_SETTINGS
-): Promise<(settingsFileStats & { difference: string })[]> {
-    const settingFiles = settingInfo(settings);
-    const currentFiles = fileInfo(app);
+	app: App,
+	settings: WatchtowerSettings = DEFAULT_SETTINGS
+): Promise<differentInfos[]> {
+	const settingFiles = settingInfo(settings);
+	const currentFiles = fileInfo(app);
 
-    const differentFiles = settingFiles.map((settingFile) => {
-        const currentFile = currentFiles.find(
-            (file) => file.path === settingFile.path
-        );
-        if (!currentFile) {
-            return { ...settingFile, difference: "extra" }; // settingFile 是多出来的文件
-        }
-        if (
-            settingFile.stat.size !== currentFile.stat.size ||
-            settingFile.stat.ctime !== currentFile.stat.ctime ||
-            settingFile.stat.mtime !== currentFile.stat.mtime
-        ) {
-            return { ...settingFile, difference: "modified" }; // settingFile 的状态不同
-        }
-        return null;
-    }).filter(Boolean) as (settingsFileStats & { difference: string })[];
+	const differentFiles = settingFiles
+		.map((settingFile) => {
+			const currentFile = currentFiles.find(
+				(file) => file.path === settingFile.path
+			);
+			if (!currentFile) {
+				return { ...settingFile, differents: "文件丢失" };
+			}
+			if (settingFile.stat.size > currentFile.stat.size) {
+				return { ...settingFile, differents: `减少${settingFile.stat.size-currentFile.stat.size}字节` };
+			}else if (settingFile.stat.size < currentFile.stat.size) {
+				return { ...settingFile, differents: `增加${currentFile.stat.size-settingFile.stat.size}字节` };
+			}
+			return null;
+		})
+		.filter(Boolean) as (settingsFileStats & { differents: string })[];
 
-    // 找出 settingFiles 中少了的文件
-    const missingFiles = currentFiles.map((currentFile) => {
-        if (!settingFiles.find((settingFile) => settingFile.path === currentFile.path)) {
-            return { ...currentFile, difference: "missing" }; // currentFile 是少了的文件
-        }
-        return null;
-    }).filter(Boolean) as (settingsFileStats & { difference: string })[];
+	// 找出 settingFiles 中少了的文件
+	const missingFiles = currentFiles
+		.map((currentFile) => {
+			if (
+				!settingFiles.find(
+					(settingFile) => settingFile.path === currentFile.path
+				)
+			) {
+				return { ...currentFile, differents: "新增文件" };
+			}
+			return null;
+		})
+		.filter(Boolean) as (settingsFileStats & { differents: string })[];
 
-    // 合并不同的文件、多出来的文件和少了的文件
-    const allDifferentFiles = [...differentFiles, ...missingFiles];
+	// 合并不同的文件、多出来的文件和少了的文件
+	const allDifferentFiles = [...differentFiles, ...missingFiles];
 
-    // 更新 Redux store 中的 differentFiles 状态
-    store.dispatch(setDifferentFiles(allDifferentFiles));
-    return allDifferentFiles;
+	// 更新 Redux store 中的 differentFiles 状态
+	store.dispatch(setDifferentFiles(allDifferentFiles));
+	return allDifferentFiles;
 }
 
 /**把时间戳转换成日期格式*/
@@ -125,4 +132,35 @@ export function timestampToDate(timestamp: number): string {
 	const hours = date.getHours().toString().padStart(2, "0");
 	const minutes = date.getMinutes().toString().padStart(2, "0");
 	return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+/**
+ * 保存文件信息并更新视图
+ * @param app {App} Obsidian 应用实例
+ * @param settings {WatchtowerSettings} 用户设置
+ * @param activateView {() => void} 激活视图的函数
+ */
+export async function saveFileInfo(app: App, settings: WatchtowerSettings, activateView: () => void) {
+	// 加载文件信息
+	const fileInfoData = fileInfo(app);
+	const fileStats: settingsFileStats[] = fileInfoData.map((file) => ({
+		basename: file.basename,
+		extension: file.extension,
+		name: file.name,
+		path: file.path,
+		stat: file.stat,
+	}));
+
+	settings.fileStats = fileStats;
+	settings.markTime = new Date().toLocaleString();
+
+	// 加载并比较文件信息
+	const differentFiles = await compareFileStats(app, settings);
+	store.dispatch(setDifferentFiles(differentFiles));
+
+	// 激活视图
+	activateView();
+
+	// 保存设置
+	await store.dispatch(setSettings(settings));
+	store.dispatch(setFileChange(true)); // 触发 setFileChange action
 }

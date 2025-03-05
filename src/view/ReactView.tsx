@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useApp } from "src/context";
-import { timestampToDate } from "src/functions";
 import { RootState, setFileChange } from "src/store";
-import { settingsFileStats } from "src/types";
+import { differentInfos } from "src/types";
 
 const ReactView: React.FC = () => {
   const app = useApp();
@@ -27,32 +26,33 @@ const ReactView: React.FC = () => {
   return (
     <div>
       <div className='ReactViewTable'>
+        {/* 写一个按钮执行 saveFileInfo 函数 */}
+        {files.length>0?
         <table>
           <thead>
             <tr>
               <th>序号</th>
               <th>文件名</th>
-              <th>文件大小</th>
-              <th>修改时间</th>
               <th>差异</th>
               {/* <th>创建时间</th> */}
             </tr>
           </thead>
           <tbody>
-            {files.map((file: settingsFileStats, index: number) => (
+            {files.map((file: differentInfos, index: number) => (
               <tr key={index}>
-                <td>{index}</td>
+                <td>{index+1}</td>
                 <td>
                   <a data-tooltip-position="top" aria-label={file.path} data-href={file.path} href={file.path}
                     className="internal-link" target="_blank"
                     rel="noopener nofollow">{file.name}</a>
                 </td>
-                <td>{file.stat.size}</td>
-                <td>{timestampToDate(file.stat.mtime)}</td>
+                <td>{file.differents}</td>
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        :<h1>无差异文件</h1>
+}
       </div>
     </div>
   );

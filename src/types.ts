@@ -29,6 +29,17 @@ export interface WatchtowerSettings {
 }
 
 
+export interface differentInfos  {
+	name: string;
+	path: string;
+	differents: string;
+}
+// 定义默认的 differentInfo 值
+export const differentInfo: differentInfos = {
+	differents: "",
+	name: "",
+	path: "",
+}
 
 
 

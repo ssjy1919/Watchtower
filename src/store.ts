@@ -1,10 +1,10 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { DEFAULT_SETTINGS, defaultFileStatus } from "./types";
+import { DEFAULT_SETTINGS, differentInfo } from "./types";
 
 // 定义初始状态
 const initialState = {
   fileChange: false, // 新增 fileChange 状态，用于标识文件是否发生变化
-  differentFiles:  [defaultFileStatus], // 新增 differentFiles 状态，用于存储不同的文件信息
+  differentFiles:  [differentInfo], // 新增 differentFiles 状态，用于存储不同的文件信息
 };
 // compareFileStats(useApp as App,Setting)
 // 创建一个 counter slice，用于管理计数器和文件变化状态
