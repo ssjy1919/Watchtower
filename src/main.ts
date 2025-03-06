@@ -6,7 +6,7 @@ import {
 	WatchtowerSettings,
 } from "./types";
 import { WatchtowerSettingTab } from "./view/settingTab";
-import { fileInfo, compareFileStats, saveFileInfo } from "./functions";
+import { fileInfo, compareFileStats } from "./functions";
 import { setFileChange, setSettings, setDifferentFiles, store } from "./store";
 
 export default class WatchtowerPlugin extends Plugin {
@@ -34,9 +34,7 @@ export default class WatchtowerPlugin extends Plugin {
 			id: "WatchtowerLeafView",
 			//设置这个命令的名字
 			name: "打开Watchtower侧边视图",
-			callback: async () => {
-				this.activateView()
-			},
+			callback: async () => {},
 		});
 
 		this.addCommand({
@@ -45,7 +43,19 @@ export default class WatchtowerPlugin extends Plugin {
 			//设置这个命令的名字
 			name: "保存文件信息",
 			callback: async () => {
-				await saveFileInfo(this.app, this.settings, this.activateView.bind(this));
+				// 加载文件信息
+				this.loadFileInfo();
+				this.settings.markTime = new Date().toLocaleString();
+				// 加载并比较文件信息
+				const differentFiles = await compareFileStats(
+					this.app,
+					this.settings
+				);
+				store.dispatch(setDifferentFiles(differentFiles));
+				this.activateView();
+				await this.saveSettings();
+				store.dispatch(setSettings(this.settings));
+				store.dispatch(setFileChange(true)); // 触发 setFileChange action
 			},
 		});
 

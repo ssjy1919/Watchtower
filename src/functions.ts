@@ -6,7 +6,9 @@ import {
 	defaultFileStatus,
 	differentInfos,
 } from "./types";
-import { setDifferentFiles, setFileChange, setSettings, store } from "./store";
+import { RootState, setDifferentFiles, store } from "./store";
+import { useApp } from "./context";
+import { useSelector } from "react-redux";
 
 /**
  * 获取文件信息
@@ -133,34 +135,23 @@ export function timestampToDate(timestamp: number): string {
 	const minutes = date.getMinutes().toString().padStart(2, "0");
 	return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
-/**
- * 保存文件信息并更新视图
- * @param app {App} Obsidian 应用实例
- * @param settings {WatchtowerSettings} 用户设置
- * @param activateView {() => void} 激活视图的函数
- */
-export async function saveFileInfo(app: App, settings: WatchtowerSettings, activateView: () => void) {
-	// 加载文件信息
-	const fileInfoData = fileInfo(app);
+
+
+export function loadFileInfo(): void {
+	const fileInfoData = fileInfo(useApp as unknown as App);
 	const fileStats: settingsFileStats[] = fileInfoData.map((file) => ({
 		basename: file.basename,
-		extension: file.extension,
-		name: file.name,
+		extension: file.basename,
+		name: file.basename,
 		path: file.path,
 		stat: file.stat,
 	}));
 
-	settings.fileStats = fileStats;
-	settings.markTime = new Date().toLocaleString();
-
-	// 加载并比较文件信息
-	const differentFiles = await compareFileStats(app, settings);
-	store.dispatch(setDifferentFiles(differentFiles));
-
-	// 激活视图
-	activateView();
-
-	// 保存设置
-	await store.dispatch(setSettings(settings));
-	store.dispatch(setFileChange(true)); // 触发 setFileChange action
+	this.settings = {
+		...useSelector((state: RootState) => state.settings),
+		fileStats,
+		markTime: new Date().toISOString(),
+		filePrefix: false,
+		leafView: "",
+	};
 }
