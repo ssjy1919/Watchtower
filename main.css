@@ -1,9 +1,1 @@
-/* src/view/ReactView.css */
-.ReactViewTable table {
-  border-collapse: collapse;
-  border: 1px solid #000;
-}
-.ReactViewTable tr {
-  border-bottom: #000 1px solid;
-}
-/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3JjL3ZpZXcvUmVhY3RWaWV3LmNzcyJdLAogICJzb3VyY2VzQ29udGVudCI6IFsiLlJlYWN0Vmlld1RhYmxlIHRhYmxle1xyXG4gICAgYm9yZGVyLWNvbGxhcHNlOiBjb2xsYXBzZTtcclxuICAgIGJvcmRlcjogMXB4IHNvbGlkICMwMDA7XHJcblxyXG59XHJcblxyXG4uUmVhY3RWaWV3VGFibGUgdHJ7XHJcbiAgICBib3JkZXItYm90dG9tOiAjMDAwIDFweCBzb2xpZDtcclxufSJdLAogICJtYXBwaW5ncyI6ICI7QUFBQTtBQUNJO0FBQ0E7QUFBQTtBQUlKO0FBQ0k7QUFBQTsiLAogICJuYW1lcyI6IFtdCn0K */
+.file-supervision table{border-collapse:collapse;border:1px solid #000}.file-supervision tr{border-bottom:#000 1px solid}.file-supervision td,.file-supervision th{border-right:#000 1px solid}.file-supervision-table-none{display:none}.file-supervision-table-show.tips,.file-supervision-table-none.tips{display:flex;flex-direction:row;align-content:center;justify-content:space-between;align-items:center;height:3em}.save-file-info:hover,.show-table:hover{box-shadow:0 0 5px #dadadaa5}.show-table{border-radius:5px;width:100%;height:100%;background-color:#fff;box-shadow:0 0 5px #000000a5;margin-right:1em}.save-file-info{height:100%;border-radius:5px;background-color:#fff;box-shadow:0 0 5px #000000a5}

@@ -1,6 +1,6 @@
 
 import { Plugin } from "obsidian";
-import { ExampleView, VIEW_TYPE_EXAMPLE } from "./view/leafView";
+import { ExampleView, VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import {
     WatchtowerSettings,
 } from "./types";
@@ -24,7 +24,7 @@ export default class WatchtowerPlugin extends Plugin {
         
         // 初始化 FileHandler，传入 plugin 实例
         this.fileHandler = new FileHandler(this.app, this.settings, this);
-
+        
         // 等待应用初始化完成
         this.app.workspace.onLayoutReady(async () => {
             // 加载并比较文件信息
@@ -33,8 +33,8 @@ export default class WatchtowerPlugin extends Plugin {
             activateView(this)
         });
         
-        this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new ExampleView(leaf, this));
-        this.addRibbonIcon("dice", "文件状态", () => {
+        this.registerView(VIEW_TYPE_FILE_SUPERVISION, (leaf) => new ExampleView(leaf, this));
+        this.addRibbonIcon("telescope", "文件状态", () => {
             activateView(this);
         });
 
@@ -60,5 +60,8 @@ export default class WatchtowerPlugin extends Plugin {
         registerFileEventHandlers(this);
     }
 
-    async onunload() {}
+    async onunload() {
+        /** 卸载标签叶子 */
+        this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
+    }
 }

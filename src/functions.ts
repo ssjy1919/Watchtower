@@ -7,7 +7,7 @@ import {
 	DEFAULT_SETTINGS,
 } from "./types";
 import { setDifferentFiles, setFileChange, setSettings, store } from "./store";
-import { VIEW_TYPE_EXAMPLE } from "./view/leafView";
+import { VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import WatchtowerPlugin from "./main";
 
 export class FileHandler {
@@ -141,9 +141,11 @@ export class FileHandler {
 		// 更新 Redux store 中的 differentFiles 状态
         store.dispatch(setDifferentFiles(allDifferentFiles));
         
-        console.log("allDifferentFiles", allDifferentFiles);
+        // console.log("allDifferentFiles", allDifferentFiles);
 		return allDifferentFiles;
 	}
+
+    
 
 	/** 把时间戳转换成日期格式 */
 	timestampToDate(timestamp: number): string {
@@ -176,10 +178,10 @@ export class FileHandler {
 	/** 保存文件信息 */
     saveFileInfo = async (): Promise<void> => {
         
-        console.log("this.settings", this.settings);
+        // console.log("this.settings", this.settings);
 		// 加载文件信息
 		this.loadFileInfo();
-        console.log("this.settings", this.settings);
+        // console.log("this.settings", this.settings);
         
         // 加载并比较文件信息
         const differentFile = await this.compareFileStats();
@@ -212,7 +214,7 @@ export async function activateView(plugin: WatchtowerPlugin) {
 	const { workspace } = plugin.app;
 
 	let leaf: WorkspaceLeaf | null = null;
-	const leaves = workspace.getLeavesOfType(VIEW_TYPE_EXAMPLE);
+	const leaves = workspace.getLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
 
 	if (leaves.length > 0) {
 		// 如果视图已存在，直接使用
@@ -222,7 +224,7 @@ export async function activateView(plugin: WatchtowerPlugin) {
 		leaf = workspace.getRightLeaf(false);
 		if (leaf) {
 			await leaf.setViewState({
-				type: VIEW_TYPE_EXAMPLE,
+				type: VIEW_TYPE_FILE_SUPERVISION,
 				active: true,
 			});
 		}

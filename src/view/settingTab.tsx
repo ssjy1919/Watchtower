@@ -2,6 +2,7 @@ import { App, PluginSettingTab } from 'obsidian';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import WatchtowerPlugin from 'src/main';
+import { FileHandler } from '../functions'; // 引入 FileHandler
 
 interface SettingComponentProps {
   plugin: WatchtowerPlugin;
@@ -13,7 +14,10 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
   const handleChange = async (value: string) => {
     setMarkTime(value);
     plugin.settings.markTime = value;
-    await plugin.saveSettings();
+
+    // 创建 FileHandler 实例并调用 saveFileInfo
+    const fileHandler = new FileHandler(plugin.app, plugin.settings, plugin);
+    await fileHandler.saveFileInfo(); // 调用 saveFileInfo 方法
   };
 
   return (

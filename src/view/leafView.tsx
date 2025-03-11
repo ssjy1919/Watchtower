@@ -1,13 +1,13 @@
 
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { Root, createRoot } from 'react-dom/client';
-import ReactView from "./ReactView"
+import FileSupervision from "./fileSupervision"
 import { Provider } from 'react-redux';
 import { store } from '../store';
-import { FileHandlerContext } from 'src/context';
+import { AppContext, FileHandlerContext } from 'src/context';
 import WatchtowerPlugin from 'src/main';
 
-export const VIEW_TYPE_EXAMPLE = 'example-view';
+export const VIEW_TYPE_FILE_SUPERVISION = 'example-view';
 export class ExampleView extends ItemView {
     root: Root | null = null;
     plugin: WatchtowerPlugin; // 显式声明 plugin 属性
@@ -16,22 +16,27 @@ export class ExampleView extends ItemView {
         super(leaf);
         this.plugin = plugin; // 初始化 plugin 属性
     }
-
+    //设置icon
+    getIcon() {
+        return 'telescope';
+    }
     getViewType() {
-        return VIEW_TYPE_EXAMPLE;
+        return VIEW_TYPE_FILE_SUPERVISION;
     }
 
     getDisplayText() {
-        return 'Example view';
+        return '瞭望台';
     }
 
     async onOpen() {
         this.root = createRoot(this.containerEl.children[1]);
         this.root.render(
             <Provider store={store}>
-                <FileHandlerContext.Provider value={{ saveFileInfo: this.plugin.fileHandler.saveFileInfo }}>
-                    <ReactView />
-                </FileHandlerContext.Provider>
+                <AppContext.Provider value={this.plugin.app}>
+                    <FileHandlerContext.Provider value={{ saveFileInfo: this.plugin.fileHandler.saveFileInfo }}>
+                        <FileSupervision />
+                    </FileHandlerContext.Provider>
+                </AppContext.Provider>
             </Provider>
         );
     }
