@@ -54,3 +54,8 @@
     background-color: #fff;
     box-shadow: 0 0 5px #000000a5;
 }
+
+/*  状态栏 */
+.Watchtower-status-bar-item.is-dirty{
+    color: #de0909;
+}

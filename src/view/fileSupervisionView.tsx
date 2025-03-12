@@ -4,7 +4,7 @@ import { RootState, setFileChange } from "src/store";
 import { differentInfos } from "src/types";
 import { AppContext, FileHandlerContext } from '../context';
 import { Notice } from "obsidian";
-import "./FileSupervision.css"
+import "./FileSupervisionView.css"
 const FileSupervision: React.FC = () => {
     const app = useContext(AppContext);
     const fileHandlerContext = useContext(FileHandlerContext);
@@ -45,7 +45,6 @@ const FileSupervision: React.FC = () => {
         }
     };
     const files = differentFiles;
-    console.log(files.length)
     return (
         <div className="file-supervision">
             <div className={`${className} tips`} onClick={handleClick}>
@@ -56,42 +55,42 @@ const FileSupervision: React.FC = () => {
             </div>
             <div className={className} >
 
-                    {files.length > 0 ?
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>序号</th>
-                                        <th>文件名</th>
-                                        <th>差异</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {files.map((file: differentInfos, index: number) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>
-                                                <a
-                                                    data-tooltip-position="top"
-                                                    aria-label={file.path}
-                                                    data-href={file.path}
-                                                    href={file.path}
-                                                    className="internal-link"
-                                                    target="_blank"
-                                                    rel="noopener nofollow"
-                                                    onClick={(e) => {
-                                                        e.preventDefault(); // 阻止默认行为
-                                                        handleOpenLink(file.path, file.differents); // 使用 app 打开链接
-                                                    }}
-                                                >
-                                                    {file.name}
-                                                </a>
-                                            </td>
-                                            <td>{file.differents}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        : <h4>笔记库文件完整</h4>}
+                {files.length > 0 ?
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>文件名</th>
+                                <th>差异</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {files.map((file: differentInfos, index: number) => (
+                                <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                        <a
+                                            data-tooltip-position="top"
+                                            aria-label={file.path}
+                                            data-href={file.path}
+                                            href={file.path}
+                                            className="internal-link"
+                                            target="_blank"
+                                            rel="noopener nofollow"
+                                            onClick={(e) => {
+                                                e.preventDefault(); // 阻止默认行为
+                                                handleOpenLink(file.path, file.differents); // 使用 app 打开链接
+                                            }}
+                                        >
+                                            {file.name}
+                                        </a>
+                                    </td>
+                                    <td>{file.differents}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    : <h4>笔记库文件完整</h4>}
             </div>
         </div>
     );

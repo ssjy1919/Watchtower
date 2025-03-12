@@ -171,7 +171,7 @@ export class FileHandler {
             ...this.settings,
 			fileStats,
 			markTime: new Date().toLocaleString(),
-			filePrefix: false,
+			isFirstInstall: this.settings.isFirstInstall,
 			leafView: "",
 		};
 	}
@@ -187,7 +187,7 @@ export class FileHandler {
         const differentFile = await this.compareFileStats();
         store.dispatch(setDifferentFiles(differentFile));
 		// 使用存储的 plugin 实例
-        await activateView(this.plugin);
+        // await activateView(this.plugin);
         // await saveSettings(this.plugin);
         await this.plugin.saveData(this.settings);
 		store.dispatch(setSettings(this.settings));

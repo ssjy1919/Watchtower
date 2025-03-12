@@ -23,8 +23,9 @@ export interface settingsFileStats {
 // 定义 WatchtowerSettings 接口，它包含有`FileStatus`接口，新增一个`markTime`用于储存记录时间。
 export interface WatchtowerSettings {
 	markTime: string;
-	fileStats: settingsFileStats[];
-	filePrefix: boolean;
+    fileStats: settingsFileStats[];
+    /** 控制首次安装插件时打开插件标签叶 */
+	isFirstInstall: boolean;
 	leafView: string;
 }
 
@@ -60,6 +61,6 @@ export const defaultFileStatus: settingsFileStats = {
 export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: '1970-01-01 00:00:00',
 	fileStats: [defaultFileStatus],
-	filePrefix: false,
+	isFirstInstall: true,
 	leafView:""
 };

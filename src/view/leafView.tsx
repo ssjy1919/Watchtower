@@ -1,14 +1,14 @@
 
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { Root, createRoot } from 'react-dom/client';
-import FileSupervision from "./fileSupervision"
+import FileSupervision from "./fileSupervisionView"
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import { AppContext, FileHandlerContext } from 'src/context';
 import WatchtowerPlugin from 'src/main';
 
 export const VIEW_TYPE_FILE_SUPERVISION = 'example-view';
-export class ExampleView extends ItemView {
+export class File_supervision extends ItemView {
     root: Root | null = null;
     plugin: WatchtowerPlugin; // 显式声明 plugin 属性
 
