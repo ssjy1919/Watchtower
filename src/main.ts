@@ -30,7 +30,7 @@ export default class WatchtowerPlugin extends Plugin {
 				activateView(this);
 				this.settings.isFirstInstall = false;
 			}
-			// this.activateMiddleView();
+			
 			// 注册文件事件监听
 			registerFileEventHandlers(this);
 		});
@@ -45,9 +45,17 @@ export default class WatchtowerPlugin extends Plugin {
 
 		this.addCommand({
 			id: "WatchtowerLeafView",
-			name: "打开Watchtower侧边视图",
+			name: "打开侧边视图",
 			callback: async () => {
 				await activateView(this);
+			},
+        });
+        
+        this.addCommand({
+			id: "WatchtowerCenterLeafView",
+			name: "打开中间视图",
+			callback: async () => {
+				this.activateMiddleView();
 			},
 		});
 

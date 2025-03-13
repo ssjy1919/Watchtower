@@ -211,6 +211,10 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 
 // 激活视图
 export async function activateView(plugin: WatchtowerPlugin) {
+    if (!plugin.fileHandler) {
+        console.warn("fileHandler is not initialized yet, cannot open view.");
+        return;
+    }
 	const { workspace } = plugin.app;
 
 	let leaf: WorkspaceLeaf | null = null;
@@ -235,6 +239,8 @@ export async function activateView(plugin: WatchtowerPlugin) {
 		workspace.revealLeaf(leaf);
 	}
 }
+
+
 
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
