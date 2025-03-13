@@ -2,7 +2,7 @@ import { App, PluginSettingTab } from 'obsidian';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import WatchtowerPlugin from 'src/main';
-import { FileHandler } from '../functions'; // 引入 FileHandler
+import { FileHandler } from '../fileHandler'; // 引入 FileHandler
 
 interface SettingComponentProps {
   plugin: WatchtowerPlugin;

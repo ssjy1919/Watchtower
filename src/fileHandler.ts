@@ -32,7 +32,7 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	fileInfo(): {
+	getFileInfo(): {
 		basename: string;
 		extension: string;
 		name: string;
@@ -61,7 +61,7 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	settingInfo(): {
+	getSettingInfo(): {
 		basename: string;
 		extension: string;
 		name: string;
@@ -82,16 +82,16 @@ export class FileHandler {
 	}
 
 	/**
-	 * 对比 settingInfo() 和 fileInfo() 得到的数据
-	 * 以 settingInfo() 的 path 为数据 id，对比它们的 stat，返回不相同的数据
+	 * 对比 getSettingInfo() 和 getFileInfo() 得到的数据
+	 * 以 getSettingInfo() 的 path 为数据 id，对比它们的 stat，返回不相同的数据
 	 *
 	 * @returns {Array} 包含文件路径和状态的对象数组
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
 	async compareFileStats(): Promise<differentInfos[]> {
-		const settingFiles = this.settingInfo();
-		const currentFiles = this.fileInfo();
+		const settingFiles = this.getSettingInfo();
+		const currentFiles = this.getFileInfo();
 		const differentFiles = settingFiles
 			.map((settingFile) => {
 				const currentFile = currentFiles.find(
@@ -117,7 +117,7 @@ export class FileHandler {
 				}
 				return null;
 			})
-			.filter(Boolean) as (settingsFileStats & { differents: string })[];
+			.filter(Boolean) as (settingsFileStats & { differents: string })[];//这里可以改为-1 0 1
 
 		// 找出 settingFiles 中少了的文件
 		const missingFiles = currentFiles
@@ -142,13 +142,9 @@ export class FileHandler {
         // console.log("allDifferentFiles", allDifferentFiles);
 		return allDifferentFiles;
 	}
-
-    
-
-
 	/**加载文件信息*/
 	loadFileInfo = (): void => {
-        const fileInfoData = this.fileInfo();
+        const fileInfoData = this.getFileInfo();
 		const fileStats: settingsFileStats[] = fileInfoData.map((file) => ({
 			basename: file.basename,
 			extension: file.basename,
@@ -180,7 +176,7 @@ export class FileHandler {
         // await saveSettings(this.plugin);
         await this.plugin.saveData(this.settings);
 		store.dispatch(setSettings(this.settings));
-		store.dispatch(setFileChange(true)); // 触发 setFileChange action
+        store.dispatch(setFileChange(true)); 
 	}
 }
 

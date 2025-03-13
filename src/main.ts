@@ -2,10 +2,14 @@ import { Plugin } from "obsidian";
 import { File_supervision, VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import { WatchtowerSettings } from "./types";
 import { WatchtowerSettingTab } from "./view/settingTab";
-import { FileHandler } from "./functions";
-import { setSettings, setDifferentFiles, store } from "./store";
+import { FileHandler } from "./fileHandler";
+import { setDifferentFiles, store } from "./store";
 import { renderStatusBarView } from "./view/statusBarView";
-import { activateView, loadSettings, registerFileEventHandlers } from "./toolsFC";
+import {
+	activateView,
+	loadSettings,
+	registerFileEventHandlers,
+} from "./toolsFC";
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;
 	public fileHandler: FileHandler;
@@ -13,7 +17,6 @@ export default class WatchtowerPlugin extends Plugin {
 	async onload() {
 		// 加载设置
 		await loadSettings(this);
-		store.dispatch(setSettings(this.settings));
 		// 等待应用初始化完成
 		this.app.workspace.onLayoutReady(async () => {
 			// 初始化 FileHandler，传入 plugin 实例
@@ -26,16 +29,15 @@ export default class WatchtowerPlugin extends Plugin {
 				activateView(this);
 				this.settings.isFirstInstall = false;
 			}
-			
 			// 注册文件事件监听
 			registerFileEventHandlers(this);
+            this.registerView(
+                VIEW_TYPE_FILE_SUPERVISION,
+                (leaf) => new File_supervision(leaf, this)
+            );
+            this.addRibbonIcon("telescope", "文件状态", () => {
 		});
 
-		this.registerView(
-			VIEW_TYPE_FILE_SUPERVISION,
-			(leaf) => new File_supervision(leaf, this)
-		);
-		this.addRibbonIcon("telescope", "文件状态", () => {
 			activateView(this);
 		});
 
@@ -45,9 +47,9 @@ export default class WatchtowerPlugin extends Plugin {
 			callback: async () => {
 				await activateView(this);
 			},
-        });
-        
-        this.addCommand({
+		});
+
+		this.addCommand({
 			id: "WatchtowerCenterLeafView",
 			name: "打开中间视图",
 			callback: async () => {
@@ -61,6 +63,7 @@ export default class WatchtowerPlugin extends Plugin {
 			callback: async () => {
 				// 使用 fileHandler 的 saveFileInfo 方法
 				await this.fileHandler.saveFileInfo();
+				
 			},
 		});
 

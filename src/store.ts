@@ -43,7 +43,7 @@ const settingsSlice = createSlice({
 	},
 });
 
-// 导出 actions，用于在组件中触发状态更新
+// 导出 actions ，用于在组件中触发状态更新
 // setFileChange 和 setDifferentFiles 是 counterSlice 的 actions
 // setSettings 是 settingsSlice 的 action
 export const { setFileChange, setDifferentFiles } = counterSlice.actions;
