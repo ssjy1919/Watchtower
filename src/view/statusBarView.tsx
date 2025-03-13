@@ -1,8 +1,8 @@
 import { Provider, useSelector } from "react-redux";
 import { RootState, store } from "../store";
 import { createRoot } from "react-dom/client";
-import { activateView } from "../functions"; // 确保路径正确
 import WatchtowerPlugin from "src/main";
+import { activateView } from "src/toolsFC";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
     // 使用 useSelector 获取 differentFiles 状态

@@ -3,13 +3,9 @@ import { File_supervision, VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import { WatchtowerSettings } from "./types";
 import { WatchtowerSettingTab } from "./view/settingTab";
 import { FileHandler } from "./functions";
-import {
-	loadSettings,
-	activateView,
-	registerFileEventHandlers,
-} from "./functions";
 import { setSettings, setDifferentFiles, store } from "./store";
 import { renderStatusBarView } from "./view/statusBarView";
+import { activateView, loadSettings, registerFileEventHandlers } from "./toolsFC";
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;
 	public fileHandler: FileHandler;
