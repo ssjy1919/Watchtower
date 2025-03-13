@@ -29,10 +29,11 @@ export default class WatchtowerPlugin extends Plugin {
 			if (this.settings.isFirstInstall) {
 				activateView(this);
 				this.settings.isFirstInstall = false;
-            }
-            this.activateMiddleView();
-        });
-        
+			}
+			// this.activateMiddleView();
+			// 注册文件事件监听
+			registerFileEventHandlers(this);
+		});
 
 		this.registerView(
 			VIEW_TYPE_FILE_SUPERVISION,
@@ -45,9 +46,9 @@ export default class WatchtowerPlugin extends Plugin {
 		this.addCommand({
 			id: "WatchtowerLeafView",
 			name: "打开Watchtower侧边视图",
-            callback: async () => {
-                await activateView(this);
-            },
+			callback: async () => {
+				await activateView(this);
+			},
 		});
 
 		this.addCommand({
@@ -57,24 +58,15 @@ export default class WatchtowerPlugin extends Plugin {
 				// 使用 fileHandler 的 saveFileInfo 方法
 				await this.fileHandler.saveFileInfo();
 			},
-        });
-        
-		// 这将在应用程序的底部添加一个状态栏项目。在移动应用程序上不起作用。
-		const statusBarItemEl = this.addStatusBarItem();
-        // 渲染 statusBarView 到 statusBarItemEl
-		renderStatusBarView(statusBarItemEl,this);
+		});
 
-        
+		// 添加状态栏项目
+		const statusBarItemEl = this.addStatusBarItem();
+		renderStatusBarView(statusBarItemEl, this);
 
 		// 挂载插件设置页面
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
-
-		// 注册文件事件监听
-        registerFileEventHandlers(this);
-        
-        
-    }
-    
+	}
 
 	/** 激活中间区域的视图 */
 	async activateMiddleView() {

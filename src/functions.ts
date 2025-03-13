@@ -242,7 +242,12 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		event: string,
 		file: TAbstractFile,
 		oldPath?: string
-	) => {
+    ) => {
+        if (!plugin.fileHandler) {
+            console.error("fileHandler is not initialized yet");
+            return;
+        }
+
 		store.dispatch(setFileChange(true)); // 触发 setFileChange action
         
 		// 加载并比较文件信息
