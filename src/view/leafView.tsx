@@ -4,17 +4,16 @@ import { Root, createRoot } from 'react-dom/client';
 import FileSupervision from "./fileSupervisionView"
 import { Provider } from 'react-redux';
 import { store } from '../store';
-import { AppContext, FileHandlerContext } from 'src/context';
 import WatchtowerPlugin from 'src/main';
 
 export const VIEW_TYPE_FILE_SUPERVISION = 'example-view';
 export class File_supervision extends ItemView {
     root: Root | null = null;
     plugin: WatchtowerPlugin; // 显式声明 plugin 属性
-
     constructor(leaf: WorkspaceLeaf, plugin: WatchtowerPlugin) {
         super(leaf);
-        this.plugin = plugin; // 初始化 plugin 属性
+        this.plugin = plugin;
+
     }
     //设置icon
     getIcon() {
@@ -32,11 +31,7 @@ export class File_supervision extends ItemView {
         this.root = createRoot(this.containerEl.children[1]);
         this.root.render(
             <Provider store={store}>
-                <AppContext.Provider value={this.plugin.app}>
-                    <FileHandlerContext.Provider value={{ saveFileInfo: this.plugin.fileHandler.saveFileInfo }}>
-                        <FileSupervision />
-                    </FileHandlerContext.Provider>
-                </AppContext.Provider>
+                <FileSupervision plugin={this.plugin} />
             </Provider>
         );
     }

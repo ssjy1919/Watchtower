@@ -1,13 +1,5 @@
 
-/**
- * 不知道为啥 obsidian 的类型定义不包含 fileMap 这个属性，
- * 通过声明 fileMap，扩展 obsidian 的类型定义
- */
-// declare module 'obsidian' {
-//   interface Vault {
-// 	fileMap: TFile[];
-//   }
-// }
+
 
 import { FileStats } from "obsidian";
 
@@ -18,6 +10,8 @@ export interface settingsFileStats {
 		name: string;
 		path: string;
 		stat: FileStats;
+        differents: string;
+        
 }
 
 // 定义 WatchtowerSettings 接口，它包含有`FileStatus`接口，新增一个`markTime`用于储存记录时间。
@@ -26,21 +20,9 @@ export interface WatchtowerSettings {
     fileStats: settingsFileStats[];
     /** 控制首次安装插件时打开插件标签叶 */
 	isFirstInstall: boolean;
-	leafView: string;
 }
 
 
-export interface differentInfos  {
-	name: string;
-	path: string;
-	differents: string;
-}
-// 定义默认的 differentInfo 值
-export const differentInfo: differentInfos = {
-	differents: "",
-	name: "",
-	path: "",
-}
 
 
 
@@ -55,6 +37,7 @@ export const defaultFileStatus: settingsFileStats = {
 		ctime: 0,
 		mtime: 0,
 	},
+	differents: "",
 }
 
 // 定义默认的 WatchtowerSettings 值
@@ -62,5 +45,4 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: '1970-01-01 00:00:00',
 	fileStats: [defaultFileStatus],
 	isFirstInstall: true,
-	leafView:""
 };

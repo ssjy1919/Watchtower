@@ -3,7 +3,6 @@ import {
 	WatchtowerSettings,
 	settingsFileStats,
 	defaultFileStatus,
-	differentInfos,
 } from "./types";
 import { setDifferentFiles, setFileChange, setSettings, store } from "./store";
 import WatchtowerPlugin from "./main";
@@ -38,18 +37,30 @@ export class FileHandler {
 		name: string;
 		path: string;
 		stat: FileStats;
+		differents: string; // 新增字段
 	}[] {
 		// 获取所有 Markdown 文件
 		const markdownFiles = this.app.vault.getMarkdownFiles();
 
+		// 将 settings.fileStats 转换为 Map，提高查找效率
+		const fileStatsMap = new Map(
+			this.settings.fileStats.map((file) => [file.path, file])
+		);
+
 		// 遍历文件列表，收集所有文件的信息
-		const filesInfo = markdownFiles.map((file) => ({
-			basename: file.basename,
-			extension: file.basename,
-			name: file.basename,
-			path: file.path,
-			stat: file.stat,
-		}));
+		const filesInfo = markdownFiles.map((file) => {
+			// 使用 fileStatsMap 快速查找 differents
+			const differents = fileStatsMap.get(file.path)?.differents || "";
+
+			return {
+				basename: file.basename,
+				extension: file.extension,
+				name: file.name,
+				path: file.path,
+				stat: file.stat,
+				differents, // 新增字段
+			};
+		});
 
 		// 如果没有找到文件，返回一个空数组
 		return filesInfo.length > 0 ? filesInfo : [defaultFileStatus];
@@ -89,7 +100,7 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	async compareFileStats(): Promise<differentInfos[]> {
+	async compareFileStats(): Promise<settingsFileStats[]> {
 		const settingFiles = this.getSettingInfo();
 		const currentFiles = this.getFileInfo();
 		const differentFiles = settingFiles
@@ -117,7 +128,7 @@ export class FileHandler {
 				}
 				return null;
 			})
-			.filter(Boolean) as (settingsFileStats & { differents: string })[];//这里可以改为-1 0 1
+			.filter(Boolean) as settingsFileStats[]; //这里可以改为-1 0 1
 
 		// 找出 settingFiles 中少了的文件
 		const missingFiles = currentFiles
@@ -131,52 +142,44 @@ export class FileHandler {
 				}
 				return null;
 			})
-			.filter(Boolean) as (settingsFileStats & { differents: string })[];
+			.filter(Boolean) as settingsFileStats[];
 
 		// 合并不同的文件、多出来的文件和少了的文件
 		const allDifferentFiles = [...differentFiles, ...missingFiles];
 
-		// 更新 Redux store 中的 differentFiles 状态
-        store.dispatch(setDifferentFiles(allDifferentFiles));
-        
-        // console.log("allDifferentFiles", allDifferentFiles);
+
+		// console.log("allDifferentFiles", allDifferentFiles);
 		return allDifferentFiles;
 	}
 	/**加载文件信息*/
 	loadFileInfo = (): void => {
-        const fileInfoData = this.getFileInfo();
+		const fileInfoData = this.getFileInfo();
 		const fileStats: settingsFileStats[] = fileInfoData.map((file) => ({
 			basename: file.basename,
 			extension: file.basename,
 			name: file.basename,
 			path: file.path,
 			stat: file.stat,
+            differents: file.differents,
+            
 		}));
-		this.settings = {
-            ...this.settings,
-			fileStats,
-			markTime: new Date().toLocaleString(),
-			isFirstInstall: this.settings.isFirstInstall,
-			leafView: "",
-		};
-	}
-	/** 保存文件信息 */
-    saveFileInfo = async (): Promise<void> => {
+        this.settings.fileStats = fileStats
         
-        // console.log("this.settings", this.settings);
+	};
+	/** 保存文件信息 */
+	saveFileInfo = async (): Promise<void> => {
 		// 加载文件信息
 		this.loadFileInfo();
-        // console.log("this.settings", this.settings);
+        // 比较文件信息
         
-        // 加载并比较文件信息
-        const differentFile = await this.compareFileStats();
-        store.dispatch(setDifferentFiles(differentFile));
-		// 使用存储的 plugin 实例
-        // await activateView(this.plugin);
-        // await saveSettings(this.plugin);
-        await this.plugin.saveData(this.settings);
-		store.dispatch(setSettings(this.settings));
-        store.dispatch(setFileChange(true)); 
-	}
-}
+		const differentFile = await this.compareFileStats();
+		store.dispatch(setDifferentFiles(differentFile));
 
+		// 更新 Redux store 中的 differentFiles 状态
+		this.plugin.settings.markTime = new Date().toLocaleString();
+		store.dispatch(setSettings(this.plugin.settings));
+
+		await this.plugin.saveData(this.plugin.settings);
+		store.dispatch(setFileChange(true));
+	};
+}

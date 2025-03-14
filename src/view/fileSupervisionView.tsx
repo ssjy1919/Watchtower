@@ -1,13 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, setFileChange } from "src/store";
-import { differentInfos } from "src/types";
-import { AppContext, FileHandlerContext } from '../context';
 import { Notice } from "obsidian";
 import "./FileSupervisionView.css"
-const FileSupervision: React.FC = () => {
-    const app = useContext(AppContext);
-    const fileHandlerContext = useContext(FileHandlerContext);
+import WatchtowerPlugin from "src/main";
+
+interface FileSupervisionProps {
+    plugin: WatchtowerPlugin;
+}
+
+const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
     const fileChange = useSelector((state: RootState) => state.counter.fileChange); // 获取 fileChange 状态
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles); // 获取 differentFiles 状态
     const settings = useSelector((state: RootState) => state.settings);
@@ -20,7 +22,7 @@ const FileSupervision: React.FC = () => {
             // 重置 fileChange 状态
             dispatch(setFileChange(false));
         }
-    }, [fileChange, dispatch, differentFiles]);
+    }, [fileChange, dispatch, differentFiles,settings]);
 
     const handleClick = () => {
         setClassName((prevClassName) =>
@@ -30,14 +32,12 @@ const FileSupervision: React.FC = () => {
         );
     };
     const HandleSaveFileInfo = async () => {
-        if (fileHandlerContext?.saveFileInfo) {
-            await fileHandlerContext.saveFileInfo();
-        }
+        plugin.fileHandler.saveFileInfo()
     }
     const handleOpenLink = (path: string, differents: string) => {
-        if (app) {
+        if (plugin.app) {
             if (differents != "文件丢失") {
-                app.workspace.openLinkText(path, '', false); // 调用 openLinkText 方法
+                plugin.app.workspace.openLinkText(path, '', false); // 调用 openLinkText 方法
 
             } else {
                 new Notice(`文件不存在：${path}`)
@@ -65,7 +65,7 @@ const FileSupervision: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {files.map((file: differentInfos, index: number) => (
+                            {files.map((file, index: number) => (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>

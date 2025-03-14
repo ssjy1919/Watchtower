@@ -3,7 +3,7 @@ import { File_supervision, VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import { WatchtowerSettings } from "./types";
 import { WatchtowerSettingTab } from "./view/settingTab";
 import { FileHandler } from "./fileHandler";
-import { setDifferentFiles, store } from "./store";
+import { setDifferentFiles, setSettings, store } from "./store";
 import { renderStatusBarView } from "./view/statusBarView";
 import {
 	activateView,
@@ -21,22 +21,24 @@ export default class WatchtowerPlugin extends Plugin {
 		this.app.workspace.onLayoutReady(async () => {
 			// 初始化 FileHandler，传入 plugin 实例
 			this.fileHandler = new FileHandler(this.app, this.settings, this);
-
 			// 加载并比较文件信息
 			const differentFiles = await this.fileHandler.compareFileStats();
 			store.dispatch(setDifferentFiles(differentFiles));
+			//同步设置信息到store
+			store.dispatch(setSettings(this.settings));
 			if (this.settings.isFirstInstall) {
 				activateView(this);
 				this.settings.isFirstInstall = false;
 			}
 			// 注册文件事件监听
 			registerFileEventHandlers(this);
-            this.registerView(
-                VIEW_TYPE_FILE_SUPERVISION,
-                (leaf) => new File_supervision(leaf, this)
-            );
-            this.addRibbonIcon("telescope", "文件状态", () => {
-		});
+			this.registerView(
+				VIEW_TYPE_FILE_SUPERVISION,
+				(leaf) => new File_supervision(leaf, this)
+			);
+			this.addRibbonIcon("telescope", "文件状态", async () => {
+				await activateView(this);
+			});
 
 			activateView(this);
 		});
@@ -61,12 +63,11 @@ export default class WatchtowerPlugin extends Plugin {
 			id: "WatchtowerMark",
 			name: "保存文件信息",
 			callback: async () => {
+				// this.settings.markTime = Date.now().toString();
 				// 使用 fileHandler 的 saveFileInfo 方法
 				await this.fileHandler.saveFileInfo();
-				
 			},
 		});
-
 		// 添加状态栏项目
 		const statusBarItemEl = this.addStatusBarItem();
 		renderStatusBarView(statusBarItemEl, this);
@@ -74,7 +75,6 @@ export default class WatchtowerPlugin extends Plugin {
 		// 挂载插件设置页面
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
 	}
-
 	/** 激活中间区域的视图 */
 	async activateMiddleView() {
 		// 获取一个中间区域的叶子
