@@ -3,63 +3,67 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import WatchtowerPlugin from 'src/main';
 import { FileHandler } from '../fileHandler'; // 引入 FileHandler
+import "./settingTab.css";
 
 interface SettingComponentProps {
-  plugin: WatchtowerPlugin;
+    plugin: WatchtowerPlugin;
 }
 
 const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
-  const [markTime, setMarkTime] = React.useState(plugin.settings.markTime);
+    // 使用 plugin.settings.isWatch 初始化开关状态
+    const [isSwitchOn, setIsSwitchOn] = React.useState(!!plugin.settings.isWatch);
 
-  const handleChange = async (value: string) => {
-    setMarkTime(value);
-    plugin.settings.markTime = value;
+    const handleChange = async (value: boolean) => {
 
-    // 创建 FileHandler 实例并调用 saveFileInfo
-    const fileHandler = new FileHandler(plugin.app, plugin.settings, plugin);
-    await fileHandler.saveFileInfo(); // 调用 saveFileInfo 方法
-  };
+        setIsSwitchOn(value);
+        plugin.settings.isWatch = value; // 更新 isWatch 的值
+        const fileHandler = new FileHandler(plugin.app, plugin.settings, plugin);
+        await fileHandler.saveFileInfo(); // 调用 saveFileInfo 方法保存设置
+    };
 
-  return (
-    <div>
-      <div className="setting-item">
-        <div className="setting-item-info">
-          <div className="setting-item-name">Setting #1</div>
-          <div className="setting-item-description">It's a secret</div>
+    return (
+        <div className='file-Supervision'>
+            <div className="setting-item">
+                <div className="setting-item-info">
+                    <div className="setting-item-name">文件监控功能</div>
+                    <div className="setting-item-description">启用或禁用文件监控功能</div>
+                </div>
+                <div className="setting-item-control">
+                    {/* 开关按钮 */}
+                    <label className="switch">
+                        <input
+                            type="checkbox"
+                            checked={isSwitchOn}
+                            onChange={(e) => handleChange(e.target.checked)}
+                        />
+                        <span className="slider"></span>
+                    </label>
+                </div>
+            </div>
         </div>
-        <div className="setting-item-control">
-          <input
-            type="text"
-            placeholder="Enter your secret"
-            value={markTime}
-            onChange={(e) => handleChange(e.target.value)}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export class WatchtowerSettingTab extends PluginSettingTab {
-  plugin: WatchtowerPlugin;
-  root: ReactDOM.Root | null = null;
+    plugin: WatchtowerPlugin;
+    root: ReactDOM.Root | null = null;
 
-  constructor(app: App, plugin: WatchtowerPlugin) {
-    super(app, plugin);
-    this.plugin = plugin;
-  }
-
-  display(): void {
-    const { containerEl } = this;
-
-    if (!this.root) {
-      this.root = ReactDOM.createRoot(containerEl);
+    constructor(app: App, plugin: WatchtowerPlugin) {
+        super(app, plugin);
+        this.plugin = plugin;
     }
 
-    this.root.render(
-      <React.StrictMode>
-        <SettingComponent plugin={this.plugin} />
-      </React.StrictMode>
-    );
-  }
+    display(): void {
+        const { containerEl } = this;
+
+        if (!this.root) {
+            this.root = ReactDOM.createRoot(containerEl);
+        }
+
+        this.root.render(
+            <React.StrictMode>
+                <SettingComponent plugin={this.plugin} />
+            </React.StrictMode>
+        );
+    }
 }

@@ -9,10 +9,10 @@ const initialState = {
 	// - fileChange：布尔值，用于标识文件是否发生变化，默认值为 false
 	fileChange: false,
 	/** 差异文件列表，包含文件路径和状态 */
-	differentFiles: [defaultFileStatus],
+    differentFiles: [defaultFileStatus],
 };
 
-// 创建一个名为 counterSlice 的 slice，用于管理计数器和文件变化状态
+
 const counterSlice = createSlice({
 	name: "counter", // slice 的名称，用于区分不同的 slice
 	initialState, // 初始状态
@@ -32,8 +32,7 @@ const settingsSlice = createSlice({
 	initialState: DEFAULT_SETTINGS, // 初始状态为默认设置 DEFAULT_SETTINGS
 	reducers: {
         setSettings: (state, action) => {
-            // console.log("settingsSlice.reducer.setSettings", action.payload);
-			return { ...state, ...action.payload }; // 使用扩展运算符合并新旧状态
+			return { ...state, ...action.payload }; 
 		},
 	},
 });

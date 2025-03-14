@@ -10,7 +10,7 @@ export interface settingsFileStats {
 		name: string;
 		path: string;
 		stat: FileStats;
-        differents: string;
+    differents: string;
         
 }
 
@@ -19,7 +19,9 @@ export interface WatchtowerSettings {
 	markTime: string;
     fileStats: settingsFileStats[];
     /** 控制首次安装插件时打开插件标签叶 */
-	isFirstInstall: boolean;
+    isFirstInstall: boolean;
+    /** 启动文件监控功能 */
+    isWatch?: boolean;
 }
 
 
@@ -37,12 +39,13 @@ export const defaultFileStatus: settingsFileStats = {
 		ctime: 0,
 		mtime: 0,
 	},
-	differents: "",
+    differents: "",
 }
 
 // 定义默认的 WatchtowerSettings 值
 export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: '1970-01-01 00:00:00',
 	fileStats: [defaultFileStatus],
-	isFirstInstall: true,
+    isFirstInstall: true,
+    isWatch:false
 };
