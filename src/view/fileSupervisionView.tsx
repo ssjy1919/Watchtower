@@ -49,12 +49,11 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
         <div className="file-supervision">
             <div className={`${className} tips`} onClick={handleClick}>
                 <div className="show-table">
-                    {files.length === 0 ? `版本号：${settings.markTime}` : `${files.length}份文件发生变动`}
+                    {files.length === 0 ? settings.markTime : `${files.length}份文件变动`}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存文件信息</div>
             </div>
             <div className={className} >
-
                 {files.length > 0 ?
                     <table>
                         <thead>

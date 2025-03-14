@@ -6,10 +6,14 @@ import { FileHandler } from "./fileHandler";
 import { setDifferentFiles, setSettings, store } from "./store";
 import { renderStatusBarView } from "./view/statusBarView";
 import {
+    activateMiddleView,
 	activateView,
 	loadSettings,
 	registerFileEventHandlers,
 } from "./toolsFC";
+
+
+
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;
 	public fileHandler: FileHandler;
@@ -26,7 +30,8 @@ export default class WatchtowerPlugin extends Plugin {
 			store.dispatch(setDifferentFiles(differentFiles));
 			//同步设置信息到store
 			store.dispatch(setSettings(this.settings));
-			if (this.settings.isFirstInstall) {
+            if (this.settings.isFirstInstall) {
+                console.log("isFirstInstall");
 				activateView(this);
 				this.settings.isFirstInstall = false;
 			}
@@ -39,8 +44,6 @@ export default class WatchtowerPlugin extends Plugin {
 			this.addRibbonIcon("telescope", "文件状态", async () => {
 				await activateView(this);
 			});
-
-			activateView(this);
 		});
 
 		this.addCommand({
@@ -55,7 +58,7 @@ export default class WatchtowerPlugin extends Plugin {
 			id: "WatchtowerCenterLeafView",
 			name: "打开中间视图",
 			callback: async () => {
-				this.activateMiddleView();
+				activateMiddleView(this);
 			},
 		});
 
@@ -63,28 +66,16 @@ export default class WatchtowerPlugin extends Plugin {
 			id: "WatchtowerMark",
 			name: "保存文件信息",
 			callback: async () => {
-				// this.settings.markTime = Date.now().toString();
-				// 使用 fileHandler 的 saveFileInfo 方法
 				await this.fileHandler.saveFileInfo();
 			},
 		});
 		// 添加状态栏项目
 		const statusBarItemEl = this.addStatusBarItem();
 		renderStatusBarView(statusBarItemEl, this);
-
 		// 挂载插件设置页面
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
 	}
-	/** 激活中间区域的视图 */
-	async activateMiddleView() {
-		// 获取一个中间区域的叶子
-		const leaf = this.app.workspace.getLeaf(false); // false 表示不在侧边栏中
-		await leaf.setViewState({
-			type: VIEW_TYPE_FILE_SUPERVISION,
-			active: true,
-		});
-		this.app.workspace.setActiveLeaf(leaf); // 设置为活动叶子
-	}
+
 	async onunload() {
 		/** 卸载标签叶子 */
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);

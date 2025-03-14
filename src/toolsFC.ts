@@ -38,7 +38,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 	);
 }
 
-// 激活视图
+/** 激活右边视图 */
 export async function activateView(plugin: WatchtowerPlugin) {
 	if (!plugin.fileHandler) {
 		console.warn("fileHandler is not initialized yet, cannot open view.");
@@ -68,16 +68,20 @@ export async function activateView(plugin: WatchtowerPlugin) {
 		workspace.revealLeaf(leaf);
 	}
 }
-/** 把时间戳转换成日期格式 */
-export const timestampToDate = (timestamp: number): string => {
-	const date = new Date(timestamp);
-	const year = date.getFullYear();
-	const month = (date.getMonth() + 1).toString().padStart(2, "0");
-	const day = date.getDate().toString().padStart(2, "0");
-	const hours = date.getHours().toString().padStart(2, "0");
-	const minutes = date.getMinutes().toString().padStart(2, "0");
-	return `${year}-${month}-${day} ${hours}:${minutes}`;
-};
+
+	/** 激活中间区域的视图 */
+export async function activateMiddleView(plugin: WatchtowerPlugin) {
+    // 获取一个中间区域的叶子
+    const leaf = plugin.app.workspace.getLeaf(false); // false 表示不在侧边栏中
+    await leaf.setViewState({
+        type: VIEW_TYPE_FILE_SUPERVISION,
+        active: true,
+    });
+    plugin.app.workspace.setActiveLeaf(leaf); // 设置为活动叶子
+}
+
+
+
 // 加载用户设置
 export async function loadSettings(plugin: WatchtowerPlugin) {
 	plugin.settings = Object.assign(
