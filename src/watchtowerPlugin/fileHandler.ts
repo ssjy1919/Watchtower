@@ -1,11 +1,11 @@
 import { App, FileStats } from "obsidian";
 import {
 	WatchtowerSettings,
+	SettingsFileStats,
 	settingsFileStats,
-	defaultFileStatus,
 } from "./types";
 import { setDifferentFiles, setFileChange, setSettings, store } from "./store";
-import WatchtowerPlugin from "./main";
+import WatchtowerPlugin from "../main";
 
 export class FileHandler {
 	private app: App;
@@ -63,7 +63,7 @@ export class FileHandler {
 		});
 
 		// 如果没有找到文件，返回一个空数组
-		return filesInfo.length > 0 ? filesInfo : [defaultFileStatus];
+		return filesInfo.length > 0 ? filesInfo : [settingsFileStats];
 	}
 
 	/**
@@ -89,7 +89,7 @@ export class FileHandler {
 		}));
 
 		// 如果没有找到文件，返回一个空数组
-		return filesInfo.length > 0 ? filesInfo : [defaultFileStatus];
+		return filesInfo.length > 0 ? filesInfo : [settingsFileStats];
 	}
 
 	/**
@@ -100,7 +100,7 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	async compareFileStats(): Promise<settingsFileStats[]> {
+	async compareFileStats(): Promise<SettingsFileStats[]> {
 		const settingFiles = this.getSettingInfo();
 		const currentFiles = this.getFileInfo();
 		const differentFiles = settingFiles
@@ -128,7 +128,7 @@ export class FileHandler {
 				}
 				return null;
 			})
-			.filter(Boolean) as settingsFileStats[]; //这里可以改为-1 0 1
+			.filter(Boolean) as SettingsFileStats[]; //这里可以改为-1 0 1
 
 		// 找出 settingFiles 中少了的文件
 		const missingFiles = currentFiles
@@ -142,7 +142,7 @@ export class FileHandler {
 				}
 				return null;
 			})
-			.filter(Boolean) as settingsFileStats[];
+			.filter(Boolean) as SettingsFileStats[];
 
 		// 合并不同的文件、多出来的文件和少了的文件
 		const allDifferentFiles = [...differentFiles, ...missingFiles];
@@ -154,7 +154,7 @@ export class FileHandler {
 	/**加载文件信息*/
 	loadFileInfo = (): void => {
 		const fileInfoData = this.getFileInfo();
-		const fileStats: settingsFileStats[] = fileInfoData.map((file) => ({
+		const fileStats: SettingsFileStats[] = fileInfoData.map((file) => ({
 			basename: file.basename,
 			extension: file.basename,
 			name: file.basename,

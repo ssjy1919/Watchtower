@@ -20,6 +20,5 @@
     ]
   },
   "include": [
-    "**/*.ts"
-, "src/view/settingTab.tsx"  ]
+    "**/*.ts", "**/*.tsx"  ]
 }

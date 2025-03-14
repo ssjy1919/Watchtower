@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, setFileChange } from "src/store";
+import { RootState, setFileChange } from "src/watchtowerPlugin/store";
 import { Notice } from "obsidian";
 import "./FileSupervisionView.css"
 import WatchtowerPlugin from "src/main";

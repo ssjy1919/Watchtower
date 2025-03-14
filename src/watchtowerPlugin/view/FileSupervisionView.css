@@ -56,6 +56,6 @@
 }
 
 /*  状态栏 */
-.Watchtower-status-bar-item.is-dirty{
+.watchtowerPlugin-status-bar-item.is-dirty{
     color: #de0909;
 }

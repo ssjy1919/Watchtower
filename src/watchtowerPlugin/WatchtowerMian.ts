@@ -1,20 +1,28 @@
-import { FileHandler } from "src/fileHandler";
+import { FileHandler } from "src/watchtowerPlugin/fileHandler";
 import WatchtowerPlugin from "src/main";
-import { store, setDifferentFiles, setSettings } from "src/store";
-import { activateView, registerFileEventHandlers, activateMiddleView } from "src/toolsFC";
-import { VIEW_TYPE_FILE_SUPERVISION, File_supervision } from "src/view/leafView";
-import { renderStatusBarView } from "src/view/statusBarView";
+import { store, setDifferentFiles, setSettings } from "src/watchtowerPlugin/store";
+import { activateView, registerFileEventHandlers, activateMiddleView } from "src/watchtowerPlugin/toolsFC";
+import { VIEW_TYPE_FILE_SUPERVISION, File_supervision } from "src/watchtowerPlugin/view/leafView";
+import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
 
-// 统一导出 interface 和 class
 export interface WatchtowerMain {
     plugin: WatchtowerPlugin;
 }
 
 export class WatchtowerMain {
-    plugin: WatchtowerPlugin;
+    private static instance: WatchtowerMain; // 静态属性，存储唯一实例
+    public plugin: WatchtowerPlugin;
 
-    constructor(plugin: WatchtowerPlugin) {
+    private constructor(plugin: WatchtowerPlugin) {
         this.plugin = plugin;
+    }
+
+    // 静态方法，获取唯一实例
+    public static getInstance(plugin: WatchtowerPlugin): WatchtowerMain {
+        if (!WatchtowerMain.instance) {
+            WatchtowerMain.instance = new WatchtowerMain(plugin);
+        }
+        return WatchtowerMain.instance;
     }
 
     async initialize() {

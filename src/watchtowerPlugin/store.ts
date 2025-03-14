@@ -1,7 +1,7 @@
 // configureStore 用于创建 Redux store
 // createSlice 用于定义 reducer 和 action
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { DEFAULT_SETTINGS, defaultFileStatus } from "./types";
+import { DEFAULT_SETTINGS, settingsFileStats } from "./types";
 
 // 定义初始状态 initialState
 // 包含两个属性：
@@ -9,7 +9,7 @@ const initialState = {
 	// - fileChange：布尔值，用于标识文件是否发生变化，默认值为 false
 	fileChange: false,
 	/** 差异文件列表，包含文件路径和状态 */
-    differentFiles: [defaultFileStatus],
+    differentFiles: [settingsFileStats],
 };
 
 

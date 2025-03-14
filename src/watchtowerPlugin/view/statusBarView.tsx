@@ -2,7 +2,7 @@ import { Provider, useSelector } from "react-redux";
 import { RootState, store } from "../store";
 import { createRoot } from "react-dom/client";
 import WatchtowerPlugin from "src/main";
-import { activateView } from "src/toolsFC";
+import { activateView } from "src/watchtowerPlugin/toolsFC";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
     // 使用 useSelector 获取 differentFiles 状态
@@ -15,7 +15,7 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
 
     return (
         <div 
-            className={files.length > 0 ? "Watchtower-status-bar-item is-dirty" : "Watchtower-status-bar-item"}
+            className={files.length > 0 ? "watchtowerPlugin-status-bar-item is-dirty" : "watchtowerPlugin-status-bar-item"}
             onClick={HandleClick} // 直接使用 HandleClick 函数
         >
             {files.length > 0 ? `变动文件：${files.length}` : "文件完整"}
