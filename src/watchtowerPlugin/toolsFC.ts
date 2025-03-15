@@ -2,7 +2,13 @@ import { TAbstractFile, WorkspaceLeaf } from "obsidian";
 import WatchtowerPlugin from "../main";
 import { VIEW_TYPE_FILE_SUPERVISION } from "../watchtowerPlugin/view/leafView";
 import { DEFAULT_SETTINGS } from "./types";
-import { store, setFileStatList, setRecentOpenFiles } from "./store";
+import {
+	store,
+	setFileStatList,
+	setRecentOpenFiles,
+	setDifferentFiles,
+	setSettings,
+} from "./store";
 
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
@@ -11,33 +17,58 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		file: TAbstractFile,
 		oldPath?: string
 	) => {
-		// 比较文件信息
-		const recentOpenFiles = await plugin.fileHandler.compareFileStats();
-        store.dispatch(setRecentOpenFiles(recentOpenFiles));
-		if (file?.path) {
-			// 找到 path 匹配的对象
-			const state = store.getState();
-            const fileStatList = state.counter.fileStatList;
-			const updatedFileStats =fileStatList.map(
-				(fileStat) => {
-					if (fileStat.path === file.path) {
-						// 更新 recentOpen 为当前时间
-						return {
-							...fileStat,
-							recentOpen: new Date().getTime(),
-						};
-                    }
-					return fileStat;
+		try {
+            const state = store.getState();
+            if (event === "opened") {
+                // 比较文件信息
+				const recentOpenFiles =
+                plugin.fileHandler.compareFiles();
+				store.dispatch(setRecentOpenFiles(recentOpenFiles));
+				if (file?.path) {
+                    // 找到 path 匹配的对象
+					const fileStatLists = state.counter.fileStatList;
+					const updatedFileStats = fileStatLists.map((fileStat) => {
+						if (fileStat.path === file.path) {
+							// 更新 recentOpen 为当前时间
+							return {
+								...fileStat,
+								recentOpen: new Date().getTime(),
+							};
+						}
+						return fileStat;
+					});
+					store.dispatch(setFileStatList(updatedFileStats));
 				}
-			);
-            store.dispatch(setFileStatList(updatedFileStats));
-        }
+			} else if (
+				event === "created" ||
+				event === "renamed" ||
+				event === "modified" ||
+				event === "deleted"
+			) {
+				// 加载文件信息
+				const fileStats = plugin.fileHandler.loadFileStats();
+                store.dispatch(setFileStatList(fileStats));
+                // 比较文件差异
+                const differentFiles = plugin.fileHandler.compareFiles();
+                store.dispatch(setDifferentFiles(differentFiles));
+				// 比较文件差异（仅在必要时调用）
+				// const statediffleStatLists = state.counter.differentFiles;
+				// console.log("state-differentFiles:", statediffleStatLists);
+				// const differentFiles = await plugin.fileHandler.compareFiles();
+				// console.log("differentFiles:", differentFiles);
+				// store.dispatch(setDifferentFiles(differentFiles));
+			}
+
+			// const fileStatLists = plugin.fileHandler.loadFileStats();
+			// store.dispatch(setFileStatList(fileStatLists));
+		} catch (error) {
+			console.error(`处理文件事件 ${event} 时出错：`, error);
+		}
 	};
 
 	// 订阅文件的增删改查事件
 	plugin.app.vault.on("modify", (file: TAbstractFile) =>
-        fileEventHandler("modified", file)
-        
+		fileEventHandler("modified", file)
 	);
 	plugin.app.vault.on("delete", (file: TAbstractFile) =>
 		fileEventHandler("deleted", file)
@@ -48,13 +79,12 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 	plugin.app.vault.on("create", (file: TAbstractFile) =>
 		fileEventHandler("created", file)
 	);
-
 	// 订阅文件打开事件
 	plugin.registerEvent(
 		plugin.app.workspace.on("file-open", (file: TAbstractFile | null) => {
 			if (file) {
 				// 调用文件事件处理器或其他逻辑
-                fileEventHandler("opened", file);
+				fileEventHandler("opened", file);
 			}
 		})
 	);
@@ -108,4 +138,14 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 		DEFAULT_SETTINGS,
 		await plugin.loadData()
 	);
+}
+/** 插件启动初始化 */
+export async function init(plugin: WatchtowerPlugin) {
+	// 加载文件信息
+	const fileStatLists = plugin.fileHandler.loadFileStats();
+	store.dispatch(setFileStatList(fileStatLists));
+	// 比较文件差异
+	const differentFiles = plugin.fileHandler.compareFiles();
+	store.dispatch(setDifferentFiles(differentFiles));
+	store.dispatch(setSettings(plugin.settings));
 }

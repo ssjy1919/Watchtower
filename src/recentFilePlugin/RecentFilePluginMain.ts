@@ -8,22 +8,11 @@ export interface RecentFilePluginMain {
 }
 
 export class RecentFilePluginMain {
-    private static instance: RecentFilePluginMain; // 静态属性，存储唯一实例
     public plugin: WatchtowerPlugin;
 
-    // 私有构造函数，防止外部直接实例化
-    private constructor(plugin: WatchtowerPlugin) {
+    constructor(plugin: WatchtowerPlugin) {
         this.plugin = plugin;
     }
-
-    // 静态方法，获取唯一实例
-    public static getInstance(plugin: WatchtowerPlugin): RecentFilePluginMain {
-        if (!RecentFilePluginMain.instance) {
-            RecentFilePluginMain.instance = new RecentFilePluginMain(plugin);
-        }
-        return RecentFilePluginMain.instance;
-    }
-
 
     async initialize() {
         this.plugin.app.workspace.onLayoutReady(async () => {

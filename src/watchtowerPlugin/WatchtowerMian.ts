@@ -1,15 +1,10 @@
 import { FileHandler } from "src/watchtowerPlugin/fileHandler";
 import WatchtowerPlugin from "src/main";
 import {
-	store,
-	setFileStatList,
-	setDifferentFiles,
-	setSettings,
-} from "src/watchtowerPlugin/store";
-import {
 	activateView,
 	activateMiddleView,
-	registerFileEventHandlers,
+	init,
+    registerFileEventHandlers,
 } from "src/watchtowerPlugin/toolsFC";
 import {
 	VIEW_TYPE_FILE_SUPERVISION,
@@ -22,23 +17,13 @@ export interface WatchtowerMain {
 }
 
 export class WatchtowerMain {
-	private static instance: WatchtowerMain; // 静态属性，存储唯一实例
 	public plugin: WatchtowerPlugin;
 
-	private constructor(plugin: WatchtowerPlugin) {
+	constructor(plugin: WatchtowerPlugin) {
 		this.plugin = plugin;
 	}
 
-	// 静态方法，获取唯一实例
-	public static getInstance(plugin: WatchtowerPlugin): WatchtowerMain {
-		if (!WatchtowerMain.instance) {
-			WatchtowerMain.instance = new WatchtowerMain(plugin);
-		}
-		return WatchtowerMain.instance;
-	}
-
 	async initialize() {
-		// this.plugin.app.workspace.onLayoutReady(async () => {
 		// 初始化 FileHandler
 		this.plugin.fileHandler = new FileHandler(
 			this.plugin.app,
@@ -46,16 +31,11 @@ export class WatchtowerMain {
 			this.plugin
 		);
 
-		// 加载文件信息
-		const fileStatList = this.plugin.fileHandler.loadFileStats();
-		store.dispatch(setFileStatList(fileStatList));
-		// 比较文件差异
-		const differentFiles = await this.plugin.fileHandler.compareFiles();
-		store.dispatch(setDifferentFiles(differentFiles));
-		store.dispatch(setSettings(this.plugin.settings));
+		// 数据初始化
+		init(this.plugin);
+
 		// 注册文件事件监听
 		registerFileEventHandlers(this.plugin);
-		// });
 
 		this.plugin.registerView(
 			VIEW_TYPE_FILE_SUPERVISION,

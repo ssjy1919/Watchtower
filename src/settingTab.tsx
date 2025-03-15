@@ -4,6 +4,7 @@ import WatchtowerPlugin from 'src/main';
 import "./settingTab.css";
 import { Switch } from './components/Switch';
 import * as React from 'react';
+import { init } from './watchtowerPlugin/toolsFC';
 interface SettingComponentProps {
     plugin: WatchtowerPlugin;
 }
@@ -12,8 +13,12 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 
     const handleChange = async (value: boolean) => {
         setIsSwitchOn(value);
+        
         plugin.settings.watchtowerPlugin = value;
         await plugin.saveData(plugin.settings);
+        if (value) {
+            await init(plugin);
+        }
     };
 
     return (

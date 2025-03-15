@@ -15,6 +15,8 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
         .slice()
         .sort((a, b) => b.recentOpen - a.recentOpen)
         .slice(0, 50); // 限制返回前五十个数据
+
+    // console.log("sortedFileStats", sortedFileStats);
     const dispatch = useDispatch();
     // console.log(sortedFileStats);
     React.useEffect(() => {
@@ -25,7 +27,6 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                 ? '' : 'is-active'
         );
         plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", true);
-
         store.dispatch(setFileStatList(sortedFileStats));
     };
 

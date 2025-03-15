@@ -17,11 +17,11 @@ export default class WatchtowerPlugin extends Plugin {
         // 等待应用初始化完成
         this.app.workspace.onLayoutReady(async () => {
             if (this.settings.watchtowerPlugin) {
-                const watchtowerMain = WatchtowerMain.getInstance(this);
+                const watchtowerMain = new WatchtowerMain(this);
                 await watchtowerMain.initialize();
             }
             if (this.settings.recentFilePlugin) {
-                const recentFilePluginMain = RecentFilePluginMain.getInstance(this);
+                const recentFilePluginMain = new RecentFilePluginMain(this);
                 recentFilePluginMain.initialize();
             }
         });

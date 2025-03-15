@@ -7,11 +7,11 @@ const initialState = {
 	// - fileChange：布尔值，用于标识文件是否发生变化，默认值为 false
 	fileChange: false,
 	/** 当前文件列表，包含文件路径和状态 */
-    fileStatList: [settingsFileStats],
+    fileStatList: [...[settingsFileStats]], // 创建新数组
     /* 记录差异文件列表 */
-    differentFiles: [settingsFileStats],
+    differentFiles: [...[settingsFileStats]], 
     /** 记录打开过的历史文件 */
-    recentOpenFiles: [settingsFileStats],
+    recentOpenFiles: [...[settingsFileStats]], 
 
 };
 
@@ -23,8 +23,10 @@ const counterSlice = createSlice({
 		setFileChange: (state, action) => {
 			state.fileChange = action.payload;
 		},
-		setFileStatList: (state, action) => {
-			state.fileStatList = action.payload;
+        setFileStatList: (state, action) => {
+            // console.log("Updating fileStatList with:", action.payload);
+            state.fileStatList = action.payload;
+            
         },
         setDifferentFiles: (state, action) => {
 			state.differentFiles = action.payload;

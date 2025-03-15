@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, setFileChange, setSettings, store } from "src/watchtowerPlugin/store";
+import { RootState, setFileChange } from "src/watchtowerPlugin/store";
 import { Notice } from "obsidian";
 import "./FileSupervisionView.css"
 import WatchtowerPlugin from "src/main";
@@ -16,7 +16,6 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     const settings = useSelector((state: RootState) => state.settings);
     const [className, setClassName] = useState('file-supervision-table-none');
     const dispatch = useDispatch();
-
     useEffect(() => {
         if (fileChange) {
             // 重置 fileChange 状态
@@ -31,15 +30,26 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         );
     };
     const HandleSaveFileInfo = async () => {
-        await plugin.fileHandler.saveFileInfo(); 
-        const [differentFiles, fileStats] = await Promise.all([
-            plugin.fileHandler.compareFiles(),
-            plugin.fileHandler.loadFileStats(),
-        ]);
-        store.dispatch(setSettings(plugin.settings));
-        plugin.fileHandler.updateState(fileStats, differentFiles);
-        // console.log(differentFiles);
+        try {
+            // 保存文件信息并获取最新数据
+            await plugin.fileHandler.saveFileInfo();
+            // const differentFiles = plugin.fileHandler.compareFiles();
+            // const fileStats = plugin.fileHandler.loadFileStats();
+
+            
+            // // store.dispatch(setDifferentFiles([]));
+            // plugin.fileHandler.updateState(fileStats, differentFiles);
+            // 更新 settings.fileStats
+
+            
+            // 提示用户保存成功
+            new Notice("文件信息已保存！");
+        } catch (error) {
+            console.error("保存文件信息失败：", error);
+            new Notice("保存文件信息失败，请检查控制台日志。");
+        }
     };
+
     const handleOpenLink = (path: string, differents: string) => {
         if (differents != "文件丢失") {
             plugin.app.workspace.openLinkText(path, '', false);
@@ -52,7 +62,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         <div className="file-supervision">
             <div className={`${className} tips`} onClick={handleClick}>
                 <div className="show-table">
-                    {differentFiles.length === 0 ? settings.markTime : `${differentFiles.length}份文件变动`}
+                    {differentFiles.length == 0 ? settings.markTime : `${differentFiles.length}份文件变动`}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存文件信息</div>
             </div>

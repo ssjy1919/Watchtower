@@ -6,16 +6,16 @@ import {
 } from "./types";
 import {
 	store,
-	setDifferentFiles,
 	setFileStatList,
 	setFileChange,
+	setDifferentFiles,
 } from "./store";
 import WatchtowerPlugin from "../main";
 
 export class FileHandler {
-	private app: App;
-	private settings: WatchtowerSettings;
-	private plugin: WatchtowerPlugin;
+	app: App;
+	settings: WatchtowerSettings;
+	plugin: WatchtowerPlugin;
 
 	constructor(
 		app: App,
@@ -36,7 +36,7 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	getFileInfo(): SettingsFileStats[] {
+	loadFileStats(): SettingsFileStats[] {
 		// 获取所有 Markdown 文件
 		const markdownFiles = this.app.vault.getMarkdownFiles();
 
@@ -45,23 +45,33 @@ export class FileHandler {
 			this.settings.fileStats.map((file) => [file.path, file])
 		);
 
+		// 从 Redux 状态中获取 fileStatList
+		const state = store.getState();
+		const fileStatLists = state.counter.fileStatList;
+
 		// 遍历文件列表，收集所有文件的信息
 		const filesInfo = markdownFiles.map((file) => {
 			// 使用 settingsFileStats 提供的默认值
 			const fileStat = fileStatsMap.get(file.path) || settingsFileStats;
 
+			// 从 fileStatLists 中查找对应路径的记录
+			const fileStatListEntry = fileStatLists.find(
+				(f) => f.path === file.path
+			);
+
 			return {
-				// ...file,    ...file 将 Obsidian API 返回的文件对象的所有属性（包括非可序列化的 parent 和 vault）
-				// 直接合并到结果中。这些非可序列化的属性导致 Redux 报错。
 				basename: file.basename,
 				extension: file.extension,
 				name: file.name,
 				path: file.path,
 				stat: file.stat,
-				differents: fileStat.differents,
-				recentOpen: fileStat.recentOpen,
+				differents:
+					fileStatListEntry?.differents || fileStat.differents || "",
+				recentOpen:
+					fileStatListEntry?.recentOpen || fileStat.recentOpen || 0,
 			} as SettingsFileStats;
 		});
+
 		// 如果没有找到文件，返回一个空数组
 		return filesInfo.length > 0 ? filesInfo : [settingsFileStats];
 	}
@@ -74,111 +84,90 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	async compareFileStats(): Promise<SettingsFileStats[]> {
-        const currentFiles = this.getFileInfo();
-        const fileStatList = this.settings.fileStats
-            .map((settingFile) => {
-                const currentFile = currentFiles.find(
-                    (file) => file.path === settingFile.path
-                );
-                if (!currentFile) {
-                    return { ...settingFile, differents: "文件丢失" };
-                }
-                if (settingFile.stat.size !== currentFile.stat.size) {
-                    return {
-                        ...settingFile,
-                        differents: `文件大小变化`,
-                    };
-                }
-                return null; // 文件无差异时返回 null
-            })
-            .filter(Boolean) as SettingsFileStats[];
-    
-        const missingFiles = currentFiles
-            .map((currentFile) => {
-                if (
-                    !this.settings.fileStats.find(
-                        (settingFile) => settingFile.path === currentFile.path
-                    )
-                ) {
-                    return { ...currentFile, differents: "新增文件" };
-                }
-                return null;
-            })
-            .filter(Boolean) as SettingsFileStats[];
-    
-        return [...fileStatList, ...missingFiles];
-    }
+	compareFiles(): SettingsFileStats[] {
+		const currentFiles = this.loadFileStats();
+		const fileStatLists = this.settings.fileStats
+			.map((settingFile) => {
+				const currentFile = currentFiles.find(
+					(file) => file.path === settingFile.path
+				);
+				if (!currentFile) {
+					return { ...settingFile, differents: "文件丢失" };
+				}
+				if (settingFile.stat.size !== currentFile.stat.size) {
+					if (settingFile.stat.size > currentFile.stat.size) {
+						return {
+							...settingFile,
+							differents: `减少${
+								settingFile.stat.size - currentFile.stat.size
+							} 字节`,
+						};
+					} else if (settingFile.stat.size < currentFile.stat.size) {
+						return {
+							...settingFile,
+							differents: `增加${
+								currentFile.stat.size - settingFile.stat.size
+							} 字节`,
+						};
+					}
+				}
+				return;
+			})
+			.filter(Boolean) as SettingsFileStats[];
 
-	/** 获取文件信息 */
-	loadFileStats(): SettingsFileStats[] {
-		return this.getFileInfo();
+		const missingFiles = currentFiles
+			.map((currentFile) => {
+				if (
+					!this.settings.fileStats.find(
+						(settingFile) => settingFile.path === currentFile.path
+					)
+				) {
+					return { ...currentFile, differents: "新增文件" };
+				}
+				return;
+			})
+			.filter(Boolean) as SettingsFileStats[];
+
+		return [...fileStatLists, ...missingFiles];
 	}
 
-	/**比较文件并返回文件统计信息数组。  */
-	async compareFiles(): Promise<SettingsFileStats[]> {
-		return await this.compareFileStats();
-	}
 	/** 更新markTime为当前时间的本地化字符串，同时将fileStats替换为传入的参数 */
 	createUpdatedSettings(fileStats: SettingsFileStats[]): WatchtowerSettings {
-		
-        return {
+		return {
 			...this.plugin.settings,
 			markTime: new Date().toLocaleString(),
 			fileStats: fileStats,
 		};
 	}
 	/** 将更新的设置数据持久化。 */
-	async savePluginData(updatedSettings: WatchtowerSettings): Promise<void> {
-		await this.plugin.saveData(updatedSettings);
-	}
+	// async savePluginData(updatedSettings: WatchtowerSettings): Promise<void> {
+	// 	await this.plugin.saveData(updatedSettings);
+	// }
 	/** 通过 Redux 的 dispatch 方法将数据更新到全局状态中 */
 	updateState(
 		fileStats: SettingsFileStats[],
 		differentFiles: SettingsFileStats[]
 	): void {
-        store.dispatch(setDifferentFiles([]));
 		store.dispatch(setFileStatList(fileStats));
+		store.dispatch(setDifferentFiles(differentFiles));
 		store.dispatch(setFileChange(true));
 	}
 	/** 保存文件信息到插件存储的异步函数。 */
 	saveFileInfo = async (): Promise<void> => {
+		const fileStatList = store.getState().counter.fileStatList;
+		// 更新设置
+		const updatedSettings = this.createUpdatedSettings(fileStatList);
+		// 同步更新 this.settings.fileStats
+		this.settings.fileStats = updatedSettings.fileStats;
 		// 加载文件信息
 		const fileStats = this.loadFileStats();
 
 		// 比较文件信息
-		const differentFiles = await this.compareFiles();
+		const differentFiles = this.compareFiles();
 
-		// 更新设置
-		const updatedSettings = this.createUpdatedSettings(fileStats);
-        
-		// 更新状态管理
 		// 保存数据到插件存储
-		await this.savePluginData(updatedSettings);
+		await this.plugin.saveData(updatedSettings);
+		// 更新状态管理
 		this.updateState(fileStats, differentFiles);
-
 	};
-	// /** 保存文件信息 */
-	// saveFileInfo = async (): Promise<void> => {
-	//     // 加载当前文件信息
-	// 	const fileStats = this.getFileInfo();
-	// 	store.dispatch(setFileStatList(fileStats));
-	// 	// 比较文件信息
-	//     const differentFile = await this.compareFileStats();
-
-	// 	const updatedSettings = {
-	//         ...this.plugin.settings,
-	//         markTime: new Date().toLocaleString(),
-	//         fileStats: fileStats,
-	//     };
-	//     store.dispatch(setFileChange(true));
-	// 	store.dispatch(setSettings(updatedSettings));
-	//     await this.plugin.saveData(updatedSettings);
-	//     store.dispatch(setDifferentFiles(differentFile));
-	// };
-	// /** 加载文件信息 */
-	// loadFileInfo = (): void => {
-	//     const fileStats = this.getFileInfo();
-	//     store.dispatch(setFileStatList(fileStats));
-	// }
 }

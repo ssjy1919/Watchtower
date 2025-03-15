@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
-    // 使用 useSelector 获取 fileStatList 状态
-    // const fileStatList = useSelector((state: RootState) => state.counter.fileStatList);
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
     const dispatch = useDispatch();
 
