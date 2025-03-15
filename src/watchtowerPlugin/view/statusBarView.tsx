@@ -3,22 +3,27 @@ import { RootState, store } from "../store";
 import { createRoot } from "react-dom/client";
 import WatchtowerPlugin from "src/main";
 import { activateView } from "src/watchtowerPlugin/toolsFC";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
-    // 使用 useSelector 获取 differentFiles 状态
+    // 使用 useSelector 获取 fileStatList 状态
+    // const fileStatList = useSelector((state: RootState) => state.counter.fileStatList);
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
-    const files = differentFiles;
+    const dispatch = useDispatch();
 
+    useEffect(() => {
+    }, [dispatch, differentFiles]);
     async function HandleClick() {
         await activateView(plugin);
     }
 
     return (
         <div 
-            className={files.length > 0 ? "watchtowerPlugin-status-bar-item is-dirty" : "watchtowerPlugin-status-bar-item"}
+            className={differentFiles.length > 0 ? "watchtowerPlugin-status-bar-item is-dirty" : "watchtowerPlugin-status-bar-item"}
             onClick={HandleClick} // 直接使用 HandleClick 函数
         >
-            {files.length > 0 ? `变动文件：${files.length}` : "文件完整"}
+            {differentFiles.length > 0 ? `变动文件：${differentFiles.length}` : "文件完整"}
         </div>
     );
 };

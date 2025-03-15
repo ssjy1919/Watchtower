@@ -28,7 +28,6 @@ export class RecentFilePluginMain {
     async initialize() {
         this.plugin.app.workspace.onLayoutReady(async () => {
             if (this.plugin.settings.isFirstInstall) {
-                console.log("isFirstInstall");
                 activateView(this.plugin);
                 this.plugin.settings.isFirstInstall = false;
             }

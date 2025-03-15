@@ -1,15 +1,18 @@
-// configureStore 用于创建 Redux store
-// createSlice 用于定义 reducer 和 action
+
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { DEFAULT_SETTINGS, settingsFileStats } from "./types";
 
-// 定义初始状态 initialState
-// 包含两个属性：
+
 const initialState = {
 	// - fileChange：布尔值，用于标识文件是否发生变化，默认值为 false
 	fileChange: false,
-	/** 差异文件列表，包含文件路径和状态 */
+	/** 当前文件列表，包含文件路径和状态 */
+    fileStatList: [settingsFileStats],
+    /* 记录差异文件列表 */
     differentFiles: [settingsFileStats],
+    /** 记录打开过的历史文件 */
+    recentOpenFiles: [settingsFileStats],
+
 };
 
 
@@ -20,9 +23,15 @@ const counterSlice = createSlice({
 		setFileChange: (state, action) => {
 			state.fileChange = action.payload;
 		},
-		setDifferentFiles: (state, action) => {
+		setFileStatList: (state, action) => {
+			state.fileStatList = action.payload;
+        },
+        setDifferentFiles: (state, action) => {
 			state.differentFiles = action.payload;
-		},
+        },
+        setRecentOpenFiles: (state, action) => {
+			state.recentOpenFiles = action.payload;
+        },
 	},
 });
 
@@ -38,7 +47,7 @@ const settingsSlice = createSlice({
 });
 
 // 导出 actions ，用于在组件中触发状态更新
-export const { setFileChange, setDifferentFiles } = counterSlice.actions;
+export const { setFileChange, setFileStatList ,setDifferentFiles,setRecentOpenFiles} = counterSlice.actions;
 export const { setSettings } = settingsSlice.actions;
 
 // 创建 Redux store，将 counterSlice 和 settingsSlice 的 reducer 组合在一起

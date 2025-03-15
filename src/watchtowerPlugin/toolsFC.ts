@@ -1,8 +1,8 @@
 import { TAbstractFile, WorkspaceLeaf } from "obsidian";
 import WatchtowerPlugin from "../main";
-import { store, setFileChange, setDifferentFiles, setSettings } from "./store";
 import { VIEW_TYPE_FILE_SUPERVISION } from "../watchtowerPlugin/view/leafView";
 import { DEFAULT_SETTINGS } from "./types";
+import { store, setFileStatList, setRecentOpenFiles } from "./store";
 
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
@@ -11,47 +11,33 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		file: TAbstractFile,
 		oldPath?: string
 	) => {
-		if (!plugin.fileHandler) {
-			console.error("fileHandler is not initialized yet");
-			return;
-		}
-
-		store.dispatch(setFileChange(true)); // 触发 setFileChange action
-
-		// 加载并比较文件信息
-		const differentFiles = await plugin.fileHandler.compareFileStats();
-
-		store.dispatch(setDifferentFiles(differentFiles));
-		/** 获取当前打开的文件 */
-        const currentFile = plugin.app.workspace.getActiveFile();
-        
-		if (currentFile?.path) {
+		// 比较文件信息
+		const recentOpenFiles = await plugin.fileHandler.compareFileStats();
+        store.dispatch(setRecentOpenFiles(recentOpenFiles));
+		if (file?.path) {
 			// 找到 path 匹配的对象
-            console.log(currentFile.path);
-			const updatedFileStats = plugin.settings.fileStats.map(
+			const state = store.getState();
+            const fileStatList = state.counter.fileStatList;
+			const updatedFileStats =fileStatList.map(
 				(fileStat) => {
-					if (fileStat.path === currentFile.path) {
+					if (fileStat.path === file.path) {
 						// 更新 recentOpen 为当前时间
 						return {
 							...fileStat,
-							recentOpen: new Date().getTime(), // 使用时间戳
+							recentOpen: new Date().getTime(),
 						};
-					}
-					return fileStat; // 其他对象保持不变
+                    }
+					return fileStat;
 				}
 			);
-
-			// 更新插件设置中的 fileStats
-			plugin.settings.fileStats = updatedFileStats;
-
-			// 通知 Redux Store 更新状态
-			store.dispatch(setSettings({ fileStats: updatedFileStats }));
-		}
+            store.dispatch(setFileStatList(updatedFileStats));
+        }
 	};
 
 	// 订阅文件的增删改查事件
 	plugin.app.vault.on("modify", (file: TAbstractFile) =>
-		fileEventHandler("modified", file)
+        fileEventHandler("modified", file)
+        
 	);
 	plugin.app.vault.on("delete", (file: TAbstractFile) =>
 		fileEventHandler("deleted", file)
@@ -68,7 +54,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		plugin.app.workspace.on("file-open", (file: TAbstractFile | null) => {
 			if (file) {
 				// 调用文件事件处理器或其他逻辑
-				fileEventHandler("opened", file);
+                fileEventHandler("opened", file);
 			}
 		})
 	);
@@ -122,20 +108,4 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 		DEFAULT_SETTINGS,
 		await plugin.loadData()
 	);
-}
-
-/** 获取最近打开文件的记录 */
-export function getRecentFiles(plugin: WatchtowerPlugin): TAbstractFile[] {
-	const recentFiles = plugin.app.workspace.getLastOpenFiles();
-	const recentFilesMap: TAbstractFile[] = [];
-
-	// 遍历最近打开的文件列表，将有效的文件添加到数组中
-	for (const filePath of recentFiles) {
-		const file = plugin.app.vault.getAbstractFileByPath(filePath);
-		if (file) {
-			recentFilesMap.push(file);
-		}
-	}
-	
-	return recentFilesMap; // 返回收集到的文件数组
 }

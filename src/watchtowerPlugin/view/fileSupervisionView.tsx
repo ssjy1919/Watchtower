@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, setFileChange } from "src/watchtowerPlugin/store";
+import { RootState, setFileChange, setSettings, store } from "src/watchtowerPlugin/store";
 import { Notice } from "obsidian";
 import "./FileSupervisionView.css"
 import WatchtowerPlugin from "src/main";
+import { RecentOpenFileTable } from "./RecentOpenFileTable";
 
 interface FileSupervisionProps {
     plugin: WatchtowerPlugin;
 }
 
-const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
-    const fileChange = useSelector((state: RootState) => state.counter.fileChange); // 获取 fileChange 状态
-    const differentFiles = useSelector((state: RootState) => state.counter.differentFiles); // 获取 differentFiles 状态
+const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
+    const fileChange = useSelector((state: RootState) => state.counter.fileChange);
+    const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
     const settings = useSelector((state: RootState) => state.settings);
     const [className, setClassName] = useState('file-supervision-table-none');
-
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -22,8 +22,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
             // 重置 fileChange 状态
             dispatch(setFileChange(false));
         }
-    }, [fileChange, dispatch, differentFiles,settings]);
-
+    }, [fileChange, dispatch, differentFiles, settings, setFileChange]);
     const handleClick = () => {
         setClassName((prevClassName) =>
             prevClassName === 'file-supervision-table-none'
@@ -32,29 +31,33 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
         );
     };
     const HandleSaveFileInfo = async () => {
-        plugin.fileHandler.saveFileInfo()
-    }
-    const handleOpenLink = (path: string, differents: string) => {
-        if (plugin.app) {
-            if (differents != "文件丢失") {
-                plugin.app.workspace.openLinkText(path, '', false); // 调用 openLinkText 方法
-
-            } else {
-                new Notice(`文件不存在：${path}`)
-            }
-        }
+        await plugin.fileHandler.saveFileInfo(); 
+        const [differentFiles, fileStats] = await Promise.all([
+            plugin.fileHandler.compareFiles(),
+            plugin.fileHandler.loadFileStats(),
+        ]);
+        store.dispatch(setSettings(plugin.settings));
+        plugin.fileHandler.updateState(fileStats, differentFiles);
+        // console.log(differentFiles);
     };
-    const files = differentFiles;
+    const handleOpenLink = (path: string, differents: string) => {
+        if (differents != "文件丢失") {
+            plugin.app.workspace.openLinkText(path, '', false);
+        } else {
+            new Notice(`文件不存在：${path}`)
+        }
+
+    };
     return (
         <div className="file-supervision">
             <div className={`${className} tips`} onClick={handleClick}>
                 <div className="show-table">
-                    {files.length === 0 ? settings.markTime : `${files.length}份文件变动`}
+                    {differentFiles.length === 0 ? settings.markTime : `${differentFiles.length}份文件变动`}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存文件信息</div>
             </div>
             <div className={className} >
-                {files.length > 0 ?
+                {differentFiles.length > 0 ?
                     <table>
                         <thead>
                             <tr>
@@ -64,7 +67,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {files.map((file, index: number) => (
+                            {differentFiles.map((file, index: number) => (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>
@@ -77,7 +80,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
                                             target="_blank"
                                             rel="noopener nofollow"
                                             onClick={(e) => {
-                                                e.preventDefault(); // 阻止默认行为
+                                                e.preventDefault();
                                                 handleOpenLink(file.path, file.differents); // 使用 app 打开链接
                                             }}
                                         >
@@ -91,6 +94,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({plugin}) => {
                     </table>
                     : <h4>笔记库文件完整</h4>}
             </div>
+            <RecentOpenFileTable plugin={plugin} />
         </div>
     );
 };

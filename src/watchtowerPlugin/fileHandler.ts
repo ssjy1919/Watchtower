@@ -1,10 +1,15 @@
-import { App, FileStats } from "obsidian";
+import { App } from "obsidian";
 import {
 	WatchtowerSettings,
 	SettingsFileStats,
 	settingsFileStats,
 } from "./types";
-import { setDifferentFiles, setFileChange, setSettings, store } from "./store";
+import {
+	store,
+	setDifferentFiles,
+	setFileStatList,
+	setFileChange,
+} from "./store";
 import WatchtowerPlugin from "../main";
 
 export class FileHandler {
@@ -31,14 +36,7 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	getFileInfo(): {
-		basename: string;
-		extension: string;
-		name: string;
-		path: string;
-		stat: FileStats;
-		differents: string; // 新增字段
-	}[] {
+	getFileInfo(): SettingsFileStats[] {
 		// 获取所有 Markdown 文件
 		const markdownFiles = this.app.vault.getMarkdownFiles();
 
@@ -49,45 +47,21 @@ export class FileHandler {
 
 		// 遍历文件列表，收集所有文件的信息
 		const filesInfo = markdownFiles.map((file) => {
-			// 使用 fileStatsMap 快速查找 differents
-			const differents = fileStatsMap.get(file.path)?.differents || "";
+			// 使用 settingsFileStats 提供的默认值
+			const fileStat = fileStatsMap.get(file.path) || settingsFileStats;
 
 			return {
+				// ...file,    ...file 将 Obsidian API 返回的文件对象的所有属性（包括非可序列化的 parent 和 vault）
+				// 直接合并到结果中。这些非可序列化的属性导致 Redux 报错。
 				basename: file.basename,
 				extension: file.extension,
 				name: file.name,
 				path: file.path,
 				stat: file.stat,
-				differents, // 新增字段
-			};
+				differents: fileStat.differents,
+				recentOpen: fileStat.recentOpen,
+			} as SettingsFileStats;
 		});
-
-		// 如果没有找到文件，返回一个空数组
-		return filesInfo.length > 0 ? filesInfo : [settingsFileStats];
-	}
-
-	/**
-	 * 获取用户设置保存的文件信息
-	 * @returns {Array} 包含文件路径和状态的对象数组
-	 *         - path: 文件路径
-	 *         - stat: 文件状态，包括大小、创建时间和修改时间
-	 */
-	getSettingInfo(): {
-		basename: string;
-		extension: string;
-		name: string;
-		path: string;
-		stat: FileStats;
-	}[] {
-		// 获取用户设置保存的文件信息
-		const filesInfo = this.settings.fileStats.map((file) => ({
-			basename: file.basename,
-			extension: file.extension,
-			name: file.name,
-			path: file.path,
-			stat: file.stat,
-		}));
-
 		// 如果没有找到文件，返回一个空数组
 		return filesInfo.length > 0 ? filesInfo : [settingsFileStats];
 	}
@@ -101,85 +75,110 @@ export class FileHandler {
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
 	async compareFileStats(): Promise<SettingsFileStats[]> {
-		const settingFiles = this.getSettingInfo();
-		const currentFiles = this.getFileInfo();
-		const differentFiles = settingFiles
-			.map((settingFile) => {
-				const currentFile = currentFiles.find(
-					(file) => file.path === settingFile.path
-				);
-				if (!currentFile) {
-					return { ...settingFile, differents: "文件丢失" };
-				}
-				if (settingFile.stat.size > currentFile.stat.size) {
-					return {
-						...settingFile,
-						differents: `减少${
-							settingFile.stat.size - currentFile.stat.size
-						}字节`,
-					};
-				} else if (settingFile.stat.size < currentFile.stat.size) {
-					return {
-						...settingFile,
-						differents: `增加${
-							currentFile.stat.size - settingFile.stat.size
-						}字节`,
-					};
-				}
-				return null;
-			})
-			.filter(Boolean) as SettingsFileStats[]; //这里可以改为-1 0 1
+        const currentFiles = this.getFileInfo();
+        const fileStatList = this.settings.fileStats
+            .map((settingFile) => {
+                const currentFile = currentFiles.find(
+                    (file) => file.path === settingFile.path
+                );
+                if (!currentFile) {
+                    return { ...settingFile, differents: "文件丢失" };
+                }
+                if (settingFile.stat.size !== currentFile.stat.size) {
+                    return {
+                        ...settingFile,
+                        differents: `文件大小变化`,
+                    };
+                }
+                return null; // 文件无差异时返回 null
+            })
+            .filter(Boolean) as SettingsFileStats[];
+    
+        const missingFiles = currentFiles
+            .map((currentFile) => {
+                if (
+                    !this.settings.fileStats.find(
+                        (settingFile) => settingFile.path === currentFile.path
+                    )
+                ) {
+                    return { ...currentFile, differents: "新增文件" };
+                }
+                return null;
+            })
+            .filter(Boolean) as SettingsFileStats[];
+    
+        return [...fileStatList, ...missingFiles];
+    }
 
-		// 找出 settingFiles 中少了的文件
-		const missingFiles = currentFiles
-			.map((currentFile) => {
-				if (
-					!settingFiles.find(
-						(settingFile) => settingFile.path === currentFile.path
-					)
-				) {
-					return { ...currentFile, differents: "新增文件" };
-				}
-				return null;
-			})
-			.filter(Boolean) as SettingsFileStats[];
-
-		// 合并不同的文件、多出来的文件和少了的文件
-		const allDifferentFiles = [...differentFiles, ...missingFiles];
-
-
-		// console.log("allDifferentFiles", allDifferentFiles);
-		return allDifferentFiles;
+	/** 获取文件信息 */
+	loadFileStats(): SettingsFileStats[] {
+		return this.getFileInfo();
 	}
-	/**加载文件信息*/
-	loadFileInfo = (): void => {
-		const fileInfoData = this.getFileInfo();
-		const fileStats: SettingsFileStats[] = fileInfoData.map((file) => ({
-			basename: file.basename,
-			extension: file.basename,
-			name: file.basename,
-			path: file.path,
-			stat: file.stat,
-            differents: file.differents,
-            
-		}));
-        this.settings.fileStats = fileStats
-        
-	};
-	/** 保存文件信息 */
+
+	/**比较文件并返回文件统计信息数组。  */
+	async compareFiles(): Promise<SettingsFileStats[]> {
+		return await this.compareFileStats();
+	}
+	/** 更新markTime为当前时间的本地化字符串，同时将fileStats替换为传入的参数 */
+	createUpdatedSettings(fileStats: SettingsFileStats[]): WatchtowerSettings {
+		
+        return {
+			...this.plugin.settings,
+			markTime: new Date().toLocaleString(),
+			fileStats: fileStats,
+		};
+	}
+	/** 将更新的设置数据持久化。 */
+	async savePluginData(updatedSettings: WatchtowerSettings): Promise<void> {
+		await this.plugin.saveData(updatedSettings);
+	}
+	/** 通过 Redux 的 dispatch 方法将数据更新到全局状态中 */
+	updateState(
+		fileStats: SettingsFileStats[],
+		differentFiles: SettingsFileStats[]
+	): void {
+        store.dispatch(setDifferentFiles([]));
+		store.dispatch(setFileStatList(fileStats));
+		store.dispatch(setFileChange(true));
+	}
+	/** 保存文件信息到插件存储的异步函数。 */
 	saveFileInfo = async (): Promise<void> => {
 		// 加载文件信息
-		this.loadFileInfo();
-        // 比较文件信息
+		const fileStats = this.loadFileStats();
+
+		// 比较文件信息
+		const differentFiles = await this.compareFiles();
+
+		// 更新设置
+		const updatedSettings = this.createUpdatedSettings(fileStats);
         
-		const differentFile = await this.compareFileStats();
-		store.dispatch(setDifferentFiles(differentFile));
+		// 更新状态管理
+		// 保存数据到插件存储
+		await this.savePluginData(updatedSettings);
+		this.updateState(fileStats, differentFiles);
 
-		// 更新 Redux store 中的 differentFiles 状态
-		this.plugin.settings.markTime = new Date().toLocaleString();
-		store.dispatch(setSettings(this.plugin.settings));
-
-		await this.plugin.saveData(this.plugin.settings);
-		store.dispatch(setFileChange(true));
 	};
+	// /** 保存文件信息 */
+	// saveFileInfo = async (): Promise<void> => {
+	//     // 加载当前文件信息
+	// 	const fileStats = this.getFileInfo();
+	// 	store.dispatch(setFileStatList(fileStats));
+	// 	// 比较文件信息
+	//     const differentFile = await this.compareFileStats();
+
+	// 	const updatedSettings = {
+	//         ...this.plugin.settings,
+	//         markTime: new Date().toLocaleString(),
+	//         fileStats: fileStats,
+	//     };
+	//     store.dispatch(setFileChange(true));
+	// 	store.dispatch(setSettings(updatedSettings));
+	//     await this.plugin.saveData(updatedSettings);
+	//     store.dispatch(setDifferentFiles(differentFile));
+	// };
+	// /** 加载文件信息 */
+	// loadFileInfo = (): void => {
+	//     const fileStats = this.getFileInfo();
+	//     store.dispatch(setFileStatList(fileStats));
+	// }
 }
