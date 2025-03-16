@@ -10,7 +10,7 @@ import {
 	setFileChange,
 	setDifferentFiles,
 } from "./store";
-import WatchtowerPlugin from "../main";
+import WatchtowerPlugin from "./main";
 
 export class FileHandler {
 	app: App;

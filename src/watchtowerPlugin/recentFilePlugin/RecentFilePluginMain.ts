@@ -1,5 +1,5 @@
 import WatchtowerPlugin from "src/main";
-import { activateView, activateMiddleView } from "src/watchtowerPlugin/toolsFC";
+import { activateView, activateMiddleView } from "src/toolsFC";
 import { VIEW_TYPE_FILE_SUPERVISION, File_supervision } from "src/watchtowerPlugin/view/leafView";
 import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
 

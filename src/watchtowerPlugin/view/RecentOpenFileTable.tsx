@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Menu } from "obsidian"; // 引入 Obsidian 的 Menu API
 import { useSelector } from "react-redux";
-import { RootState, store, setFileStatList } from "../store";
+import { RootState, store, setFileStatList } from "../../store";
 import WatchtowerPlugin from "src/main";
 
 

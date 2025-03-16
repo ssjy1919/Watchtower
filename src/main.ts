@@ -1,10 +1,10 @@
 import { Plugin } from "obsidian";
-import { WatchtowerSettings } from "./watchtowerPlugin/types";
-import { WatchtowerSettingTab } from "./settingTab";
-import { FileHandler } from "./watchtowerPlugin/fileHandler";
-import {  loadSettings } from "./watchtowerPlugin/toolsFC";
+import { WatchtowerSettings } from "./types";
+import { WatchtowerSettingTab } from "./setting/settingTab";
+import { FileHandler } from "./fileHandler";
+import {  loadSettings } from "./toolsFC";
 import { WatchtowerMain } from "./watchtowerPlugin/WatchtowerMian";
-import { RecentFilePluginMain } from "./recentFilePlugin/RecentFilePluginMain";
+import { RecentFilePluginMain } from "./watchtowerPlugin/recentFilePlugin/RecentFilePluginMain";
 
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;

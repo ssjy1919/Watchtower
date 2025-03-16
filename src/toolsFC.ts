@@ -1,6 +1,6 @@
 import { TAbstractFile, WorkspaceLeaf } from "obsidian";
-import WatchtowerPlugin from "../main";
-import { VIEW_TYPE_FILE_SUPERVISION } from "../watchtowerPlugin/view/leafView";
+import WatchtowerPlugin from "./main";
+import { VIEW_TYPE_FILE_SUPERVISION } from "./watchtowerPlugin/view/leafView";
 import { DEFAULT_SETTINGS } from "./types";
 import {
 	store,

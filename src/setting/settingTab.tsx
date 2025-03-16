@@ -4,7 +4,7 @@ import WatchtowerPlugin from 'src/main';
 import "./settingTab.css";
 import { Switch } from './components/Switch';
 import * as React from 'react';
-import { init } from './watchtowerPlugin/toolsFC';
+import { init } from '../toolsFC';
 interface SettingComponentProps {
     plugin: WatchtowerPlugin;
 }

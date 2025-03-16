@@ -3,7 +3,7 @@ import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { Root, createRoot } from 'react-dom/client';
 import FileSupervision from "./fileSupervisionView"
 import { Provider } from 'react-redux';
-import { store } from '../store';
+import { store } from '../../store';
 import WatchtowerPlugin from 'src/main';
 import "./leafView.css"
 export const VIEW_TYPE_FILE_SUPERVISION = 'file-supervision-left-view';

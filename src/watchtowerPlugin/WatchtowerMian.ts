@@ -1,11 +1,11 @@
-import { FileHandler } from "src/watchtowerPlugin/fileHandler";
+import { FileHandler } from "src/fileHandler";
 import WatchtowerPlugin from "src/main";
 import {
 	activateView,
 	activateMiddleView,
 	init,
     registerFileEventHandlers,
-} from "src/watchtowerPlugin/toolsFC";
+} from "src/toolsFC";
 import {
 	VIEW_TYPE_FILE_SUPERVISION,
 	File_supervision,
@@ -34,7 +34,7 @@ export class WatchtowerMain {
 		// 数据初始化
 		init(this.plugin);
 
-        
+
 		// 注册文件事件监听
 		registerFileEventHandlers(this.plugin);
 
