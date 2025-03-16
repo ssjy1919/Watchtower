@@ -12,14 +12,14 @@
     border: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);;
 }
 /* 表格整体样式 */
-table {
+.file-supervision table {
     width: 100%;
     border-collapse: collapse; /* 合并边框 */
 
 }
 
 /* 表头样式 */
-thead th {
+.file-supervision thead th {
     border: 1px solid #ddd; /* 添加分割线 */
     padding: 8px;
     text-align: left;
@@ -31,7 +31,7 @@ thead th {
 }
 
 /* 表格单元格样式 */
-tbody td {
+.file-supervision tbody td {
     border: 1px solid #ddd; /* 添加分割线 */
     padding: 8px;
     white-space: nowrap; /* 防止换行 */
@@ -42,7 +42,7 @@ tbody td {
     min-width: 3em; /* 设置最小列宽 */
 }
 /* 固定序列列最小宽度 */
-td:nth-child(1), th:nth-child(1) {
+.file-supervision td:nth-child(1), .file-supervision th:nth-child(1) {
     min-width: 1em; /* 序列列最小宽度 */
 }
 
@@ -65,8 +65,8 @@ td:nth-child(1), th:nth-child(1) {
 
 }
 
-.save-file-info:hover,
-.show-table:hover {
+.file-supervision .save-file-info:hover,
+.file-supervision .show-table:hover {
 
     color: var(--nav-item-color-hover);
     background-color: var(--nav-item-background-hover);
