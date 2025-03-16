@@ -15,6 +15,7 @@ export default class WatchtowerPlugin extends Plugin {
 		// 加载设置
         await loadSettings(this);
         // 等待应用初始化完成
+        
         this.app.workspace.onLayoutReady(async () => {
             if (this.settings.watchtowerPlugin) {
                 const watchtowerMain = new WatchtowerMain(this);

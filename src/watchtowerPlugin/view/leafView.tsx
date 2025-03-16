@@ -24,7 +24,7 @@ export class File_supervision extends ItemView {
     }
 
     getDisplayText() {
-        return '瞭望台';
+        return '瞭望塔';
     }
 
     async onOpen() {

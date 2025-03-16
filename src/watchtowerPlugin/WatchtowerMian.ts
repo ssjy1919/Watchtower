@@ -42,7 +42,7 @@ export class WatchtowerMain {
 			(leaf) => new File_supervision(leaf, this.plugin)
 		);
 
-		this.plugin.addRibbonIcon("telescope", "文件状态", async () => {
+		this.plugin.addRibbonIcon("telescope", "瞭望塔", async () => {
 			await activateView(this.plugin);
 		});
 

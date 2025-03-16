@@ -113,7 +113,6 @@ export async function activateView(plugin: WatchtowerPlugin) {
 			});
 		}
 	}
-
 	// 确保视图可见
 	if (leaf) {
 		workspace.revealLeaf(leaf);
