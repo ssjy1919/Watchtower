@@ -33,15 +33,6 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         try {
             // 保存文件信息并获取最新数据
             await plugin.fileHandler.saveFileInfo();
-            // const differentFiles = plugin.fileHandler.compareFiles();
-            // const fileStats = plugin.fileHandler.loadFileStats();
-
-            
-            // // store.dispatch(setDifferentFiles([]));
-            // plugin.fileHandler.updateState(fileStats, differentFiles);
-            // 更新 settings.fileStats
-
-            
             // 提示用户保存成功
             new Notice("文件信息已保存！");
         } catch (error) {
@@ -64,7 +55,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
                 <div className="show-table">
                     {differentFiles.length == 0 ? settings.markTime : `${differentFiles.length}份文件变动`}
                 </div>
-                <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存文件信息</div>
+                <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存</div>
             </div>
             <div className={className} >
                 {differentFiles.length > 0 ?

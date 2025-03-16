@@ -26,6 +26,8 @@ export default class WatchtowerPlugin extends Plugin {
                 recentFilePluginMain.initialize();
             }
         });
+
+        
         // 挂载插件设置页面
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
 	}

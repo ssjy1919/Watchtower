@@ -7,8 +7,9 @@
 .file-supervision tr {
     border-bottom: #000 1px solid;
 }
+
 .file-supervision td,
-.file-supervision th{
+.file-supervision th {
     border-right: #000 1px solid;
 
 }
@@ -19,17 +20,12 @@
 
 .file-supervision-table-show.tips,
 .file-supervision-table-none.tips {
-    /* display: block;
-    margin: 2px;
-    padding: 2px;
-    background-color: #fff;
-    border-radius: 5px; */
     display: flex;
     flex-direction: row;
     align-content: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    height: 3em;
+    height: 1.5em;
 }
 
 .save-file-info:hover,
@@ -37,18 +33,20 @@
 
     box-shadow: 0 0 5px #dadadaa5;
 }
-.show-table{
+
+.show-table {
 
     border-radius: 5px;
     /* 占据剩余宽度 */
-    width: 100%;
+    /* width: 100%; */
     height: 100%;
+    min-width: 5em;
     background-color: #fff;
     box-shadow: 0 0 5px #000000a5;
     margin-right: 1em;
 }
 
-.save-file-info{
+.save-file-info {
     height: 100%;
     border-radius: 5px;
     background-color: #fff;
@@ -56,6 +54,6 @@
 }
 
 /*  状态栏 */
-.watchtowerPlugin-status-bar-item.is-dirty{
+.watchtowerPlugin-status-bar-item.is-dirty {
     color: #de0909;
 }

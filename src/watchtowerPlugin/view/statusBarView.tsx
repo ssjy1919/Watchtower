@@ -5,33 +5,68 @@ import WatchtowerPlugin from "src/main";
 import { activateView } from "src/watchtowerPlugin/toolsFC";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
     const dispatch = useDispatch();
 
     useEffect(() => {
+        // 可以在这里处理副作用逻辑
     }, [dispatch, differentFiles]);
-    async function HandleClick() {
-        await activateView(plugin);
-    }
+
+    // 点击状态栏时显示菜单
+    const handleMenu = (event: React.MouseEvent) => {
+        event.preventDefault(); // 阻止默认行为
+
+        // 创建右键菜单
+        const menu = new Menu();
+
+                // 添加菜单项：刷新文件状态
+                menu.addItem((item) => {
+                    item.setTitle("打开插件标签页")
+                        .setIcon("refresh-cw")
+                        .onClick(async () => {
+                            await activateView(plugin);
+                        });
+                });
+        // 添加菜单项：保存文件信息
+        menu.addItem((item) => {
+            item.setTitle("保存文件信息")
+                .setIcon("refresh-cw")
+                .onClick(async () => {
+                    await activateView(plugin);
+                    try {
+                        // 保存文件信息并获取最新数据
+                        await plugin.fileHandler.saveFileInfo();
+                        // 提示用户保存成功
+                        new Notice("文件信息已保存！");
+                    } catch (error) {
+                        console.error("保存文件信息失败：", error);
+                        new Notice("保存文件信息失败，请检查控制台日志。");
+                    }
+                });
+        });
+
+        // 显示菜单
+        menu.showAtMouseEvent(event.nativeEvent);
+    };
 
     return (
-        <div 
+        <div
             className={differentFiles.length > 0 ? "watchtowerPlugin-status-bar-item is-dirty" : "watchtowerPlugin-status-bar-item"}
-            onClick={HandleClick} // 直接使用 HandleClick 函数
+            onClick={handleMenu} // 绑定点击事件
         >
             {differentFiles.length > 0 ? `变动文件：${differentFiles.length}` : "文件完整"}
         </div>
     );
 };
 
-
 export function renderStatusBarView(container: HTMLElement, plugin: WatchtowerPlugin) {
     const root = createRoot(container);
     root.render(
         <Provider store={store}>
-            <StatusBarView container={container} plugin={plugin} /> {/* 传递 plugin 实例 */}
+            <StatusBarView container={container} plugin={plugin} />
         </Provider>
     );
 }
