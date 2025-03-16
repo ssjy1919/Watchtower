@@ -10,18 +10,19 @@ interface RecentOpenFileTableProps {
 }
 export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin }) => {
     const [className, setClassName] = React.useState('');
+    const recentOpenFilesMode = useSelector((state: RootState) => state.settings.recentOpenFilesMode);
+
     const sortedFileStats = useSelector((state: RootState) => state.counter.fileStatList)
         .slice()
         .sort((a, b) => b.recentOpen - a.recentOpen)
         .slice(0, 50);
 
-    // const dispatch = useDispatch();
 
     const handleClick = (index: number) => {
         setClassName((prevClassName) =>
             prevClassName === 'is-active' ? '' : 'is-active'
         );
-        plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", true);
+        plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", recentOpenFilesMode);
         store.dispatch(setFileStatList(sortedFileStats));
     };
 
@@ -39,7 +40,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
             item.setTitle("Open File")
                 .setIcon("document")
                 .onClick(() => {
-                    plugin.app.workspace.openLinkText(fileStat.path, "", true);
+                    plugin.app.workspace.openLinkText(fileStat.path, "", recentOpenFilesMode);
                 });
         });
 

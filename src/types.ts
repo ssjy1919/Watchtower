@@ -6,8 +6,8 @@ export interface SettingsFileStats {
 	name: string;
 	path: string;
 	stat: FileStats;
-    differents: string;
-    recentOpen: number;
+	differents: string;
+	recentOpen: number;
 }
 
 export interface WatchtowerSettings {
@@ -16,9 +16,10 @@ export interface WatchtowerSettings {
 	/** 控制首次安装插件时打开插件标签叶 */
 	isFirstInstall: boolean;
 	/** 启动文件监控功能 */
-    watchtowerPlugin: boolean;
-    recentFilePlugin: boolean;
-    
+	watchtowerPlugin: boolean;
+	recentFilePlugin: boolean;
+	/** 历史文件列表打开方式 */
+	recentOpenFilesMode: boolean;
 }
 
 // 定义默认的 FileStatus 值
@@ -32,8 +33,8 @@ export const settingsFileStats: SettingsFileStats = {
 		ctime: 0,
 		mtime: 0,
 	},
-    differents: "",
-    recentOpen: 0,
+	differents: "",
+	recentOpen: 0,
 };
 
 // 定义默认的 WatchtowerSettings 值
@@ -41,6 +42,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: "1970-01-01 00:00:00",
 	fileStats: [settingsFileStats],
 	isFirstInstall: true,
-    watchtowerPlugin: false,
-    recentFilePlugin: false,
+	watchtowerPlugin: false,
+	recentFilePlugin: false,
+	recentOpenFilesMode: false,
 };

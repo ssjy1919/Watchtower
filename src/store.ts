@@ -12,6 +12,7 @@ const initialState = {
     differentFiles: [...[settingsFileStats]], 
     /** 记录打开过的历史文件 */
     recentOpenFiles: [...[settingsFileStats]], 
+    /** 历史文件列表打开方式 */
 
 };
 

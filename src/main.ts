@@ -40,6 +40,6 @@ export default class WatchtowerPlugin extends Plugin {
 
 	async onunload() {
 		/** 卸载标签叶子 */
-		this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
+		// this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
 	}
 }
