@@ -9,6 +9,7 @@ import {
 	setFileStatList,
 	setFileChange,
 	setDifferentFiles,
+    setSettings,
 } from "./store";
 import WatchtowerPlugin from "./main";
 
@@ -139,17 +140,16 @@ export class FileHandler {
 			fileStats: fileStats,
 		};
 	}
-	/** 将更新的设置数据持久化。 */
-	// async savePluginData(updatedSettings: WatchtowerSettings): Promise<void> {
-	// 	await this.plugin.saveData(updatedSettings);
-	// }
+
 	/** 通过 Redux 的 dispatch 方法将数据更新到全局状态中 */
 	updateState(
 		fileStats: SettingsFileStats[],
 		differentFiles: SettingsFileStats[]
 	): void {
 		store.dispatch(setFileStatList(fileStats));
-		store.dispatch(setDifferentFiles(differentFiles));
+        store.dispatch(setDifferentFiles(differentFiles));
+        this.settings.markTime= new Date().toLocaleString();
+        store.dispatch(setSettings(this.settings));
 		store.dispatch(setFileChange(true));
 	}
 	/** 保存文件信息到插件存储的异步函数。 */

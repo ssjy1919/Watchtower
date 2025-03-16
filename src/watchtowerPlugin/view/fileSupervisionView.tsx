@@ -13,6 +13,7 @@ interface FileSupervisionProps {
 const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     const fileChange = useSelector((state: RootState) => state.counter.fileChange);
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
+    const stoerSettings = useSelector((state: RootState) => state.settings);
     const settings = useSelector((state: RootState) => state.settings);
     const [className, setClassName] = useState('file-supervision-table-none');
     const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     };
     const HandleSaveFileInfo = async () => {
         try {
+            console.log(stoerSettings.markTime);
             // 保存文件信息并获取最新数据
             await plugin.fileHandler.saveFileInfo();
             // 提示用户保存成功
@@ -53,7 +55,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         <div className="file-supervision">
             <div className={`${className} tips`} >
                 <div className="show-table" onClick={handleClick}>
-                    {differentFiles.length == 0 ? settings.markTime : `${differentFiles.length}份文件变动`}
+                    {differentFiles.length == 0 ? stoerSettings.markTime : `${differentFiles.length}份文件变动 ${stoerSettings.markTime}`}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存</div>
             </div>
@@ -93,7 +95,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
                             ))}
                         </tbody>
                     </table>
-                    : <h4>笔记库文件完整</h4>}
+                    : <span>笔记库文件完整，记录时间：<br/>{stoerSettings.markTime}</span>}
             </div>
             <RecentOpenFileTable plugin={plugin} />
         </div>
