@@ -12,7 +12,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 1.5em;
+    min-height: 1.5em;
 
 }
 
@@ -42,11 +42,28 @@
     background-color: #fff;
     box-shadow: 0 0 5px #000000a5;
 } */
+.file-supervision .file-supervision-table-show.tips,
+.file-supervision .file-supervision-table-none.tips {
+    margin: 0.5em;
+    padding: 3px 8px;
+}
+
+.file-supervision-table-show{
+    margin: 2em;
+}
+
+
+.file-supervision .file-supervision-table-none.tips div {
+    margin: 0.1em;
+    padding: 3px 8px;
+
+}
+
+
+
+
 
 /*  状态栏 */
 .watchtowerPlugin-status-bar-item.is-dirty {
     color: #de0909;
 }
-
-
-

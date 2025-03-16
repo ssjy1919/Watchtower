@@ -4,7 +4,7 @@ import { RootState, setFileChange } from "src/store";
 import { Notice } from "obsidian";
 import "./FileSupervisionView.css"
 import WatchtowerPlugin from "src/main";
-import { RecentOpenFileTable } from "./RecentOpenFileTable";
+import { RecentOpenFileTable } from "../recentFilePlugin/RecentOpenFileTable";
 
 interface FileSupervisionProps {
     plugin: WatchtowerPlugin;
@@ -51,8 +51,8 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     };
     return (
         <div className="file-supervision">
-            <div className={`${className} tips`} onClick={handleClick}>
-                <div className="show-table">
+            <div className={`${className} tips`} >
+                <div className="show-table" onClick={handleClick}>
                     {differentFiles.length == 0 ? settings.markTime : `${differentFiles.length}份文件变动`}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存</div>

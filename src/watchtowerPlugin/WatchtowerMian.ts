@@ -4,12 +4,8 @@ import {
 	activateView,
 	activateMiddleView,
 	init,
-    registerFileEventHandlers,
+	registerFileEventHandlers,
 } from "src/toolsFC";
-import {
-	VIEW_TYPE_FILE_SUPERVISION,
-	File_supervision,
-} from "src/watchtowerPlugin/view/leafView";
 import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
 
 export interface WatchtowerMain {
@@ -34,14 +30,9 @@ export class WatchtowerMain {
 		// 数据初始化
 		init(this.plugin);
 
-
 		// 注册文件事件监听
 		registerFileEventHandlers(this.plugin);
-
-		this.plugin.registerView(
-			VIEW_TYPE_FILE_SUPERVISION,
-			(leaf) => new File_supervision(leaf, this.plugin)
-		);
+		
 
 		this.plugin.addRibbonIcon("telescope", "瞭望塔", async () => {
 			await activateView(this.plugin);
