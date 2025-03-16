@@ -5,8 +5,8 @@ import FileSupervision from "./fileSupervisionView"
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import WatchtowerPlugin from 'src/main';
-
-export const VIEW_TYPE_FILE_SUPERVISION = 'example-view';
+import "./leafView.css"
+export const VIEW_TYPE_FILE_SUPERVISION = 'file-supervision-left-view';
 export class File_supervision extends ItemView {
     root: Root | null = null;
     plugin: WatchtowerPlugin; // 显式声明 plugin 属性

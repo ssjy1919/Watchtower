@@ -34,6 +34,7 @@ export class WatchtowerMain {
 		// 数据初始化
 		init(this.plugin);
 
+        
 		// 注册文件事件监听
 		registerFileEventHandlers(this.plugin);
 

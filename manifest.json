@@ -1,9 +1,9 @@
 {
 	"id": "note-watchtowerPlugin",
-	"name": "1Note watchtowerPlugin",
+	"name": "Note watchtowerPlugin",
 	"version": "0.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "瞭望塔，象征持续监控，适合知识管理场景",
+	"description": "瞭望塔",
 	"author": "Obsidian",
 	"authorUrl": "https://obsidian.md",
 	"fundingUrl": "https://obsidian.md/pricing",

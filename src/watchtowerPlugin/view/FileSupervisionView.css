@@ -1,17 +1,6 @@
-.file-supervision table {
-    border-collapse: collapse;
-    border: 1px solid #000;
+.file-supervision {
 
-}
-
-.file-supervision tr {
-    border-bottom: #000 1px solid;
-}
-
-.file-supervision td,
-.file-supervision th {
-    border-right: #000 1px solid;
-
+    min-width: 6em;
 }
 
 .file-supervision-table-none {
@@ -22,23 +11,24 @@
 .file-supervision-table-none.tips {
     display: flex;
     flex-direction: row;
-    align-content: center;
-    justify-content: flex-start;
-    align-items: center;
+    justify-content: space-between;
     height: 1.5em;
+
 }
 
 .save-file-info:hover,
 .show-table:hover {
 
-    box-shadow: 0 0 5px #dadadaa5;
+    color: var(--nav-item-color-hover);
+    background-color: var(--nav-item-background-hover);
+    font-weight: var(--nav-item-weight-hover);
+
 }
 
+/*
 .show-table {
 
     border-radius: 5px;
-    /* 占据剩余宽度 */
-    /* width: 100%; */
     height: 100%;
     min-width: 5em;
     background-color: #fff;
@@ -51,9 +41,12 @@
     border-radius: 5px;
     background-color: #fff;
     box-shadow: 0 0 5px #000000a5;
-}
+} */
 
 /*  状态栏 */
 .watchtowerPlugin-status-bar-item.is-dirty {
     color: #de0909;
 }
+
+
+

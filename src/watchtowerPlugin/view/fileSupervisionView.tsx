@@ -62,7 +62,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
                     <table>
                         <thead>
                             <tr>
-                                <th>序号</th>
+                                <th>序列</th>
                                 <th>文件名</th>
                                 <th>差异</th>
                             </tr>

@@ -1,6 +1,4 @@
-
-
-
+/**设置页面的开关按钮*/
 interface SwitchProps {
     label: string;
     description: string;

@@ -24,7 +24,7 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
 
                 // 添加菜单项：刷新文件状态
                 menu.addItem((item) => {
-                    item.setTitle("打开插件标签页")
+                    item.setTitle("打开插件标签")
                         .setIcon("refresh-cw")
                         .onClick(async () => {
                             await activateView(plugin);

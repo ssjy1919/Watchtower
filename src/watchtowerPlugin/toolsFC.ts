@@ -51,16 +51,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
                 // 比较文件差异
                 const differentFiles = plugin.fileHandler.compareFiles();
                 store.dispatch(setDifferentFiles(differentFiles));
-				// 比较文件差异（仅在必要时调用）
-				// const statediffleStatLists = state.counter.differentFiles;
-				// console.log("state-differentFiles:", statediffleStatLists);
-				// const differentFiles = await plugin.fileHandler.compareFiles();
-				// console.log("differentFiles:", differentFiles);
-				// store.dispatch(setDifferentFiles(differentFiles));
 			}
-
-			// const fileStatLists = plugin.fileHandler.loadFileStats();
-			// store.dispatch(setFileStatList(fileStatLists));
 		} catch (error) {
 			console.error(`处理文件事件 ${event} 时出错：`, error);
 		}
