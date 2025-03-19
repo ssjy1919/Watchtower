@@ -110,16 +110,6 @@ export async function activateView(plugin: WatchtowerPlugin) {
 	}
 }
 
-/** 激活中间区域的视图 */
-export async function activateMiddleView(plugin: WatchtowerPlugin) {
-	// 获取一个中间区域的叶子
-	const leaf = plugin.app.workspace.getLeaf(false); // false 表示不在侧边栏中
-	await leaf.setViewState({
-		type: VIEW_TYPE_FILE_SUPERVISION,
-		active: true,
-	});
-	plugin.app.workspace.setActiveLeaf(leaf); // 设置为活动叶子
-}
 
 // 加载用户设置
 export async function loadSettings(plugin: WatchtowerPlugin) {

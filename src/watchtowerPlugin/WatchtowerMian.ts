@@ -2,7 +2,6 @@ import { FileHandler } from "src/fileHandler";
 import WatchtowerPlugin from "src/main";
 import {
 	activateView,
-	activateMiddleView,
 	init,
 	registerFileEventHandlers,
 } from "src/toolsFC";
@@ -46,13 +45,7 @@ export class WatchtowerMain {
 			},
 		});
 
-		this.plugin.addCommand({
-			id: "WatchtowerCenterLeafView",
-			name: "打开中间视图",
-			callback: async () => {
-				activateMiddleView(this.plugin);
-			},
-		});
+
 
 		this.plugin.addCommand({
 			id: "WatchtowerMark",

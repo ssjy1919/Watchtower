@@ -3,7 +3,7 @@ import { Menu } from "obsidian"; // 引入 Obsidian 的 Menu API
 import { useSelector } from "react-redux";
 import { RootState, store, setFileStatList } from "../../store";
 import WatchtowerPlugin from "src/main";
-
+import "./RecentOpenFileTable.css"
 
 interface RecentOpenFileTableProps {
     plugin: WatchtowerPlugin,
@@ -53,15 +53,15 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                 });
         });
 
-        // // 添加菜单项：删除文件记录
-        // menu.addItem((item) => {
-        //     item.setTitle("Remove from List")
-        //         .setIcon("trash")
-        //         .onClick(() => {
-        //             const updatedFileStats = sortedFileStats.filter((_, i) => i !== index);
-        //             store.dispatch(setFileStatList(updatedFileStats));
-        //         });
-        // });
+        // 添加菜单项：删除文件记录
+        menu.addItem((item) => {
+            item.setTitle("Remove from List")
+                .setIcon("trash")
+                .onClick(() => {
+                    const updatedFileStats = sortedFileStats.filter((_, i) => i !== index);
+                    store.dispatch(setFileStatList(updatedFileStats));
+                });
+        });
 
         // 显示菜单
         menu.showAtMouseEvent(event.nativeEvent);

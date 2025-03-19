@@ -1,5 +1,5 @@
 .file-supervision-table-show{
-    max-width: 30em;
+    max-width: 20em;
     margin-bottom: 1em;
     margin-left: 2em;
 }
@@ -33,19 +33,22 @@
 /* 表格单元格样式 */
 .file-supervision tbody td {
     border: 1px solid #ddd; /* 添加分割线 */
-    padding: 8px;
+    padding: 3px;
     white-space: nowrap; /* 防止换行 */
     overflow: hidden; /* 隐藏超出内容 */
     text-overflow: ellipsis; /* 显示省略号 */
-    max-width: 200px; /* 设置最大宽度，超出部分隐藏 */
-    
-    min-width: 3em; /* 设置最小列宽 */
-}
-/* 固定序列列最小宽度 */
-.file-supervision td:nth-child(1), .file-supervision th:nth-child(1) {
-    min-width: 1em; /* 序列列最小宽度 */
+    max-width: 4em; /* 设置最大宽度，超出部分隐藏 */
+    min-width: 1em; /* 设置最小列宽 */
 }
 
+
+/* .file-supervision td:nth-child(3), .file-supervision th:nth-child(3),
+.file-supervision td:nth-child(2), .file-supervision th:nth-child(2),
+.file-supervision td:nth-child(1), .file-supervision th:nth-child(1) {
+    max-width: 8em;
+    min-width: 1em;
+
+} */
 
 
 .file-supervision-table-show span{
@@ -103,9 +106,6 @@
     border-inline-start: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
     /* 右边 */
     border-inline-end: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
-}
-.tree-item-self.nav-file-title.tappable.is-clickable{
-    max-width: 95%;
 }
 
 

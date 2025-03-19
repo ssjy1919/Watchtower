@@ -37,6 +37,9 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
             await plugin.fileHandler.saveFileInfo();
             // 提示用户保存成功
             new Notice("文件信息已保存！");
+            setClassName((prevClassName) =>
+                prevClassName ='file-supervision-table-none'
+            );
         } catch (error) {
             console.error("保存文件信息失败：", error);
             new Notice("保存文件信息失败，请检查控制台日志。");
