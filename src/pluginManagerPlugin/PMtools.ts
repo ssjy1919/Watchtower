@@ -1,5 +1,5 @@
 import WatchtowerPlugin from "src/main";
-import { VIEW_TYPE_PLUGIN_MANAGER } from "./PluginManagerLeft";
+import { VIEW_TYPE_PLUGIN_MANAGER } from "./PMleft";
 
 /** 激活中间区域的视图 */
 export async function activateMiddleView(plugin: WatchtowerPlugin) {

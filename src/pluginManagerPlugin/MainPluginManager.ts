@@ -1,6 +1,6 @@
 import WatchtowerPlugin from "src/main";
-import { activateMiddleView } from "./toolsPluginManager";
-import { PluginManagerLeft, VIEW_TYPE_PLUGIN_MANAGER } from "./PluginManagerLeft";
+import { activateMiddleView } from "./PMtools";
+import { PluginManagerLeft, VIEW_TYPE_PLUGIN_MANAGER } from "./PMleft";
 
 export interface PluginManagerPlugin {
     plugin: WatchtowerPlugin;

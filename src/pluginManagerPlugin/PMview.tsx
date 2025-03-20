@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, setFileChange } from "src/store";
-import { Notice } from "obsidian";
 import WatchtowerPlugin from "src/main";
-import { PluginHandler } from "./PluginHandler";
-import { IPlugin } from "./PluginHandler";
+import { PluginHandler } from "./PMhandler";
+import { IPlugin } from "./PMhandler";
+import { Switch } from "src/setting/components/Switch";
 
 interface PluginManagerView {
     plugin: WatchtowerPlugin;
@@ -20,63 +20,44 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const dispatch = useDispatch();
 
     const pluginHandler = useMemo(() => new PluginHandler(plugin), [plugin]);
-
     useEffect(() => {
         const allPlugins = pluginHandler.getAllPlugins();
         const enabledPlugins = pluginHandler.getEnabledPlugins();
         const disabledPlugins = pluginHandler.getDisabledPlugins();
         setPlugins([...enabledPlugins, ...disabledPlugins]);
+
     }, [pluginHandler]);
 
-    useEffect(() => {
-        if (fileChange) {
-            dispatch(setFileChange(false));
-        }
-    }, [fileChange, dispatch, differentFiles, settings]);
-
-    const handleClick = () => {
-        setClassName((prevClassName) =>
-            prevClassName === 'file-supervision-table-none'
-                ? 'file-supervision-table-show'
-                : 'file-supervision-table-none'
-        );
-    };
-
-    const HandleSaveFileInfo = async () => {
-        try {
-            console.log(stoerSettings.markTime);
-            await plugin.fileHandler.saveFileInfo();
-            new Notice("文件信息已保存！");
-            setClassName('file-supervision-table-none');
-        } catch (error) {
-            console.error("保存文件信息失败：", error);
-            new Notice("保存文件信息失败，请检查控制台日志。");
-        }
-    };
-
-    const handleOpenLink = (path: string, differents: string) => {
-        if (differents != "文件丢失") {
-            plugin.app.workspace.openLinkText(path, '', false);
-        } else {
-            new Notice(`文件不存在：${path}`);
-        }
-    };
-
+        const handleChange = async (iPlugin: IPlugin) => {
+            if (iPlugin.enabled) {
+                pluginHandler.enablePlugin(iPlugin.id);
+            }else{
+                pluginHandler.disablePlugin(iPlugin.id);
+            }
+        };
     return (
         <div className="PluginManagerView">
-            <h1>标题</h1>
             <table>
                 <thead>
                     <tr>
                         <th>插件名称</th>
                         <th>状态</th>
+                        <th>操作时间</th>
                     </tr>
                 </thead>
                 <tbody>
                     {plugins.map((plugin) => (
                         <tr key={plugin.id}>
                             <td>{plugin.name}</td>
-                            <td>{plugin.enabled ? "已开启" : "已关闭"}</td>
+                            <td>
+                                <Switch
+                                    label=""
+                                    description=""
+                                    value={plugin.enabled}
+                                    onChange={() => { handleChange(plugin)}}
+                                />
+                            </td>
+                            <td>{pluginHandler.getSwitchTimeByPluginId(plugin.id)}</td>
                         </tr>
                     ))}
                 </tbody>

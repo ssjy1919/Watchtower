@@ -1,19 +1,20 @@
 import WatchtowerPlugin from "src/main";
 
 export interface IPlugin {
-	id: string;
-	name: string;
-	enabled: boolean;
+    id: string;
+    name: string;
+    enabled: boolean;
 }
 export interface PluginHandler {
-	plugin: WatchtowerPlugin;
+    plugin: WatchtowerPlugin;
 }
+
 export class PluginHandler {
-    private plugins: IPlugin[];
+    private pluginList: IPlugin[];
     plugin: WatchtowerPlugin;
 
     constructor(plugin: WatchtowerPlugin) {
-        this.plugins = [];
+        this.pluginList = [];
         this.plugin = plugin;
     }
 
@@ -27,7 +28,6 @@ export class PluginHandler {
                 return {
                     id,
                     name: manifest.name,
-
                     //@ts-ignore
                     enabled: app.plugins.enabledPlugins.has(id),
                 };
@@ -46,7 +46,7 @@ export class PluginHandler {
         return this.getAllPlugins().filter((plugin) => !plugin.enabled);
     }
 
-    // 开启插件
+    /** 开启插件 */
     enablePlugin(pluginId: string): void {
         //@ts-ignore
         if (app.plugins.manifests[pluginId]) {
@@ -56,7 +56,7 @@ export class PluginHandler {
         }
     }
 
-    // 关闭插件
+    /** 关闭插件 */
     disablePlugin(pluginId: string): void {
         //@ts-ignore
         if (app.plugins.manifests[pluginId]) {
@@ -66,8 +66,18 @@ export class PluginHandler {
         }
     }
 
+    /**
+     * 根据插件 id 查询 DEFAULT_SETTINGS.pluginManager 中对应项的 switchTime
+     * @param pluginId 插件 id
+     * @returns 对应插件项的 switchTime，未找到时返回 -1
+     */
+    getSwitchTimeByPluginId(pluginId: string): number {
+        const pluginEntry = this.plugin.settings.pluginManager.find(pm => pm.id === pluginId);
+        return pluginEntry ? pluginEntry.switchTime : -1;
+    }
+
     // 刷新插件列表
     private refreshPlugins(): void {
-        this.plugins = this.getAllPlugins();
+        this.pluginList = this.getAllPlugins();
     }
 }

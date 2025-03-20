@@ -32,7 +32,6 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     };
     const HandleSaveFileInfo = async () => {
         try {
-            console.log(stoerSettings.markTime);
             // 保存文件信息并获取最新数据
             await plugin.fileHandler.saveFileInfo();
             // 提示用户保存成功

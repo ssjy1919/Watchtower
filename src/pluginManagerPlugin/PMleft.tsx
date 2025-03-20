@@ -3,7 +3,7 @@ import { Root, createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import WatchtowerPlugin from "src/main";
 import { store } from "src/store";
-import PluginManagerView from "./PluginManagerView";
+import PluginManagerView from "./PMview";
 
 
 
