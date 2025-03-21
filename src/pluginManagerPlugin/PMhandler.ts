@@ -38,14 +38,14 @@ export class PluginHandler {
 					enabled: app.plugins.enabledPlugins.has(id),
 					switchTime: pluginSetting.switchTime,
 					comment: pluginSetting.comment,
-					tags: pluginSetting.tags,
+					delayStart: pluginSetting.delayStart,
 					author: manifest.author || "",
 					authorUrl: manifest.authorUrl || "",
 					description: manifest.description || "",
 					dir: manifest.dir || "",
 					isDesktopOnly: manifest.isDesktopOnly || false,
 					minAppVersion: manifest.minAppVersion || "",
-                    version: manifest.version || "",
+					version: manifest.version || "",
 				};
 			}
 		);
@@ -105,23 +105,15 @@ export class PluginHandler {
 	openPluginSettings(pluginId: string): void {
 		//@ts-ignore
 		if (!app.plugins.enabledPlugins.has(pluginId)) {
-			new Notice("插件未启用，不能打开设置页面", 5000);
-			return;
-		} else if (
-			//@ts-ignore
-			!app.plugins.getPlugin(pluginId) || !app.plugins.getPlugin(pluginId).settings
-		) {
-			new Notice("此插件没有设置项", 5000);
+			new Notice("插件未开启", 5000);
 			return;
 		}
 		//@ts-ignore
-		app.setting.open();
-		//@ts-ignore
-		if (app.plugins.manifests[pluginId]) {
-			//@ts-ignore
-			app.setting.openTabById(pluginId);
+		if (!app.setting.openTabById(pluginId)) {
+			new Notice("此插件没有设置项", 5000);
 		} else {
-			console.warn(`插件 ID ${pluginId} 不存在`);
+			//@ts-ignore
+			app.setting.open();
 		}
 	}
 }

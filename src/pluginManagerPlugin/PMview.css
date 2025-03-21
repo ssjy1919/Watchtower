@@ -77,7 +77,7 @@
 }
 .PluginManagerView th:nth-child(1),
 .PluginManagerView td:nth-child(1) {
-    width: 25%; 
+    width: 20%; 
     background-color: #f9f9f9; 
 }
 .PluginManagerView .enabled {
@@ -108,7 +108,7 @@
 
 .PluginManagerView th:nth-child(4),
 .PluginManagerView td:nth-child(4) {
-    width: 50%; /* 设置第四列的宽度 */
+    min-width: 8em;
 }
 .PluginManagerView textarea {
     width: 100%;

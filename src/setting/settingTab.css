@@ -45,3 +45,13 @@
     transform: translateX(20px);
     /* 滑块移动的距离 */
 }
+
+.file-Supervision-setting-container .setting-item {
+    margin-top: 1em;
+    border-bottom: 1px solid var(--background-modifier-border-hover);
+}
+
+.file-Supervision-setting-container .recent-file-open-new-tab{
+    margin-left: 2em;
+
+}

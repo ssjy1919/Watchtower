@@ -1,15 +1,16 @@
 import WatchtowerPlugin from "src/main";
 import { VIEW_TYPE_PLUGIN_MANAGER } from "./PMleft";
 
-/** 激活中间区域的视图 */
+
+/** 
+ * 激活中间区域的视图。
+ * 在中间区域左右分屏打开标签页
+ *  */
 export async function activateMiddleView(plugin: WatchtowerPlugin) {
-    // 获取一个中间区域的叶子, false 表示不在侧边栏中
-    const leaf = plugin.app.workspace.getLeaf(false); 
-    await leaf.setViewState({
+    // 获取右侧叶子 - 指定vertical方向分屏
+    const rightLeaf = plugin.app.workspace.getLeaf('split', 'vertical');
+    await rightLeaf.setViewState({
         type: VIEW_TYPE_PLUGIN_MANAGER,
         active: true,
     });
-     // 设置为活动叶子
-    plugin.app.workspace.setActiveLeaf(leaf);
 }
-

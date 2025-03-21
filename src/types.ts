@@ -20,8 +20,8 @@ export interface PluginManager {
 	switchTime: number;
 	/** 用户备注 */
 	comment: string;
-	/** 用户标签 */
-	tags: string;
+	/** 插件延时启动 */
+	delayStart: number;
 	author: string;
 	authorUrl: string;
 	description: string;
@@ -36,7 +36,7 @@ export const pluginManager: PluginManager = {
 	enabled: false,
 	switchTime: 0,
 	comment: "",
-	tags: "",
+	delayStart: 0,
 	author: "",
 	authorUrl: "",
 	description: "",
@@ -93,7 +93,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	recentOpenFilesMode: true,
 	pluginManager: [pluginManager],
 	sortField: {
-		field: "name",
-		order: "asc",
+		field: "enabled",
+		order: "desc",
 	},
 };

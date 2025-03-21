@@ -59,7 +59,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                     </div>}
 
                 </div>
-                <div className="recent-file-open-new-tab">
+                <div className="plugin-manager">
                     <Switch
                         label="插件管理功能"
                         description="插件管理功能开关。（开启时重启obsidian生效）"

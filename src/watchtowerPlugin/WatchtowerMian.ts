@@ -6,7 +6,6 @@ import {
 	registerFileEventHandlers,
 } from "src/toolsFC";
 import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
-import { File_supervision, VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 
 export interface WatchtowerMain {
 	plugin: WatchtowerPlugin;
@@ -37,10 +36,6 @@ export class WatchtowerMain {
 			await activateView(this.plugin);
 		});
 
-        this.plugin.registerView(
-            VIEW_TYPE_FILE_SUPERVISION,
-            (leaf) => new File_supervision(leaf, this.plugin)
-        );
 
 
 
