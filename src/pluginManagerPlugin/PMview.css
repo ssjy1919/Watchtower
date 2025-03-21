@@ -1,0 +1,103 @@
+/* 开关按钮样式 */
+.PluginManagerView .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.PluginManagerView .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.PluginManagerView .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--background-modifier-border-hover);
+    transition: 0.4s;
+    border-radius: 20px;
+}
+
+.PluginManagerView .slider:before {
+    position: absolute;
+    content: '';
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--toggle-thumb-color);
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.PluginManagerView input:checked+.slider {
+    background-color: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+    /* 开启时的背景颜色 */
+}
+
+.PluginManagerView input:checked+.slider:before {
+    transform: translateX(20px);
+    /* 滑块移动的距离 */
+}
+
+
+
+
+/* 表格样式 */
+.PluginManagerView table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.PluginManagerView tr {
+    border: 1px solid #ddd; /* 添加下边框作为分割线 */
+
+}
+.PluginManagerView td {
+    padding-left: 5px;
+    
+}
+.PluginManagerView th:nth-child(1),
+.PluginManagerView td:nth-child(1) {
+    width: 25%; 
+    background-color: #f9f9f9; 
+}
+.PluginManagerView .enabled {
+    background-color: #f9f9f9;  
+    color: #333; 
+}
+.PluginManagerView .enabled:hover {
+    background-color: #ffffff; 
+    color: #333; 
+}
+
+.PluginManagerView th:nth-child(2),
+.PluginManagerView td:nth-child(2) {
+    width: 2%; /* 设置第二列的宽度 */
+    
+    text-align: right; /* 让单元格内的文本居中 */
+    vertical-align: middle; /* 让单元格内的内容垂直居中 */
+}
+
+.PluginManagerView th:nth-child(3),
+.PluginManagerView td:nth-child(3) {
+    width: 5%; /* 设置第三列的宽度 */
+    text-align: center; /* 让单元格内的文本居中 */
+    vertical-align: middle; /* 让单元格内的内容垂直居中 */
+    background-color: #f9f9f9; 
+}
+
+.PluginManagerView th:nth-child(4),
+.PluginManagerView td:nth-child(4) {
+    width: 70%; /* 设置第四列的宽度 */
+}
+.PluginManagerView textarea {
+    width: 100%;
+}
+

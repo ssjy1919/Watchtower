@@ -1,18 +1,18 @@
 /* 开关按钮样式 */
-.recent-file-open-new-tab .switch {
+.file-Supervision-setting-container .switch {
     position: relative;
     display: inline-block;
     width: 40px;
     height: 20px;
 }
 
-.recent-file-open-new-tab .switch input {
+.file-Supervision-setting-container .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.recent-file-open-new-tab .slider {
+.file-Supervision-setting-container .slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -24,7 +24,7 @@
     border-radius: 20px;
 }
 
-.recent-file-open-new-tab .slider:before {
+.file-Supervision-setting-container .slider:before {
     position: absolute;
     content: '';
     height: 16px;
@@ -36,12 +36,12 @@
     border-radius: 50%;
 }
 
-.recent-file-open-new-tab input:checked+.slider {
+.file-Supervision-setting-container input:checked+.slider {
     background-color: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
     /* 开启时的背景颜色 */
 }
 
-.recent-file-open-new-tab input:checked+.slider:before {
+.file-Supervision-setting-container input:checked+.slider:before {
     transform: translateX(20px);
     /* 滑块移动的距离 */
 }

@@ -10,21 +10,40 @@ export interface SettingsFileStats {
 	recentOpen: number;
 }
 
-
-/** 插件管理对象接口 */
+/** 插件对象接口 */
 export interface PluginManager {
-    id: string;
-	state: boolean;
-	switchTime: number;
-	comment: string;
+	id: string;
+	name: string;
+	/** 启用状态 */
+    enabled: boolean;
+    /** 最后开关时间 */
+    switchTime: number;
+    /** 用户备注 */
+    comment: string;
+    /** 用户标签 */
 	tags: string;
+	author: string;
+	authorUrl: string;
+	description: string;
+	dir: string;
+	isDesktopOnly: boolean;
+	minAppVersion: string;
+	version: string;
 }
 export const pluginManager: PluginManager = {
-    id: "",
-	state: false,
-	switchTime: -1,
+	id: "",
+	name: "",
+	enabled: false,
+	switchTime: 0,
 	comment: "",
 	tags: "",
+	author: "",
+	authorUrl: "",
+	description: "",
+	dir: "",
+	isDesktopOnly: false,
+	minAppVersion: "",
+	version: "",
 };
 
 // 定义默认的 FileStatus 值
@@ -51,8 +70,8 @@ export interface WatchtowerSettings {
 	watchtowerPlugin: boolean;
 	recentFilePlugin: boolean;
 	/** 历史文件列表打开方式 */
-    recentOpenFilesMode: boolean;
-	pluginManager: PluginManager[],
+	recentOpenFilesMode: boolean;
+	pluginManager: PluginManager[];
 }
 
 // 定义默认的 WatchtowerSettings 值
@@ -62,6 +81,6 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	isFirstInstall: true,
 	watchtowerPlugin: false,
 	recentFilePlugin: false,
-    recentOpenFilesMode: false,
-    pluginManager:[pluginManager]
+	recentOpenFilesMode: false,
+	pluginManager: [pluginManager],
 };

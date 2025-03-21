@@ -1,40 +1,66 @@
-import { useEffect, useState, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, setFileChange } from "src/store";
 import WatchtowerPlugin from "src/main";
 import { PluginHandler } from "./PMhandler";
 import { IPlugin } from "./PMhandler";
 import { Switch } from "src/setting/components/Switch";
-
+import "./PMview.css"
+import { useDispatch } from "react-redux";
+import { RootState, setSettings } from "src/store";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 interface PluginManagerView {
     plugin: WatchtowerPlugin;
 }
 
 const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
-    const fileChange = useSelector((state: RootState) => state.counter.fileChange);
-    const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
-    const stoerSettings = useSelector((state: RootState) => state.settings);
-    const settings = useSelector((state: RootState) => state.settings);
-    const [className, setClassName] = useState('file-supervision-table-none');
-    const [plugins, setPlugins] = useState<IPlugin[]>([]);
+    const pluginHandler = new PluginHandler(plugin);
+    const pluginManager = useSelector((state: RootState) => state.settings.pluginManager);
     const dispatch = useDispatch();
-
-    const pluginHandler = useMemo(() => new PluginHandler(plugin), [plugin]);
     useEffect(() => {
-        const allPlugins = pluginHandler.getAllPlugins();
-        const enabledPlugins = pluginHandler.getEnabledPlugins();
-        const disabledPlugins = pluginHandler.getDisabledPlugins();
-        setPlugins([...enabledPlugins, ...disabledPlugins]);
+        const nallPlugins = pluginHandler.getAllPlugins();
+        plugin.settings.pluginManager = nallPlugins;
+        dispatch(setSettings(plugin.settings));
+    }, []);
 
-    }, [pluginHandler]);
-
-        const handleChange = async (iPlugin: IPlugin) => {
-            if (iPlugin.enabled) {
-                pluginHandler.enablePlugin(iPlugin.id);
-            }else{
-                pluginHandler.disablePlugin(iPlugin.id);
+    /**处理开关 */
+    const handleChange = async (iPlugin: IPlugin) => {
+        const updatedPlugins = plugin.settings.pluginManager.map(p => {
+            if (p.id === iPlugin.id) {
+                return {
+                    ...p,
+                    enabled: !iPlugin.enabled,
+                    switchTime: new Date().getTime(),
+                };
             }
-        };
+            return p;
+        });
+        plugin.settings.pluginManager = updatedPlugins;
+        dispatch(setSettings(plugin.settings));
+        // 保存数据到插件存储
+        await plugin.saveData(plugin.settings);
+        if (iPlugin.enabled) {
+            pluginHandler.disablePlugin(iPlugin.id);
+
+        } else {
+            pluginHandler.enablePlugin(iPlugin.id);
+        }
+    }
+    const handleCommentChange = async (iPlugin: IPlugin, newComment: string) => {
+        const updatedPlugins = plugin.settings.pluginManager.map(p => {
+            if (p.id === iPlugin.id) {
+                return {
+                    ...p,
+                    comment: newComment,
+                };
+            }
+            return p;
+        });
+        plugin.settings.pluginManager = updatedPlugins;
+        dispatch(setSettings(plugin.settings));
+        await plugin.saveData(plugin.settings);
+    }
+    const handleSettingClick = (iPlugin: IPlugin) => {
+        pluginHandler.openPluginSettings(iPlugin.id)
+    }
     return (
         <div className="PluginManagerView">
             <table>
@@ -42,22 +68,30 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     <tr>
                         <th>插件名称</th>
                         <th>状态</th>
-                        <th>操作时间</th>
+                        <th>开关时间</th>
+                        {/* <th>标签</th> */}
+                        <th>备注</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {plugins.map((plugin) => (
+                    {pluginManager.map((plugin) => (
                         <tr key={plugin.id}>
-                            <td>{plugin.name}</td>
-                            <td>
-                                <Switch
-                                    label=""
-                                    description=""
-                                    value={plugin.enabled}
-                                    onChange={() => { handleChange(plugin)}}
-                                />
+                            {/* @ts-ignore */}
+                            <td className={app.plugins.enabledPlugins.has(plugin.id) ? "enabled" : ""} onClick={() => { handleSettingClick(plugin) }}>{plugin.name}{app.plugins.enabledPlugins.has(plugin.id) ? "  ⚙️" : ""}</td>
+                            <td>{plugin.id != "watchtowerPlugin" ? <Switch
+                                label=""
+                                description=""
+                                value={plugin.enabled}
+                                onChange={() => { handleChange(plugin) }}
+                            /> : ""}
                             </td>
-                            <td>{pluginHandler.getSwitchTimeByPluginId(plugin.id)}</td>
+                            <td>{pluginHandler.getSwitchTimeByPluginId(plugin.id) === 0 ? 0 : new Date(pluginHandler.getSwitchTimeByPluginId(plugin.id)).toLocaleString()}</td>
+                            <td>                                <textarea
+                                defaultValue={plugin.comment === "" ? plugin.description : plugin.comment}
+                                placeholder={plugin.description}
+                                rows={2}
+                                onBlur={(e) => handleCommentChange(plugin, e.target.value)}
+                            /></td>
                         </tr>
                     ))}
                 </tbody>

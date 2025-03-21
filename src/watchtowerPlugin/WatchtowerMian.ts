@@ -31,7 +31,6 @@ export class WatchtowerMain {
 
 		// 注册文件事件监听
 		registerFileEventHandlers(this.plugin);
-		
 
 		this.plugin.addRibbonIcon("telescope", "瞭望塔", async () => {
 			await activateView(this.plugin);

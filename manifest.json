@@ -1,6 +1,6 @@
 {
-	"id": "note-watchtowerPlugin",
-	"name": "Note watchtowerPlugin",
+	"id": "watchtowerPlugin",
+	"name": "1watchtowerPlugin",
 	"version": "0.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "瞭望塔",
