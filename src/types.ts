@@ -10,17 +10,17 @@ export interface SettingsFileStats {
 	recentOpen: number;
 }
 
-/** 插件对象接口 */
+/** 已安装的插件对象接口 */
 export interface PluginManager {
 	id: string;
 	name: string;
 	/** 启用状态 */
-    enabled: boolean;
-    /** 最后开关时间 */
-    switchTime: number;
-    /** 用户备注 */
-    comment: string;
-    /** 用户标签 */
+	enabled: boolean;
+	/** 最后开关时间 */
+	switchTime: number;
+	/** 用户备注 */
+	comment: string;
+	/** 用户标签 */
 	tags: string;
 	author: string;
 	authorUrl: string;
@@ -61,17 +61,26 @@ export const settingsFileStats: SettingsFileStats = {
 	recentOpen: 0,
 };
 
+export interface SortField {
+    /** 排序字段 */
+    field: keyof PluginManager | null;
+    /** 排序顺序 */
+	order: "asc" | "desc" | null;
+}
+
 export interface WatchtowerSettings {
 	markTime: string;
 	fileStats: SettingsFileStats[];
 	/** 控制首次安装插件时打开插件标签叶 */
 	isFirstInstall: boolean;
-	/** 启动文件监控功能 */
+	/** 是否启动文件监控功能 */
 	watchtowerPlugin: boolean;
-	recentFilePlugin: boolean;
+	/** 是否启动插件管理功能 */
+	pluginManagerPlugin: boolean;
 	/** 历史文件列表打开方式 */
 	recentOpenFilesMode: boolean;
-	pluginManager: PluginManager[];
+    pluginManager: PluginManager[];
+	sortField: SortField;
 }
 
 // 定义默认的 WatchtowerSettings 值
@@ -79,8 +88,12 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: "1970-01-01 00:00:00",
 	fileStats: [settingsFileStats],
 	isFirstInstall: true,
-	watchtowerPlugin: false,
-	recentFilePlugin: false,
-	recentOpenFilesMode: false,
+	watchtowerPlugin: true,
+	pluginManagerPlugin: true,
+	recentOpenFilesMode: true,
 	pluginManager: [pluginManager],
+	sortField: {
+		field: "name",
+		order: "asc",
+	},
 };

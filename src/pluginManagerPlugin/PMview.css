@@ -45,20 +45,32 @@
     transform: translateX(20px);
     /* 滑块移动的距离 */
 }
-
+.PluginManagerView .setting-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75em 0;
+    flex-direction: column;
+    justify-content: center;
+}
 
 
 
 /* 表格样式 */
+
+
 .PluginManagerView table {
     border-collapse: collapse;
     width: 100%;
 }
 
+
+
 .PluginManagerView tr {
     border: 1px solid #ddd; /* 添加下边框作为分割线 */
 
 }
+
+
 .PluginManagerView td {
     padding-left: 5px;
     
@@ -71,6 +83,7 @@
 .PluginManagerView .enabled {
     background-color: #f9f9f9;  
     color: #333; 
+    cursor: pointer;
 }
 .PluginManagerView .enabled:hover {
     background-color: #ffffff; 
@@ -79,15 +92,15 @@
 
 .PluginManagerView th:nth-child(2),
 .PluginManagerView td:nth-child(2) {
-    width: 2%; /* 设置第二列的宽度 */
+    width: 10%; /* 设置第二列的宽度 */
     
-    text-align: right; /* 让单元格内的文本居中 */
+    text-align: center; /* 让单元格内的文本居中 */
     vertical-align: middle; /* 让单元格内的内容垂直居中 */
 }
 
 .PluginManagerView th:nth-child(3),
 .PluginManagerView td:nth-child(3) {
-    width: 5%; /* 设置第三列的宽度 */
+    width: 15%; /* 设置第三列的宽度 */
     text-align: center; /* 让单元格内的文本居中 */
     vertical-align: middle; /* 让单元格内的内容垂直居中 */
     background-color: #f9f9f9; 
@@ -95,9 +108,15 @@
 
 .PluginManagerView th:nth-child(4),
 .PluginManagerView td:nth-child(4) {
-    width: 70%; /* 设置第四列的宽度 */
+    width: 50%; /* 设置第四列的宽度 */
 }
 .PluginManagerView textarea {
     width: 100%;
 }
+.PluginManagerView th {
+    background-color: #3333337d;
+    height: 50px;
+    cursor: pointer;
+}
+
 

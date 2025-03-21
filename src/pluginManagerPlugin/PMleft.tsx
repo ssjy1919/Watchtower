@@ -18,7 +18,7 @@ export class PluginManagerLeft extends ItemView {
     }
     //设置icon
     getIcon() {
-        return 'Blocks';
+        return 'blocks';
     }
     getViewType() {
         return VIEW_TYPE_PLUGIN_MANAGER;

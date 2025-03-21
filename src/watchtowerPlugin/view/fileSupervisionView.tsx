@@ -19,7 +19,6 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     const dispatch = useDispatch();
     useEffect(() => {
         if (fileChange) {
-            // 重置 fileChange 状态
             dispatch(setFileChange(false));
         }
     }, [fileChange, dispatch, differentFiles, settings, setFileChange]);

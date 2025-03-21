@@ -6,6 +6,7 @@ import { activateView } from "src/toolsFC";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
+import { activateMiddleView } from "src/pluginManagerPlugin/PMtools";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
@@ -22,18 +23,18 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
         // 创建右键菜单
         const menu = new Menu();
 
-                // 添加菜单项：刷新文件状态
-                menu.addItem((item) => {
-                    item.setTitle("打开插件标签")
-                        .setIcon("refresh-cw")
-                        .onClick(async () => {
-                            await activateView(plugin);
-                        });
+        // 添加菜单项：刷新文件状态
+        menu.addItem((item) => {
+            item.setTitle("打开历史文件")
+                .setIcon("telescope")
+                .onClick(async () => {
+                    await activateView(plugin);
                 });
+        });
         // 添加菜单项：保存文件信息
         menu.addItem((item) => {
             item.setTitle("保存文件信息")
-                .setIcon("refresh-cw")
+                .setIcon("save")
                 .onClick(async () => {
                     await activateView(plugin);
                     try {
@@ -47,7 +48,13 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
                     }
                 });
         });
-
+        menu.addItem((item) => {
+            item.setTitle("打开插件管理")
+                .setIcon("blocks")
+                .onClick(async () => {
+                    activateMiddleView(plugin);
+                });
+        });
         // 显示菜单
         menu.showAtMouseEvent(event.nativeEvent);
     };

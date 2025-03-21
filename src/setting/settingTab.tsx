@@ -13,7 +13,9 @@ interface SettingComponentProps {
 }
 const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(plugin.settings.watchtowerPlugin);
-
+    const recentOpenFilesMode = useSelector((state: RootState) => state.settings.recentOpenFilesMode);
+    const pluginManagerMode = useSelector((state: RootState) => state.settings.pluginManagerPlugin);
+    const dispatch = useDispatch();
     const handleChangeFileSupervision = async (value: boolean) => {
         setIsSwitchOn(value);
 
@@ -24,8 +26,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
         }
     };
 
-    const recentOpenFilesMode = useSelector((state: RootState) => state.settings.recentOpenFilesMode);
-    const dispatch = useDispatch();
+
 
 
     const handleChange = async (value: boolean) => {
@@ -33,14 +34,18 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
         dispatch(setSettings(plugin.settings));
         await plugin.saveData(plugin.settings);
     };
-
+    const handlePluginManagerChange = async (value: boolean) => {
+        plugin.settings.pluginManagerPlugin = value;
+        dispatch(setSettings(plugin.settings));
+        await plugin.saveData(plugin.settings);
+    };
     return (
         <>
             <div className="file-Supervision-setting-container">
                 <div className="file-Supervision">
                     <Switch
                         label="文件监控功能"
-                        description="启用或禁用文件监控功能（重启obsidian生效）"
+                        description="文件监控功能开关（开启时重启obsidian生效）"
                         value={isSwitchOn}
                         onChange={handleChangeFileSupervision}
                     />
@@ -52,8 +57,16 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                             onChange={handleChange}
                         />
                     </div>}
-                </div>
 
+                </div>
+                <div className="recent-file-open-new-tab">
+                    <Switch
+                        label="插件管理功能"
+                        description="插件管理功能开关。（开启时重启obsidian生效）"
+                        value={pluginManagerMode}
+                        onChange={handlePluginManagerChange}
+                    />
+                </div>
 
             </div>
         </>

@@ -20,18 +20,6 @@ export class PluginHandler {
 		this.plugin = plugin;
 	}
 
-	/** 	
-     * 
-	switchTime: number;
-	comment: string;
-	tags: string;
-	author: string;
-	authorUrl: string;
-	description: string;
-	dir: string;
-	isDesktopOnly: boolean;
-	minAppVersion: string;
-	version: string; */
 	/** 获取所有已安装的插件 */
 	getAllPlugins(): PluginManager[] {
 		//@ts-ignore
@@ -57,7 +45,7 @@ export class PluginHandler {
 					dir: manifest.dir || "",
 					isDesktopOnly: manifest.isDesktopOnly || false,
 					minAppVersion: manifest.minAppVersion || "",
-					version: manifest.version || "",
+                    version: manifest.version || "",
 				};
 			}
 		);

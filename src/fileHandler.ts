@@ -9,7 +9,7 @@ import {
 	setFileStatList,
 	setFileChange,
 	setDifferentFiles,
-    setSettings,
+	setSettings,
 } from "./store";
 import WatchtowerPlugin from "./main";
 
@@ -146,10 +146,16 @@ export class FileHandler {
 		fileStats: SettingsFileStats[],
 		differentFiles: SettingsFileStats[]
 	): void {
+		// 创建新的 settings 对象，保留原有属性
+		const currentSettings = store.getState().settings;
+		const updatedSettings = {
+			...currentSettings,
+			markTime: new Date().toLocaleString(),
+			fileStats: this.settings.fileStats,
+		};
 		store.dispatch(setFileStatList(fileStats));
-        store.dispatch(setDifferentFiles(differentFiles));
-        this.settings.markTime= new Date().toLocaleString();
-        store.dispatch(setSettings(this.settings));
+		store.dispatch(setDifferentFiles(differentFiles));
+		store.dispatch(setSettings(updatedSettings));
 		store.dispatch(setFileChange(true));
 	}
 	/** 保存文件信息到插件存储的异步函数。 */
