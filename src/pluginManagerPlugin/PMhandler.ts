@@ -33,7 +33,7 @@ export class PluginHandler {
 					) || pluginManager;
 				return {
 					id,
-					name: manifest.name,
+                    name: manifest.name,
 					//@ts-ignore
 					enabled: app.plugins.enabledPlugins.has(id),
 					switchTime: pluginSetting.switchTime,

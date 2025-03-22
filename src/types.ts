@@ -14,14 +14,14 @@ export interface SettingsFileStats {
 export interface PluginManager {
 	id: string;
 	name: string;
-	/** 启用状态 */
-	enabled: boolean;
+	/** obsidian应用捕获的插件启用状态，不包括延时启动的插件 */
+    enabled: boolean;
 	/** 最后开关时间 */
 	switchTime: number;
 	/** 用户备注 */
 	comment: string;
 	/** 插件延时启动 */
-	delayStart: number;
+    delayStart: number;
 	author: string;
 	authorUrl: string;
 	description: string;
@@ -33,10 +33,10 @@ export interface PluginManager {
 export const pluginManager: PluginManager = {
 	id: "",
 	name: "",
-	enabled: false,
+    enabled: false,
 	switchTime: 0,
 	comment: "",
-	delayStart: 0,
+    delayStart: 0,
 	author: "",
 	authorUrl: "",
 	description: "",

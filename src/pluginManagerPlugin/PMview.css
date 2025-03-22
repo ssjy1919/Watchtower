@@ -75,11 +75,33 @@
     padding-left: 5px;
     
 }
+
+.PluginManagerView th {
+    background-color: #9e9d9d51;
+    height: 50px;
+    cursor: pointer;
+    border: #333 solid 1px;
+}
+
+
+.PluginManagerView td:nth-child(odd) { /* 单数行 */
+    background-color: #e1e1e159; 
+}
+.PluginManagerView td:nth-child(even) {
+   
+    background-color: #f9f9f9; 
+}
+
+
+.PluginManagerView .plugin-name {
+    display: flex;
+    justify-content: space-between;
+}
 .PluginManagerView th:nth-child(1),
 .PluginManagerView td:nth-child(1) {
     width: 20%; 
-    background-color: #f9f9f9; 
 }
+
 .PluginManagerView .enabled {
     background-color: #f9f9f9;  
     color: #333; 
@@ -89,34 +111,34 @@
     background-color: #ffffff; 
     color: #333; 
 }
-
 .PluginManagerView th:nth-child(2),
 .PluginManagerView td:nth-child(2) {
     width: 10%; /* 设置第二列的宽度 */
-    
     text-align: center; /* 让单元格内的文本居中 */
     vertical-align: middle; /* 让单元格内的内容垂直居中 */
 }
-
 .PluginManagerView th:nth-child(3),
 .PluginManagerView td:nth-child(3) {
     width: 15%; /* 设置第三列的宽度 */
     text-align: center; /* 让单元格内的文本居中 */
     vertical-align: middle; /* 让单元格内的内容垂直居中 */
-    background-color: #f9f9f9; 
 }
-
 .PluginManagerView th:nth-child(4),
 .PluginManagerView td:nth-child(4) {
     min-width: 8em;
 }
+.PluginManagerView th:nth-child(5),
+.PluginManagerView td:nth-child(5) {
+    max-width: 3em;
+}
+.PluginManagerView td:nth-child(5) input {
+    display: inline-block; /* 保持行内块级元素 */
+    width: auto; /* 宽度由内容决定 */
+    max-width: 3em; /* 确保不超过父元素的宽度 */
+    min-width: 0.5em; /* 确保宽度至少能容纳内容 */
+    box-sizing: border-box; /* 包括 padding 和 border 在宽度计算中 */
+}
 .PluginManagerView textarea {
     width: 100%;
 }
-.PluginManagerView th {
-    background-color: #3333337d;
-    height: 50px;
-    cursor: pointer;
-}
-
 

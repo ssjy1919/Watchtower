@@ -29,8 +29,10 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
     /**处理开关 */
     const handleChange = async (iPlugin: IPlugin) => {
+
         const updatedPlugins = plugin.settings.pluginManager.map(p => {
             if (p.id === iPlugin.id) {
+
                 return {
                     ...p,
                     enabled: !iPlugin.enabled,
@@ -39,16 +41,30 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
+
+        updatedPlugins.forEach(async (p) => {
+            if (p.id === iPlugin.id) {
+                if (iPlugin.enabled) {
+                    pluginHandler.disablePlugin(iPlugin.id);
+                } else if (!iPlugin.enabled && p.delayStart > 0) {
+                    //@ts-ignore
+                    app.plugins.enablePlugin(iPlugin.id);
+                    p.enabled = true;
+                } else if (!iPlugin.enabled && p.delayStart <= 0) {
+                    pluginHandler.enablePlugin(iPlugin.id);
+
+                }
+            }
+        });
+
+
         plugin.settings.pluginManager = updatedPlugins;
         dispatch(setSettings(plugin.settings));
         // 保存数据到插件存储
         await plugin.saveData(plugin.settings);
-        if (iPlugin.enabled) {
-            pluginHandler.disablePlugin(iPlugin.id);
-        } else {
-            pluginHandler.enablePlugin(iPlugin.id);
-        }
+
     }
+    /**处理延时启动*/
     const handleDelayStartChange = async (iPlugin: IPlugin, newDelayStart: number) => {
         const updatedPlugins = plugin.settings.pluginManager.map(p => {
             if (p.id === iPlugin.id) {
@@ -62,6 +78,19 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         plugin.settings.pluginManager = updatedPlugins;
         dispatch(setSettings(plugin.settings));
         await plugin.saveData(plugin.settings);
+        if (newDelayStart > 0) {
+            if (iPlugin.enabled) {
+                //用户设置的延时时间大于0且插件处于启用状态时，禁用插件后再用disablePlugin临时启动
+                pluginHandler.disablePlugin(iPlugin.id);
+                //@ts-ignore
+                app.plugins.enablePlugin(iPlugin.id)
+            }
+
+        } else {
+            if (iPlugin.enabled)
+                //启动并保存插件信息
+                pluginHandler.enablePlugin(iPlugin.id);
+        }
     }
     // 处理备注
     const handleCommentChange = async (iPlugin: IPlugin, newComment: string) => {
@@ -172,17 +201,20 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 <tbody>
                     {sortedPlugins.map((plugin) => (
                         <tr key={plugin.id}>
-                            {/* @ts-ignore */}
                             <td className={plugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(plugin) }}>
-                                {/* @ts-ignore */}
-                                {plugin.name}{plugin.enabled ? "  ⚙️" : " "}
+
+                                <div className="plugin-name">
+                                    <div>{plugin.name}</div>
+                                    <div>{plugin.enabled ? "  ⚙️" : " "}</div>
+                                </div>
+                                
                             </td>
-                            <td><Switch
+                            <td>{plugin.id != "watchtowerPlugin" ? <Switch
                                 label=""
                                 description=""
                                 value={plugin.enabled}
                                 onChange={() => { handleChange(plugin) }}
-                            />
+                            /> : " ⚠"}
                             </td>
                             <td>
                                 {pluginHandler.getSwitchTimeByPluginId(plugin.id) === 0
@@ -198,14 +230,14 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                 />
                             </td>
                             <td>
-                                <input
+                                {plugin.id != "watchtowerPlugin" ? 
+                                    <input
                                     type="number"
                                     defaultValue={plugin.delayStart || 0}
                                     min="0"
-                                    max="3600"
-                                    style={{ width: "3em" }}
-                                    onChange={(e) => handleDelayStartChange(plugin, parseInt(e.target.value))}
-                                />
+                                    max="99999"
+                                    onBlur={(e) => handleDelayStartChange(plugin, parseInt(e.target.value))}
+                                />:"⚞⛒⚟"}
                             </td>
                         </tr>
                     ))}
