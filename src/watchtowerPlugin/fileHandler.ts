@@ -3,15 +3,15 @@ import {
 	WatchtowerSettings,
 	SettingsFileStats,
 	settingsFileStats,
-} from "./types";
+} from "../types";
 import {
 	store,
 	setFileStatList,
 	setFileChange,
 	setDifferentFiles,
 	setSettings,
-} from "./store";
-import WatchtowerPlugin from "./main";
+} from "../store";
+import WatchtowerPlugin from "../main";
 
 export class FileHandler {
 	app: App;

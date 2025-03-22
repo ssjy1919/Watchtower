@@ -1,10 +1,10 @@
 {
-	"id": "watchtowerPlugin",
-	"name": "1watchtowerPlugin",
-	"version": "0.0.0",
+	"id": "watchtower",
+	"name": "watchtower",
+	"version": "0.0.2",
 	"minAppVersion": "0.15.0",
-	"description": "瞭望塔",
-	"author": "Obsidian",
+	"description": "obsidian 的瞭望塔，插件管理、最近打开文件、笔记文件完整性验证",
+	"author": "ssjy1919",
 	"authorUrl": "https://obsidian.md",
 	"fundingUrl": "https://obsidian.md/pricing",
 	"isDesktopOnly": false

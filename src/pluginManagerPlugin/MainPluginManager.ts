@@ -14,16 +14,16 @@ export class PluginManagerPlugin {
 		this.plugin = plugin;
 		this.plugin.addCommand({
 			id: "pluginManagerCenterLeafView",
-			name: "打开中间视图",
+			name: "打开插件管理视图",
 			callback: async () => {
 				activateMiddleView(this.plugin);
 			},
 		});
 
-		this.plugin.addRibbonIcon("blocks", "管理插件", async () => {
+		this.plugin.addRibbonIcon("blocks", "插件管理", async () => {
 			activateMiddleView(this.plugin);
 		});
-		// 注册文件插件管理视图
+		// 注册插件管理视图
 		this.plugin.registerView(
 			VIEW_TYPE_PLUGIN_MANAGER,
 			(leaf) => new PluginManagerLeft(leaf, this.plugin)
@@ -38,7 +38,7 @@ export class PluginManagerPlugin {
 					const updatedPlugins =
                     this.plugin.settings.pluginManager.map((p) => {
                         if (p.id === plugin.id) {
-                                console.log(`${plugin.delayStart}秒到了，启动插件：`, plugin);
+                                console.log(`到达${plugin.delayStart}秒，启动插件：`, plugin);
 								return {
 									...p,
                                     enabled: true,

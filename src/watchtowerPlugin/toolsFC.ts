@@ -1,14 +1,14 @@
 import { TAbstractFile, WorkspaceLeaf } from "obsidian";
-import WatchtowerPlugin from "./main";
-import { VIEW_TYPE_FILE_SUPERVISION } from "./watchtowerPlugin/view/leafView";
-import { DEFAULT_SETTINGS } from "./types";
+import WatchtowerPlugin from "../main";
+import { VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
+import { DEFAULT_SETTINGS } from "../types";
 import {
 	store,
 	setFileStatList,
 	setRecentOpenFiles,
 	setDifferentFiles,
 	setSettings,
-} from "./store";
+} from "../store";
 
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {

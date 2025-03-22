@@ -1,62 +1,78 @@
-.file-supervision-table-show{
-    max-width: 20em;
-    margin-bottom: 1em;
-    margin-left: 2em;
+.file-supervision-table-show {
+    max-width: 10em;
+    min-width: 2em;
+    margin-left: 0.5em;
 }
 
 .file-supervision-table-none {
     display: none;
 }
-.recent-open-file-table{
+
+.recent-open-file-table {
     margin-bottom: 1em;
-    border: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);;
+    border: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
+    ;
 }
+
 /* 表格整体样式 */
 .file-supervision table {
     width: 100%;
-    border-collapse: collapse; /* 合并边框 */
+    border-collapse: collapse;
+    /* 合并边框 */
 
 }
 
 /* 表头样式 */
 .file-supervision thead th {
-    border: 1px solid #ddd; /* 添加分割线 */
+    border: 1px solid #ddd;
+    /* 添加分割线 */
     padding: 8px;
     text-align: left;
-    background-color: #f4f4f4; /* 可选背景色 */
-    white-space: nowrap; /* 防止换行 */
-    overflow: hidden; /* 隐藏超出内容 */
-    text-overflow: ellipsis; /* 显示省略号 */
-    min-width: 3em; /* 设置最小列宽 */
+    background-color: #f4f4f4;
+    /* 可选背景色 */
+    white-space: nowrap;
+    /* 防止换行 */
+    overflow: hidden;
+    /* 隐藏超出内容 */
+    text-overflow: ellipsis;
+    /* 显示省略号 */
+    min-width: 3em;
+    /* 设置最小列宽 */
+    font-size: 0.5em;
 }
 
 /* 表格单元格样式 */
 .file-supervision tbody td {
-    border: 1px solid #ddd; /* 添加分割线 */
+    border: 1px solid #ddd;
+    /* 添加分割线 */
     padding: 3px;
-    white-space: nowrap; /* 防止换行 */
-    overflow: hidden; /* 隐藏超出内容 */
-    text-overflow: ellipsis; /* 显示省略号 */
-    max-width: 4em; /* 设置最大宽度，超出部分隐藏 */
-    min-width: 1em; /* 设置最小列宽 */
-}
-
-
-/* .file-supervision td:nth-child(3), .file-supervision th:nth-child(3),
-.file-supervision td:nth-child(2), .file-supervision th:nth-child(2),
-.file-supervision td:nth-child(1), .file-supervision th:nth-child(1) {
-    max-width: 8em;
+    white-space: nowrap;
+    /* 防止换行 */
+    overflow: hidden;
+    /* 隐藏超出内容 */
+    text-overflow: ellipsis;
+    /* 显示省略号 */
+    max-width: 4em;
+    /* 设置最大宽度，超出部分隐藏 */
     min-width: 1em;
-
-} */
-
-
-.file-supervision-table-show span{
-    font-size: 0.8em;
-    /* margin-left: 3em; */
+    /* 设置最小列宽 */
+    font-size: 0.5em;
 }
 
+.file-supervision th:nth-child(1),
+.file-supervision td:nth-child(1) {
+    width: 2em;
+}
 
+.file-supervision th:nth-child(2),
+.file-supervision td:nth-child(2) {
+    min-width: 2em;
+}
+
+.file-supervision th:nth-child(3),
+.file-supervision td:nth-child(3) {
+    width: 5.5em;
+}
 
 
 .file-supervision-table-show.tips,
@@ -68,6 +84,11 @@
 
 }
 
+.file-supervision .save-file-info,
+.file-supervision .show-table {
+    font-size: 0.5em;
+}
+
 .file-supervision .save-file-info:hover,
 .file-supervision .show-table:hover {
 
@@ -77,38 +98,23 @@
 
 }
 
-/*
-.show-table {
-
-    border-radius: 5px;
-    height: 100%;
-    min-width: 5em;
-    background-color: #fff;
-    box-shadow: 0 0 5px #000000a5;
-    margin-right: 1em;
-}
-
-.save-file-info {
-    height: 100%;
-    border-radius: 5px;
-    background-color: #fff;
-    box-shadow: 0 0 5px #000000a5;
-} */
 .file-supervision .file-supervision-table-show.tips,
 .file-supervision .file-supervision-table-none.tips {
-    margin: 0.5em;
+    margin: 0.1em;
     padding: 3px 8px;
 }
 
-.file-supervision-table-show table{
-    margin: 0.5em;
+.file-supervision-table-show table {
+    margin: 0 0.5em 0.5em 0;
     padding: 0.5em;
     border-inline-start: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
     /* 右边 */
     border-inline-end: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
 }
 
-
+.file-supervision .markTime {
+    font-size: 0.5em;
+}
 
 
 

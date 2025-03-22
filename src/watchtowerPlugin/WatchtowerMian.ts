@@ -1,10 +1,10 @@
-import { FileHandler } from "src/fileHandler";
+import { FileHandler } from "src/watchtowerPlugin/fileHandler";
 import WatchtowerPlugin from "src/main";
 import {
 	activateView,
 	init,
 	registerFileEventHandlers,
-} from "src/toolsFC";
+} from "src/watchtowerPlugin/toolsFC";
 import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
 
 export interface WatchtowerMain {

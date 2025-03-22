@@ -1,5 +1,6 @@
 import { Notice } from "obsidian";
 import WatchtowerPlugin from "src/main";
+import { store } from "src/store";
 import { pluginManager, PluginManager } from "src/types";
 
 export interface IPlugin {
@@ -33,7 +34,7 @@ export class PluginHandler {
 					) || pluginManager;
 				return {
 					id,
-                    name: manifest.name,
+					name: manifest.name,
 					//@ts-ignore
 					enabled: app.plugins.enabledPlugins.has(id),
 					switchTime: pluginSetting.switchTime,
@@ -103,8 +104,14 @@ export class PluginHandler {
 	 * @param pluginId 插件 id
 	 */
 	openPluginSettings(pluginId: string): void {
-		//@ts-ignore
-		if (!app.plugins.enabledPlugins.has(pluginId)) {
+		const stat = store.getState();
+		const pluginExists = stat.settings.pluginManager.some((p) => {
+			if (p.id === pluginId) {
+				if (p.enabled) return true;
+			}
+		});
+		
+		if (!pluginExists) {
 			new Notice("插件未开启", 5000);
 			return;
 		}

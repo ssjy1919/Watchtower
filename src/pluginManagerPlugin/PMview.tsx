@@ -8,6 +8,7 @@ import { RootState, setSettings } from "src/store";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
+import { Notice } from "obsidian";
 
 interface PluginManagerView {
     plugin: WatchtowerPlugin;
@@ -85,6 +86,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 //@ts-ignore
                 app.plugins.enablePlugin(iPlugin.id)
             }
+            new Notice(`${iPlugin.name} 插件会在 obsidian 启动后的 ${newDelayStart} 秒启动，要完全关闭插件请将延时清零再关闭插件`);
 
         } else {
             if (iPlugin.enabled)
@@ -172,7 +174,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 <thead>
                     <tr>
                         <th onClick={() => handleHeaderClick('name')} >
-                            插件名称{" "}
+                            一共{plugin.settings.pluginManager.length}个插件，开启{getEnabledPlugins}关闭{getDisabledPlugins}{" "}
                             {settings.sortField.field === "name" && settings.sortField.order === "asc" && "↑"}
                             {settings.sortField.field === "name" && settings.sortField.order === "desc" && "↓"}
                         </th>
@@ -181,20 +183,20 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                             {settings.sortField.field === "enabled" && settings.sortField.order === "asc" && "↑"}
                             {settings.sortField.field === "enabled" && settings.sortField.order === "desc" && "↓"}
                         </th>
+                        <th onClick={() => handleHeaderClick('delayStart')} >
+                            延时启动(秒)
+                            {settings.sortField.field === "delayStart" && settings.sortField.order === "asc" && "↑"}
+                            {settings.sortField.field === "delayStart" && settings.sortField.order === "desc" && "↓"}
+                        </th>
                         <th onClick={() => handleHeaderClick('switchTime')} >
                             开关时间{" "}
                             {settings.sortField.field === "switchTime" && settings.sortField.order === "asc" && "↑"}
                             {settings.sortField.field === "switchTime" && settings.sortField.order === "desc" && "↓"}
                         </th>
                         <th onClick={() => handleHeaderClick('comment')} >
-                            备注：{plugin.settings.pluginManager.length}个插件，开启{getEnabledPlugins}关闭{getDisabledPlugins}{" "}
+                            备注{" "}
                             {settings.sortField.field === "comment" && settings.sortField.order === "asc" && "↑"}
                             {settings.sortField.field === "comment" && settings.sortField.order === "desc" && "↓"}
-                        </th>
-                        <th onClick={() => handleHeaderClick('delayStart')} >
-                            延时启动(秒)
-                            {settings.sortField.field === "delayStart" && settings.sortField.order === "asc" && "↑"}
-                            {settings.sortField.field === "delayStart" && settings.sortField.order === "desc" && "↓"}
                         </th>
                     </tr>
                 </thead>
@@ -205,16 +207,27 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
                                 <div className="plugin-name">
                                     <div>{plugin.name}</div>
-                                    <div>{plugin.enabled ? "  ⚙️" : " "}</div>
+
+                                    <div>{plugin.enabled ? "  ⚙️" : " "}<div className="version">{plugin.version}</div></div>
                                 </div>
-                                
+
                             </td>
-                            <td>{plugin.id != "watchtowerPlugin" ? <Switch
+                            <td>{plugin.id != "watchtower" ? <Switch
                                 label=""
                                 description=""
                                 value={plugin.enabled}
                                 onChange={() => { handleChange(plugin) }}
-                            /> : " ⚠"}
+                            /> : "⚪"}
+                            </td>
+                            <td>
+                                {plugin.id != "watchtower" ?
+                                    <input
+                                        type="number"
+                                        defaultValue={plugin.delayStart || 0}
+                                        min="0"
+                                        max="99999"
+                                        onBlur={(e) => handleDelayStartChange(plugin, parseInt(e.target.value))}
+                                    /> : "⚞⛒⚟"}
                             </td>
                             <td>
                                 {pluginHandler.getSwitchTimeByPluginId(plugin.id) === 0
@@ -228,16 +241,6 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                     rows={2}
                                     onBlur={(e) => handleCommentChange(plugin, e.target.value)}
                                 />
-                            </td>
-                            <td>
-                                {plugin.id != "watchtowerPlugin" ? 
-                                    <input
-                                    type="number"
-                                    defaultValue={plugin.delayStart || 0}
-                                    min="0"
-                                    max="99999"
-                                    onBlur={(e) => handleDelayStartChange(plugin, parseInt(e.target.value))}
-                                />:"⚞⛒⚟"}
                             </td>
                         </tr>
                     ))}

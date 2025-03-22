@@ -2,7 +2,7 @@ import { Provider, useSelector } from "react-redux";
 import { RootState, store } from "../../store";
 import { createRoot } from "react-dom/client";
 import WatchtowerPlugin from "src/main";
-import { activateView } from "src/toolsFC";
+import { activateView } from "src/watchtowerPlugin/toolsFC";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API

@@ -4,7 +4,7 @@ import { RootState, setFileChange } from "src/store";
 import { Notice } from "obsidian";
 import "./FileSupervisionView.css"
 import WatchtowerPlugin from "src/main";
-import { RecentOpenFileTable } from "../recentFilePlugin/RecentOpenFileTable";
+import { RecentOpenFileTable } from "../recentFile/RecentOpenFileTable";
 
 interface FileSupervisionProps {
     plugin: WatchtowerPlugin;
@@ -96,7 +96,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
                             ))}
                         </tbody>
                     </table>
-                    : <span>笔记库文件完整，记录时间：<br/>{stoerSettings.markTime}</span>}
+                    : <div className="markTime">笔记库文件完整，记录时间：<br/>{stoerSettings.markTime}</div>}
             </div>
             <RecentOpenFileTable plugin={plugin} />
         </div>

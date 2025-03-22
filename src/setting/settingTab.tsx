@@ -7,7 +7,7 @@ import * as React from 'react';
 import { RootState, setSettings, store } from 'src/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
-import { init } from 'src/toolsFC';
+import { init } from 'src/watchtowerPlugin/toolsFC';
 interface SettingComponentProps {
     plugin: WatchtowerPlugin;
 }
