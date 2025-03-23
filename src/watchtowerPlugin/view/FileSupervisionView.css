@@ -1,7 +1,8 @@
 .file-supervision-table-show {
-    max-width: 10em;
-    min-width: 2em;
+    width: auto;
+    max-width: 100%;
     margin-left: 0.5em;
+    font-size: 0.8em;
 }
 
 .file-supervision-table-none {
@@ -16,63 +17,40 @@
 
 /* 表格整体样式 */
 .file-supervision table {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     border-collapse: collapse;
-    /* 合并边框 */
-
+    table-layout: auto;
 }
 
-/* 表头样式 */
-.file-supervision thead th {
+.file-supervision th,
+.file-supervision td {
     border: 1px solid #ddd;
-    /* 添加分割线 */
-    padding: 8px;
-    text-align: left;
-    background-color: #f4f4f4;
-    /* 可选背景色 */
-    white-space: nowrap;
-    /* 防止换行 */
-    overflow: hidden;
-    /* 隐藏超出内容 */
-    text-overflow: ellipsis;
-    /* 显示省略号 */
-    min-width: 3em;
-    /* 设置最小列宽 */
-    font-size: 0.5em;
-}
-
-/* 表格单元格样式 */
-.file-supervision tbody td {
-    border: 1px solid #ddd;
-    /* 添加分割线 */
     padding: 3px;
     white-space: nowrap;
-    /* 防止换行 */
     overflow: hidden;
-    /* 隐藏超出内容 */
     text-overflow: ellipsis;
-    /* 显示省略号 */
-    max-width: 4em;
-    /* 设置最大宽度，超出部分隐藏 */
     min-width: 1em;
-    /* 设置最小列宽 */
-    font-size: 0.5em;
 }
 
 .file-supervision th:nth-child(1),
 .file-supervision td:nth-child(1) {
-    width: 2em;
+    width: auto;
 }
 
 .file-supervision th:nth-child(2),
 .file-supervision td:nth-child(2) {
-    min-width: 2em;
+    max-width: 8em;
+    min-width: 1em;
 }
 
 .file-supervision th:nth-child(3),
 .file-supervision td:nth-child(3) {
-    width: 5.5em;
+    max-width: 100%;
+    min-width: 1em;
 }
+
+
 
 
 .file-supervision-table-show.tips,
@@ -86,7 +64,9 @@
 
 .file-supervision .save-file-info,
 .file-supervision .show-table {
-    font-size: 0.5em;
+
+    font-size: 0.8em;
+
 }
 
 .file-supervision .save-file-info:hover,
@@ -120,6 +100,6 @@
 
 
 /*  状态栏 */
-.watchtowerPlugin-status-bar-item.is-dirty {
+/* .watchtowerPlugin-status-bar-item.is-dirty {
     color: #de0909;
-}
+} */

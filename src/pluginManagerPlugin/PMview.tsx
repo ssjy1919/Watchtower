@@ -8,7 +8,6 @@ import { RootState, setSettings } from "src/store";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
-import { Notice } from "obsidian";
 
 interface PluginManagerView {
     plugin: WatchtowerPlugin;
@@ -30,10 +29,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
     /**处理开关 */
     const handleChange = async (iPlugin: IPlugin) => {
-
         const updatedPlugins = plugin.settings.pluginManager.map(p => {
             if (p.id === iPlugin.id) {
-
                 return {
                     ...p,
                     enabled: !iPlugin.enabled,
@@ -42,15 +39,14 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
-
-        updatedPlugins.forEach(async (p) => {
+        //  单独用 forEach 处理调用逻辑， 如果和上面的 map 合并，调试时容易看蒙
+        updatedPlugins.forEach(p => {
             if (p.id === iPlugin.id) {
                 if (iPlugin.enabled) {
                     pluginHandler.disablePlugin(iPlugin.id);
                 } else if (!iPlugin.enabled && p.delayStart > 0) {
                     //@ts-ignore
                     app.plugins.enablePlugin(iPlugin.id);
-                    p.enabled = true;
                 } else if (!iPlugin.enabled && p.delayStart <= 0) {
                     pluginHandler.enablePlugin(iPlugin.id);
 
@@ -76,23 +72,21 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
-        plugin.settings.pluginManager = updatedPlugins;
-        dispatch(setSettings(plugin.settings));
-        await plugin.saveData(plugin.settings);
         if (newDelayStart > 0) {
             if (iPlugin.enabled) {
-                //用户设置的延时时间大于0且插件处于启用状态时，禁用插件后再用disablePlugin临时启动
+                //用户设置的延时时间大于0且插件处于启用状态时，禁用插件通知ob后再用disablePlugin临时启动
                 pluginHandler.disablePlugin(iPlugin.id);
                 //@ts-ignore
-                app.plugins.enablePlugin(iPlugin.id)
+                app.plugins.enablePlugin(iPlugin.id);
             }
-            new Notice(`${iPlugin.name} 插件会在 obsidian 启动后的 ${newDelayStart} 秒启动，要完全关闭插件请将延时清零再关闭插件`);
-
         } else {
             if (iPlugin.enabled)
                 //启动并保存插件信息
                 pluginHandler.enablePlugin(iPlugin.id);
         }
+        plugin.settings.pluginManager = updatedPlugins;
+        dispatch(setSettings(plugin.settings));
+        await plugin.saveData(plugin.settings);
     }
     // 处理备注
     const handleCommentChange = async (iPlugin: IPlugin, newComment: string) => {

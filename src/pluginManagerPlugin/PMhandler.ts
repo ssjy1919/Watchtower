@@ -35,8 +35,9 @@ export class PluginHandler {
 				return {
 					id,
 					name: manifest.name,
-					//@ts-ignore
-					enabled: app.plugins.enabledPlugins.has(id),
+					enabled:
+						//@ts-ignore 直接获取已启动的插件
+						Object.keys(app.plugins.plugins).includes(id),
 					switchTime: pluginSetting.switchTime,
 					comment: pluginSetting.comment,
 					delayStart: pluginSetting.delayStart,
@@ -110,7 +111,7 @@ export class PluginHandler {
 				if (p.enabled) return true;
 			}
 		});
-		
+
 		if (!pluginExists) {
 			new Notice("插件未开启", 5000);
 			return;

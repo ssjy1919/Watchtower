@@ -56,7 +56,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         <div className="file-supervision">
             <div className={`${className} tips`} >
                 <div className="show-table" onClick={handleClick}>
-                    {differentFiles.length == 0 ? stoerSettings.markTime : `${differentFiles.length}份文件变动 ${stoerSettings.markTime}`}
+                    {differentFiles.length == 0 ? stoerSettings.markTime : <div>{stoerSettings.markTime}<br/>{differentFiles.length}份变动文件</div>}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存</div>
             </div>
