@@ -7,6 +7,7 @@ import {
 	setFileStatList,
 	setDifferentFiles,
 	setSettings,
+	setRecentOpenFiles,
 } from "../store";
 
 // 注册文件事件处理程序
@@ -18,7 +19,15 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 	) => {
 		const state = store.getState();
 		//把新创建文件、修改文件、重命名文件同样视为最近打开的文件更符合使用逻辑
-		if (event === "opened"|| event === "create"|| event === "modify"|| event === "rename") {
+		if (
+			event === "opened" ||
+			event === "create" ||
+			event === "modify" ||
+			event === "rename"
+		) {
+			// 比较文件信息
+			const recentOpenFiles = plugin.fileHandler.compareFiles();
+			store.dispatch(setRecentOpenFiles(recentOpenFiles));
 			if (file?.path) {
 				// 找到 path 匹配的对象
 				const fileStatLists = state.counter.fileStatList;
@@ -42,29 +51,30 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 						fileStats: updatedFileStats,
 					};
 					await plugin.saveData(newSettings);
-				}
+			
+                }
 			}
-			// 加载文件信息
-			const fileStats = plugin.fileHandler.loadFileStats();
-			store.dispatch(setFileStatList(fileStats));
-			// 比较文件差异
-			const differentFiles = plugin.fileHandler.compareFiles();
-			store.dispatch(setDifferentFiles(differentFiles));
 		}
+		// 加载文件信息
+		const fileStats = plugin.fileHandler.loadFileStats();
+		store.dispatch(setFileStatList(fileStats));
+		// 比较文件差异
+		const differentFiles = plugin.fileHandler.compareFiles();
+		store.dispatch(setDifferentFiles(differentFiles));
 	};
 
 	// 订阅文件的增删改查事件
 	plugin.app.vault.on("modify", (file: TAbstractFile) =>
-		fileEventHandler("modified", file)
+		fileEventHandler("modify", file)
 	);
 	plugin.app.vault.on("delete", (file: TAbstractFile) =>
-		fileEventHandler("deleted", file)
+		fileEventHandler("delete", file)
 	);
 	plugin.app.vault.on("rename", (file: TAbstractFile, oldPath: string) =>
-		fileEventHandler("renamed", file, oldPath)
+		fileEventHandler("rename", file, oldPath)
 	);
 	plugin.app.vault.on("create", (file: TAbstractFile) =>
-		fileEventHandler("created", file)
+		fileEventHandler("create", file)
 	);
 	// 订阅文件打开事件
 	plugin.registerEvent(
