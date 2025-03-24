@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, setFileChange } from "src/store";
 import { Notice } from "obsidian";
-import "./FileSupervisionView.css"
+import "./fileSupervisionView.css"
 import WatchtowerPlugin from "src/main";
 import { RecentOpenFileTable } from "../recentFile/RecentOpenFileTable";
 

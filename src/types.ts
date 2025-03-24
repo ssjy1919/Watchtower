@@ -1,12 +1,19 @@
 import { FileStats } from "obsidian";
-
+/** 文件信息 */
 export interface SettingsFileStats {
-	basename: string;
-	extension: string;
-	name: string;
-	path: string;
-	stat: FileStats;
-	differents: string;
+    /** 不包含后缀文件名 */
+    basename: string;
+    /** 文件后缀 */
+    extension: string;
+    /** 不包含路径的文件名 */
+    name: string;
+    /** 文件完整路径包括后缀 */
+    path: string;
+    /** 文件状态 */
+    stat: FileStats;
+    /** 文件差异 */
+    differents: string;
+    /** 最近打开时间 */
 	recentOpen: number;
 }
 
@@ -22,12 +29,19 @@ export interface PluginManager {
 	comment: string;
 	/** 插件延时启动 */
     delayStart: number;
-	author: string;
+    /** 作者 */
+    author: string;
+    /** 仓库地址 */
 	authorUrl: string;
-	description: string;
-	dir: string;
-	isDesktopOnly: boolean;
-	minAppVersion: string;
+	/** 插件描述 */
+    description: string;
+    /** 插件路径 */
+    dir: string;
+    /** 是否仅桌面端可用 */
+    isDesktopOnly: boolean;
+    /** 最低obsidian版本 */
+    minAppVersion: string;
+    /** 插件版本 */
 	version: string;
 }
 export const pluginManager: PluginManager = {
@@ -69,7 +83,9 @@ export interface SortField {
 }
 
 export interface WatchtowerSettings {
-	markTime: string;
+    /** 保存文件信息的时间 */
+    markTime: string;
+    /** 文件信息 */
 	fileStats: SettingsFileStats[];
 	/** 控制首次安装插件时打开插件标签叶 */
 	isFirstInstall: boolean;
@@ -78,8 +94,10 @@ export interface WatchtowerSettings {
 	/** 是否启动插件管理功能 */
 	pluginManagerPlugin: boolean;
 	/** 历史文件列表打开方式 */
-	recentOpenFilesMode: boolean;
+    recentOpenFilesMode: boolean;
+    /** 插件信息 */
     pluginManager: PluginManager[];
+    /** 插件管理页面的排序字段 */
 	sortField: SortField;
 }
 
