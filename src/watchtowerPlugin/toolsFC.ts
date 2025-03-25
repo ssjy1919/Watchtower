@@ -5,7 +5,6 @@ import { DEFAULT_SETTINGS } from "../types";
 import {
 	store,
 	setFileStatList,
-	setRecentOpenFiles,
 	setDifferentFiles,
 	setSettings,
 } from "../store";
@@ -17,43 +16,40 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		file: TAbstractFile,
 		oldPath?: string
 	) => {
-		try {
-            const state = store.getState();
-            if (event === "opened") {
-                // 比较文件信息
-				const recentOpenFiles =
-                plugin.fileHandler.compareFiles();
-				store.dispatch(setRecentOpenFiles(recentOpenFiles));
-				if (file?.path) {
-                    // 找到 path 匹配的对象
-					const fileStatLists = state.counter.fileStatList;
-					const updatedFileStats = fileStatLists.map((fileStat) => {
-						if (fileStat.path === file.path) {
-							// 更新 recentOpen 为当前时间
-							return {
-								...fileStat,
-								recentOpen: new Date().getTime(),
-							};
-						}
-						return fileStat;
-					});
-					store.dispatch(setFileStatList(updatedFileStats));
+		const state = store.getState();
+		//把新创建文件、修改文件、重命名文件同样视为最近打开的文件更符合使用逻辑
+		if (event === "opened"|| event === "create"|| event === "modify"|| event === "rename") {
+			if (file?.path) {
+				// 找到 path 匹配的对象
+				const fileStatLists = state.counter.fileStatList;
+				const updatedFileStats = fileStatLists.map((fileStat) => {
+					if (fileStat.path === file.path) {
+						// 更新 recentOpen 为当前时间
+						return {
+							...fileStat,
+							recentOpen: new Date().getTime(),
+						};
+					}
+					return fileStat;
+				});
+				store.dispatch(setFileStatList(updatedFileStats));
+				if (
+					plugin.settings.recentFilesMode.recentFilesSaveMode ===
+					"immediate"
+				) {
+					const newSettings = {
+						...plugin.settings,
+						fileStats: updatedFileStats,
+					};
+					await plugin.saveData(newSettings);
 				}
-			} else if (
-				event === "created" ||
-				event === "renamed" ||
-				event === "modified" ||
-				event === "deleted"
-			) {
-				// 加载文件信息
-				const fileStats = plugin.fileHandler.loadFileStats();
-                store.dispatch(setFileStatList(fileStats));
-                // 比较文件差异
-                const differentFiles = plugin.fileHandler.compareFiles();
-                store.dispatch(setDifferentFiles(differentFiles));
 			}
-		} catch (error) {
-			console.error(`处理文件事件 ${event} 时出错：`, error);
+			// 加载文件信息
+			const fileStats = plugin.fileHandler.loadFileStats();
+			store.dispatch(setFileStatList(fileStats));
+			// 比较文件差异
+			const differentFiles = plugin.fileHandler.compareFiles();
+			store.dispatch(setDifferentFiles(differentFiles));
 		}
 	};
 
@@ -109,7 +105,6 @@ export async function activateView(plugin: WatchtowerPlugin) {
 		workspace.revealLeaf(leaf);
 	}
 }
-
 
 // 加载用户设置
 export async function loadSettings(plugin: WatchtowerPlugin) {

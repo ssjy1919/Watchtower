@@ -1,19 +1,19 @@
 import { FileStats } from "obsidian";
 /** 文件信息 */
 export interface SettingsFileStats {
-    /** 不包含后缀文件名 */
-    basename: string;
-    /** 文件后缀 */
-    extension: string;
-    /** 不包含路径的文件名 */
-    name: string;
-    /** 文件完整路径包括后缀 */
-    path: string;
-    /** 文件状态 */
-    stat: FileStats;
-    /** 文件差异 */
-    differents: string;
-    /** 最近打开时间 */
+	/** 不包含后缀文件名 */
+	basename: string;
+	/** 文件后缀 */
+	extension: string;
+	/** 不包含路径的文件名 */
+	name: string;
+	/** 文件完整路径包括后缀 */
+	path: string;
+	/** 文件状态 */
+	stat: FileStats;
+	/** 文件差异 */
+	differents: string;
+	/** 最近打开时间 */
 	recentOpen: number;
 }
 
@@ -22,35 +22,35 @@ export interface PluginManager {
 	id: string;
 	name: string;
 	/** obsidian应用捕获的插件启用状态，不包括延时启动的插件 */
-    enabled: boolean;
+	enabled: boolean;
 	/** 最后开关时间 */
 	switchTime: number;
 	/** 用户备注 */
 	comment: string;
 	/** 插件延时启动 */
-    delayStart: number;
-    /** 作者 */
-    author: string;
-    /** 仓库地址 */
+	delayStart: number;
+	/** 作者 */
+	author: string;
+	/** 仓库地址 */
 	authorUrl: string;
 	/** 插件描述 */
-    description: string;
-    /** 插件路径 */
-    dir: string;
-    /** 是否仅桌面端可用 */
-    isDesktopOnly: boolean;
-    /** 最低obsidian版本 */
-    minAppVersion: string;
-    /** 插件版本 */
+	description: string;
+	/** 插件路径 */
+	dir: string;
+	/** 是否仅桌面端可用 */
+	isDesktopOnly: boolean;
+	/** 最低obsidian版本 */
+	minAppVersion: string;
+	/** 插件版本 */
 	version: string;
 }
 export const pluginManager: PluginManager = {
 	id: "",
 	name: "",
-    enabled: false,
+	enabled: false,
 	switchTime: 0,
 	comment: "",
-    delayStart: 0,
+	delayStart: 0,
 	author: "",
 	authorUrl: "",
 	description: "",
@@ -76,16 +76,36 @@ export const settingsFileStats: SettingsFileStats = {
 };
 
 export interface SortField {
-    /** 排序字段 */
-    field: keyof PluginManager | null;
-    /** 排序顺序 */
+	/** 排序字段 */
+	field: keyof PluginManager | null;
+	/** 排序顺序 */
 	order: "asc" | "desc" | null;
 }
 
+/** 历史文件列表配置 */
+export interface RecentFilesMode {
+	/** 历史文件列表打开方式 */
+	recentFilesOpenMode: boolean;
+	/** 历史文件列表保存方式，即时、手动*/
+	recentFilesSaveMode: RecentFilesSaveMode;
+}
+export type RecentFilesSaveMode = "immediate" |  "manual";
+
+// export interface RecentFilesSaveMode {
+//     recentFilesSaveMode: SaveMode;
+// }
+/** 历史文件列表打开方式和保存方式 */
+export const recentFilesMode: RecentFilesMode = {
+	recentFilesOpenMode: false,
+	recentFilesSaveMode: "manual" ,
+};
+
+
+
 export interface WatchtowerSettings {
-    /** 保存文件信息的时间 */
-    markTime: string;
-    /** 文件信息 */
+	/** 保存文件信息的时间 */
+	markTime: string;
+	/** 文件信息 */
 	fileStats: SettingsFileStats[];
 	/** 控制首次安装插件时打开插件标签叶 */
 	isFirstInstall: boolean;
@@ -93,11 +113,11 @@ export interface WatchtowerSettings {
 	watchtowerPlugin: boolean;
 	/** 是否启动插件管理功能 */
 	pluginManagerPlugin: boolean;
-	/** 历史文件列表打开方式 */
-    recentOpenFilesMode: boolean;
-    /** 插件信息 */
-    pluginManager: PluginManager[];
-    /** 插件管理页面的排序字段 */
+	/** 历史文件列表配置 */
+	recentFilesMode: RecentFilesMode;
+	/** 插件信息 */
+	pluginManager: PluginManager[];
+	/** 插件管理页面的排序字段 */
 	sortField: SortField;
 }
 
@@ -108,7 +128,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	isFirstInstall: true,
 	watchtowerPlugin: true,
 	pluginManagerPlugin: true,
-	recentOpenFilesMode: true,
+	recentFilesMode: recentFilesMode,
 	pluginManager: [pluginManager],
 	sortField: {
 		field: "enabled",
