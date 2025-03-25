@@ -5,7 +5,7 @@
 	"minAppVersion": "0.15.0",
 	"description": "obsidian 的瞭望塔，插件管理、最近打开文件、笔记文件完整性验证",
 	"author": "ssjy1919",
-	"authorUrl": "https://obsidian.md",
+	"authorUrl": "https://github.com/ssjy1919/Watchtower",
 	"fundingUrl": "https://obsidian.md/pricing",
 	"isDesktopOnly": false
 }

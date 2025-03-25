@@ -59,6 +59,9 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
     return (
         <>
             <div className="file-Supervision-setting-container">
+                <div className="link">
+                    <a href="https://github.com/ssjy1919/Watchtower">前往Github项目地址，以帮助作者改进项目</a>
+                </div>
                 <div className="file-Supervision">
                     <Switch
                         label="文件监控功能"
@@ -68,7 +71,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                     />
                     {plugin.settings.watchtowerPlugin && <div className="recent-file-open-new-tab">
                         <Switch
-                            label="历史文件打开方式"
+                            label="最近文件在新标签页打开"
                             description="开启按钮时，打开历史文件在新页面打开。"
                             value={recentFilesMode.recentFilesOpenMode}
                             onChange={handleChange}
@@ -90,6 +93,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                         onChange={handlePluginManagerChange}
                     />
                 </div>
+                {/* 增加一个链接"https://github.com/ssjy1919/Watchtower"*/}
 
             </div>
         </>
