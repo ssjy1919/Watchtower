@@ -60,7 +60,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
         <>
             <div className="file-Supervision-setting-container">
                 <div className="link">
-                    <a href="https://github.com/ssjy1919/Watchtower">前往Github项目地址，以帮助作者改进项目</a>
+                    <a href="https://github.com/ssjy1919/Watchtower/releases">前往 Github 看看更新了什么</a>
                 </div>
                 <div className="file-Supervision">
                     <Switch
@@ -93,8 +93,6 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                         onChange={handlePluginManagerChange}
                     />
                 </div>
-                {/* 增加一个链接"https://github.com/ssjy1919/Watchtower"*/}
-
             </div>
         </>
     );
