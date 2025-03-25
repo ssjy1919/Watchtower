@@ -33,24 +33,14 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 					return fileStat;
 				});
 				store.dispatch(setFileStatList(updatedFileStats));
-				if (
-					plugin.settings.recentFilesMode.recentFilesSaveMode ===
-					"immediate"
-				) {
-					const newSettings = {
-						...plugin.settings,
-						fileStats: updatedFileStats,
-					};
-					await plugin.saveData(newSettings);
-				}
 			}
-			// 加载文件信息
-			const fileStats = plugin.fileHandler.loadFileStats();
-			store.dispatch(setFileStatList(fileStats));
-			// 比较文件差异
-			const differentFiles = plugin.fileHandler.compareFiles();
-			store.dispatch(setDifferentFiles(differentFiles));
 		}
+        // 加载文件信息
+        const fileStats = plugin.fileHandler.loadFileStats();
+        store.dispatch(setFileStatList(fileStats));
+        // 比较文件差异
+        const differentFiles = plugin.fileHandler.compareFiles();
+        store.dispatch(setDifferentFiles(differentFiles));
 	};
 
 	// 订阅文件的增删改查事件

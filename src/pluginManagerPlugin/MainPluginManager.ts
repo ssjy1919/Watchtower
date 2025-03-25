@@ -38,7 +38,7 @@ export class PluginManagerPlugin {
 					const updatedPlugins =
                     this.plugin.settings.pluginManager.map((p) => {
                         if (p.id === plugin.id) {
-                                console.log(`到达${plugin.delayStart}秒，启动插件：`, plugin);
+                                // console.log(`到达${plugin.delayStart}秒，启动插件：`, plugin);
 								return {
 									...p,
                                     enabled: true,
@@ -47,7 +47,8 @@ export class PluginManagerPlugin {
 							return p;
 						});
 					this.plugin.settings.pluginManager = updatedPlugins;
-					store.dispatch(setSettings(this.plugin.settings));
+                    store.dispatch(setSettings(this.plugin.settings));
+                    console.log(`插件${plugin.id}启动`,this.plugin.settings.markTime);
 				}, plugin.delayStart * 1000);
 			}
 		});

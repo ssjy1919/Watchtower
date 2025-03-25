@@ -156,7 +156,8 @@ export class FileHandler {
 		store.dispatch(setFileStatList(fileStats));
 		store.dispatch(setDifferentFiles(differentFiles));
 		store.dispatch(setSettings(updatedSettings));
-		store.dispatch(setFileChange(true));
+        store.dispatch(setFileChange(true));
+        this.plugin.settings = updatedSettings;
 	}
 	/** 保存文件信息到插件存储的异步函数。 */
 	saveFileInfo = async (): Promise<void> => {

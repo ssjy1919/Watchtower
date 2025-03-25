@@ -10,7 +10,7 @@ interface RecentOpenFileTableProps {
 }
 export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin }) => {
     const [className, setClassName] = React.useState('');
-    const recentFilesOpenMode = useSelector((state: RootState) => state.settings.recentFilesMode.recentFilesOpenMode);
+    const recentFilesOpenMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
 
     const sortedFileStats = useSelector((state: RootState) => state.counter.fileStatList)
         .slice().sort((a, b) => b.recentOpen - a.recentOpen);

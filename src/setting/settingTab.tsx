@@ -8,14 +8,12 @@ import { RootState, setSettings, store } from 'src/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
 import { init } from 'src/watchtowerPlugin/toolsFC';
-import { Droplist } from './components/Droplist';
-import { RecentFilesSaveMode } from 'src/types';
 interface SettingComponentProps {
     plugin: WatchtowerPlugin;
 }
 const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(plugin.settings.watchtowerPlugin);
-    const recentFilesMode = useSelector((state: RootState) => state.settings.recentFilesMode);
+    const recentFilesMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
     const pluginManagerMode = useSelector((state: RootState) => state.settings.pluginManagerPlugin);
     const dispatch = useDispatch();
     const handleChangeFileSupervision = async (value: boolean) => {
@@ -32,7 +30,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 
 
     const handleChange = async (value: boolean) => {
-        plugin.settings.recentFilesMode.recentFilesOpenMode = value;
+        plugin.settings.recentFilesOpenMode = value;
         dispatch(setSettings(plugin.settings));
         await plugin.saveData(plugin.settings);
     };
@@ -41,26 +39,12 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
         dispatch(setSettings(plugin.settings));
         await plugin.saveData(plugin.settings);
     };
-    const handleSetSaveMode = async (newValue: RecentFilesSaveMode) => {
-        // 直接修改了原有的 settings 对象，而 Redux 的比较机制可能未能检测到这种“浅层”变更，导致状态未更新。
-        // 解决方案是使用不可变更新模式，创建新的 settings 对象。
-        // plugin.settings.recentFilesMode.recentFilesSaveMode = newValue;
-        const newSettings = {
-            ...plugin.settings,
-            recentFilesMode: {
-                ...plugin.settings.recentFilesMode,
-                recentFilesSaveMode: newValue
-            }
-        };
-        plugin.settings = newSettings;
-        dispatch(setSettings(newSettings));
-        await plugin.saveData(newSettings);
-    };
+
     return (
         <>
             <div className="file-Supervision-setting-container">
                 <div className="link">
-                    <a href="https://github.com/ssjy1919/Watchtower">前往Github项目地址，以帮助作者改进项目</a>
+                    <a href="https://github.com/ssjy1919/Watchtower">前往Github项目地址</a>
                 </div>
                 <div className="file-Supervision">
                     <Switch
@@ -73,15 +57,10 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                         <Switch
                             label="最近文件在新标签页打开"
                             description="开启按钮时，打开历史文件在新页面打开。"
-                            value={recentFilesMode.recentFilesOpenMode}
+                            value={recentFilesMode}
                             onChange={handleChange}
                         />
-                        <Droplist
-                            label="历史文件列表保存方式"
-                            description="选择历史文件列表的保存方式，自动保存或手动保存。"
-                            value={recentFilesMode.recentFilesSaveMode}
-                            onChange={(newValue) => handleSetSaveMode(newValue)}
-                        />
+                        
                     </div>}
 
                 </div>
@@ -93,7 +72,6 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                         onChange={handlePluginManagerChange}
                     />
                 </div>
-                {/* 增加一个链接"https://github.com/ssjy1919/Watchtower"*/}
 
             </div>
         </>

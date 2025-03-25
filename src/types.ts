@@ -82,23 +82,8 @@ export interface SortField {
 	order: "asc" | "desc" | null;
 }
 
-/** 历史文件列表配置 */
-export interface RecentFilesMode {
-	/** 历史文件列表打开方式 */
-	recentFilesOpenMode: boolean;
-	/** 历史文件列表保存方式，即时、手动*/
-	recentFilesSaveMode: RecentFilesSaveMode;
-}
-export type RecentFilesSaveMode = "immediate" |  "manual";
 
-// export interface RecentFilesSaveMode {
-//     recentFilesSaveMode: SaveMode;
-// }
-/** 历史文件列表打开方式和保存方式 */
-export const recentFilesMode: RecentFilesMode = {
-	recentFilesOpenMode: false,
-	recentFilesSaveMode: "manual" ,
-};
+
 
 
 
@@ -114,7 +99,7 @@ export interface WatchtowerSettings {
 	/** 是否启动插件管理功能 */
 	pluginManagerPlugin: boolean;
 	/** 历史文件列表配置 */
-	recentFilesMode: RecentFilesMode;
+	recentFilesOpenMode: boolean;
 	/** 插件信息 */
 	pluginManager: PluginManager[];
 	/** 插件管理页面的排序字段 */
@@ -128,7 +113,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	isFirstInstall: true,
 	watchtowerPlugin: true,
 	pluginManagerPlugin: true,
-	recentFilesMode: recentFilesMode,
+	recentFilesOpenMode: false,
 	pluginManager: [pluginManager],
 	sortField: {
 		field: "enabled",
