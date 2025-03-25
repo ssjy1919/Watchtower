@@ -5,7 +5,6 @@ import { Switch } from "src/setting/components/Switch";
 import "./PMview.css"
 import { useDispatch } from "react-redux";
 import { RootState, setSettings } from "src/store";
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 
@@ -15,21 +14,13 @@ interface PluginManagerView {
 
 const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const pluginHandler = new PluginHandler(plugin);
-    const settings = useSelector((state: RootState) => state.settings);
-    const getEnabledPlugins = settings.pluginManager.filter(p => p.enabled).length;
-    const getDisabledPlugins = settings.pluginManager.filter(p => !p.enabled).length;
+    const stoerSettings = useSelector((state: RootState) => state.settings);
+    const getEnabledPlugins = stoerSettings.pluginManager.filter(p => p.enabled).length;
+    const getDisabledPlugins = stoerSettings.pluginManager.filter(p => !p.enabled).length;
     const dispatch = useDispatch();
-
-
-    useEffect(() => {
-        const nallPlugins = pluginHandler.getAllPlugins();
-        plugin.settings.pluginManager = nallPlugins;
-        dispatch(setSettings(plugin.settings));
-    }, [dispatch]);
-
     /**处理开关 */
     const handleChange = async (iPlugin: IPlugin) => {
-        const updatedPlugins = plugin.settings.pluginManager.map(p => {
+        const updatedPlugins = stoerSettings.pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
                     ...p,
@@ -53,12 +44,12 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 }
             }
         });
+        const newSettings = { ...plugin.settings, pluginManager: updatedPlugins };
 
-
-        plugin.settings.pluginManager = updatedPlugins;
-        dispatch(setSettings(plugin.settings));
+        plugin.settings = newSettings;
+        dispatch(setSettings(newSettings));
         // 保存数据到插件存储
-        await plugin.saveData(plugin.settings);
+        await plugin.saveData(newSettings);
 
     }
     /**处理延时启动*/
@@ -109,13 +100,13 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     }
 
 
-    // 处理下拉菜单排序选择（保留，用于内部调用）
+    // 处理排序选择（保留，用于内部调用）
     const handleSortChange = (field: keyof PluginManager, order: string) => {
         const newSortField = order === ""
             ? { field: null, order: null }
             : { field, order: order as "asc" | "desc" };
 
-        const updatedSettings = { ...settings, sortField: newSortField };
+        const updatedSettings = { ...stoerSettings, sortField: newSortField };
 
         // 更新插件配置和 Redux 状态
         plugin.settings = updatedSettings;
@@ -126,21 +117,21 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     // 点击表头时循环切换排序状态
     const handleHeaderClick = (field: keyof PluginManager) => {
         let newOrder: "asc" | "desc" | "" = "";
-        if (settings.sortField.field !== field || !settings.sortField.order) {
+        if (stoerSettings.sortField.field !== field || !stoerSettings.sortField.order) {
             newOrder = "asc";
-        } else if (settings.sortField.order === "asc") {
+        } else if (stoerSettings.sortField.order === "asc") {
             newOrder = "desc";
-        } else if (settings.sortField.order === "desc") {
+        } else if (stoerSettings.sortField.order === "desc") {
             newOrder = "";
         }
         handleSortChange(field, newOrder);
     };
 
     // 根据排序状态返回排序后的列表
-    const sortedPlugins = (settings.sortField.field && settings.sortField.order)
+    const sortedPlugins = (stoerSettings.sortField.field && stoerSettings.sortField.order)
         ? (() => {
-            const sortField = settings.sortField.field as keyof PluginManager;
-            return [...settings.pluginManager].sort((a, b) => {
+            const sortField = stoerSettings.sortField.field as keyof PluginManager;
+            return [...stoerSettings.pluginManager].sort((a, b) => {
                 let aVal = a[sortField] ?? "";
                 let bVal = b[sortField] ?? "";
                 if (sortField === "enabled") {
@@ -149,8 +140,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 }
 
                 // 主排序逻辑
-                if (aVal > bVal) return settings.sortField.order === "asc" ? 1 : -1;
-                if (aVal < bVal) return settings.sortField.order === "asc" ? -1 : 1;
+                if (aVal > bVal) return stoerSettings.sortField.order === "asc" ? 1 : -1;
+                if (aVal < bVal) return stoerSettings.sortField.order === "asc" ? -1 : 1;
 
                 // 相等时按name二次排序
                 const aName = a.name.toLowerCase();
@@ -160,7 +151,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 return 0;
             });
         })()
-        : settings.pluginManager;
+        : stoerSettings.pluginManager;
 
     return (
         <div className="PluginManagerView">
@@ -169,28 +160,28 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     <tr>
                         <th onClick={() => handleHeaderClick('name')} >
                             一共{plugin.settings.pluginManager.length}个插件，开启{getEnabledPlugins}关闭{getDisabledPlugins}{" "}
-                            {settings.sortField.field === "name" && settings.sortField.order === "asc" && "↑"}
-                            {settings.sortField.field === "name" && settings.sortField.order === "desc" && "↓"}
+                            {stoerSettings.sortField.field === "name" && stoerSettings.sortField.order === "asc" && "↑"}
+                            {stoerSettings.sortField.field === "name" && stoerSettings.sortField.order === "desc" && "↓"}
                         </th>
                         <th onClick={() => handleHeaderClick('enabled')} >
                             状态{" "}
-                            {settings.sortField.field === "enabled" && settings.sortField.order === "asc" && "↑"}
-                            {settings.sortField.field === "enabled" && settings.sortField.order === "desc" && "↓"}
+                            {stoerSettings.sortField.field === "enabled" && stoerSettings.sortField.order === "asc" && "↑"}
+                            {stoerSettings.sortField.field === "enabled" && stoerSettings.sortField.order === "desc" && "↓"}
                         </th>
                         <th onClick={() => handleHeaderClick('delayStart')} >
                             延时启动(秒)
-                            {settings.sortField.field === "delayStart" && settings.sortField.order === "asc" && "↑"}
-                            {settings.sortField.field === "delayStart" && settings.sortField.order === "desc" && "↓"}
+                            {stoerSettings.sortField.field === "delayStart" && stoerSettings.sortField.order === "asc" && "↑"}
+                            {stoerSettings.sortField.field === "delayStart" && stoerSettings.sortField.order === "desc" && "↓"}
                         </th>
                         <th onClick={() => handleHeaderClick('switchTime')} >
                             开关时间{" "}
-                            {settings.sortField.field === "switchTime" && settings.sortField.order === "asc" && "↑"}
-                            {settings.sortField.field === "switchTime" && settings.sortField.order === "desc" && "↓"}
+                            {stoerSettings.sortField.field === "switchTime" && stoerSettings.sortField.order === "asc" && "↑"}
+                            {stoerSettings.sortField.field === "switchTime" && stoerSettings.sortField.order === "desc" && "↓"}
                         </th>
                         <th onClick={() => handleHeaderClick('comment')} >
                             备注{" "}
-                            {settings.sortField.field === "comment" && settings.sortField.order === "asc" && "↑"}
-                            {settings.sortField.field === "comment" && settings.sortField.order === "desc" && "↓"}
+                            {stoerSettings.sortField.field === "comment" && stoerSettings.sortField.order === "asc" && "↑"}
+                            {stoerSettings.sortField.field === "comment" && stoerSettings.sortField.order === "desc" && "↓"}
                         </th>
                     </tr>
                 </thead>

@@ -2,9 +2,7 @@ import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { DEFAULT_SETTINGS, settingsFileStats } from "./types";
 
 const initialState = {
-	// - fileChange：布尔值，用于标识文件是否发生变化，默认值为 false
-	fileChange: false,
-	/** 当前文件列表，包含文件路径和状态 */
+	/** 当前最新状态的文件列表，包含文件路径和状态 */
 	fileStatList: [...[settingsFileStats]],
 	/* 记录差异文件列表 */
 	differentFiles: [...[settingsFileStats]],
@@ -16,9 +14,6 @@ const counterSlice = createSlice({
 	name: "counter", // slice 的名称，用于区分不同的 slice
 	initialState, // 初始状态
 	reducers: {
-		setFileChange: (state, action) => {
-			state.fileChange = action.payload;
-		},
 		setFileStatList: (state, action) => {
 			// console.log("Updating fileStatList with:", action.payload);
 			state.fileStatList = action.payload;
@@ -46,7 +41,6 @@ const settingsSlice = createSlice({
 // 导出 actions ，用于在组件中触发状态更新
 
 export const {
-	setFileChange,
 	setFileStatList,
 	setDifferentFiles,
 	setRecentOpenFiles,

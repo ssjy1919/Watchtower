@@ -7,7 +7,6 @@ import {
 	setFileStatList,
 	setDifferentFiles,
 	setSettings,
-	setRecentOpenFiles,
 } from "../store";
 
 // 注册文件事件处理程序
@@ -24,12 +23,12 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			event === "create" ||
 			event === "modify" ||
 			event === "rename"
-		) {
+        ) {
 			// 比较文件信息
-			const recentOpenFiles = plugin.fileHandler.compareFiles();
-			store.dispatch(setRecentOpenFiles(recentOpenFiles));
+			// const recentOpenFiles = plugin.fileHandler.compareFiles();
+			// store.dispatch(setRecentOpenFiles(recentOpenFiles));
 			if (file?.path) {
-				// 找到 path 匹配的对象
+				// const fileStatLists = state.counter.fileStatList;
 				const fileStatLists = state.counter.fileStatList;
 				const updatedFileStats = fileStatLists.map((fileStat) => {
 					if (fileStat.path === file.path) {
@@ -49,9 +48,10 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 					const newSettings = {
 						...plugin.settings,
 						fileStats: updatedFileStats,
-					};
-					await plugin.saveData(newSettings);
-			
+                    };
+                    store.dispatch(setSettings(newSettings));
+                    plugin.settings = newSettings;
+                    await plugin.saveData(newSettings);
                 }
 			}
 		}
@@ -59,7 +59,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		const fileStats = plugin.fileHandler.loadFileStats();
 		store.dispatch(setFileStatList(fileStats));
 		// 比较文件差异
-		const differentFiles = plugin.fileHandler.compareFiles();
+        const differentFiles = plugin.fileHandler.compareFiles()
 		store.dispatch(setDifferentFiles(differentFiles));
 	};
 

@@ -79,7 +79,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                     </div>
                 </div>
                 // 限制历史文件的数量，太多了还不如去文件夹翻或搜索
-            )).slice(0, 30)}
+            )).slice(0, 60)}
         </div>
     );
 };

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, setFileChange } from "src/store";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "src/store";
 import { Notice } from "obsidian";
 import "./fileSupervisionView.css"
 import WatchtowerPlugin from "src/main";
@@ -11,17 +11,9 @@ interface FileSupervisionProps {
 }
 
 const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
-    const fileChange = useSelector((state: RootState) => state.counter.fileChange);
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
     const stoerSettings = useSelector((state: RootState) => state.settings);
-    const settings = useSelector((state: RootState) => state.settings);
     const [className, setClassName] = useState('file-supervision-table-none');
-    const dispatch = useDispatch();
-    useEffect(() => {
-        if (fileChange) {
-            dispatch(setFileChange(false));
-        }
-    }, [fileChange, dispatch, differentFiles, settings, setFileChange]);
     const handleClick = () => {
         setClassName((prevClassName) =>
             prevClassName === 'file-supervision-table-none'

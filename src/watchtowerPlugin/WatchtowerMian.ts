@@ -22,7 +22,6 @@ export class WatchtowerMain {
 		// 初始化 FileHandler
 		this.plugin.fileHandler = new FileHandler(
 			this.plugin.app,
-			this.plugin.settings,
 			this.plugin
 		);
 

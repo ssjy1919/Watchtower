@@ -7,7 +7,6 @@ import {
 import {
 	store,
 	setFileStatList,
-	setFileChange,
 	setDifferentFiles,
 	setSettings,
 } from "../store";
@@ -15,16 +14,13 @@ import WatchtowerPlugin from "../main";
 
 export class FileHandler {
 	app: App;
-	settings: WatchtowerSettings;
 	plugin: WatchtowerPlugin;
 
 	constructor(
 		app: App,
-		settings: WatchtowerSettings,
 		plugin: WatchtowerPlugin
 	) {
 		this.app = app;
-		this.settings = settings;
 		this.plugin = plugin;
 	}
 
@@ -43,7 +39,7 @@ export class FileHandler {
 
 		// 将 settings.fileStats 转换为 Map，提高查找效率
 		const fileStatsMap = new Map(
-			this.settings.fileStats.map((file) => [file.path, file])
+			this.plugin.settings.fileStats.map((file) => [file.path, file])
 		);
 
 		// 从 Redux 状态中获取 fileStatList
@@ -87,7 +83,7 @@ export class FileHandler {
 	 */
 	compareFiles(): SettingsFileStats[] {
 		const currentFiles = this.loadFileStats();
-		const fileStatLists = this.settings.fileStats
+		const fileStatLists = this.plugin.settings.fileStats
 			.map((settingFile) => {
 				const currentFile = currentFiles.find(
 					(file) => file.path === settingFile.path
@@ -119,7 +115,7 @@ export class FileHandler {
 		const missingFiles = currentFiles
 			.map((currentFile) => {
 				if (
-					!this.settings.fileStats.find(
+					!this.plugin.settings.fileStats.find(
 						(settingFile) => settingFile.path === currentFile.path
 					)
 				) {
@@ -148,23 +144,26 @@ export class FileHandler {
 	): void {
 		// 创建新的 settings 对象，保留原有属性
 		const currentSettings = store.getState().settings;
+		console.log(currentSettings.markTime);
 		const updatedSettings = {
 			...currentSettings,
 			markTime: new Date().toLocaleString(),
-			fileStats: this.settings.fileStats,
+			fileStats: this.plugin.settings.fileStats,
 		};
 		store.dispatch(setFileStatList(fileStats));
 		store.dispatch(setDifferentFiles(differentFiles));
+
 		store.dispatch(setSettings(updatedSettings));
-		store.dispatch(setFileChange(true));
+		console.log(updatedSettings.markTime);
+		this.plugin.settings = updatedSettings;
 	}
 	/** 保存文件信息到插件存储的异步函数。 */
 	saveFileInfo = async (): Promise<void> => {
 		const fileStatList = store.getState().counter.fileStatList;
 		// 更新设置
 		const updatedSettings = this.createUpdatedSettings(fileStatList);
-		// 同步更新 this.settings.fileStats
-		this.settings.fileStats = updatedSettings.fileStats;
+		// 同步更新 this.plugin.settings.fileStats
+		this.plugin.settings.fileStats = updatedSettings.fileStats;
 		// 加载文件信息
 		const fileStats = this.loadFileStats();
 

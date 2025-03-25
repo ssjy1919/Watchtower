@@ -3,23 +3,15 @@ import { RootState, store } from "../../store";
 import { createRoot } from "react-dom/client";
 import WatchtowerPlugin from "src/main";
 import { activateView } from "src/watchtowerPlugin/toolsFC";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
+import { Menu, Notice } from "obsidian";
 import { activateMiddleView } from "src/pluginManagerPlugin/PMtools";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
     const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        // 可以在这里处理副作用逻辑
-    }, [dispatch, differentFiles]);
 
     // 点击状态栏时显示菜单
     const handleMenu = (event: React.MouseEvent) => {
         event.preventDefault(); // 阻止默认行为
-
         // 创建右键菜单
         const menu = new Menu();
 

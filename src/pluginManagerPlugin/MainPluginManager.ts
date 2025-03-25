@@ -34,9 +34,10 @@ export class PluginManagerPlugin {
 				//延时启动
 				setTimeout(() => {
 					//@ts-ignore
-					app.plugins.enablePlugin(plugin.id);
+                    app.plugins.enablePlugin(plugin.id);
+                    const pluginManager = store.getState().settings.pluginManager;
 					const updatedPlugins =
-                    this.plugin.settings.pluginManager.map((p) => {
+                    pluginManager.map((p) => {
                         if (p.id === plugin.id) {
                                 console.log(`到达${plugin.delayStart}秒，启动插件：`, plugin);
 								return {
