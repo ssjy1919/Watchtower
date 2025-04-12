@@ -19,7 +19,6 @@ export class PluginManagerPlugin {
 				activateMiddleView(this.plugin);
 			},
 		});
-
 		this.plugin.addRibbonIcon("blocks", "插件管理", async () => {
 			activateMiddleView(this.plugin);
 		});
@@ -28,27 +27,31 @@ export class PluginManagerPlugin {
 			VIEW_TYPE_PLUGIN_MANAGER,
 			(leaf) => new PluginManagerLeft(leaf, this.plugin)
 		);
-        //延时启动
 		plugin.settings.pluginManager.forEach((plugin) => {
 			if (plugin.delayStart > 0) {
 				//延时启动
 				setTimeout(() => {
 					//@ts-ignore
 					app.plugins.enablePlugin(plugin.id);
-					const updatedPlugins =
-                    this.plugin.settings.pluginManager.map((p) => {
-                        if (p.id === plugin.id) {
-                                // console.log(`到达${plugin.delayStart}秒，启动插件：`, plugin);
+					const updatedPlugins = store
+						.getState()
+						.settings.pluginManager.map((p) => {
+							if (p.id === plugin.id) {
+								// console.log(`到达${plugin.delayStart}秒，启动插件：`, plugin);
 								return {
 									...p,
-                                    enabled: true,
+									enabled: true,
 								};
 							}
 							return p;
-						});
-					this.plugin.settings.pluginManager = updatedPlugins;
-                    store.dispatch(setSettings(this.plugin.settings));
-                    console.log(`插件${plugin.id}启动`,this.plugin.settings.markTime);
+                        });
+                        const newSettings = {
+                            ...store.getState().settings,
+                            pluginManager: updatedPlugins,
+                        };
+					store.dispatch(setSettings(newSettings));
+					// await this.plugin.saveData(newSettings);
+					// console.log(`插件${plugin.id}启动`,this.plugin.settings.markTime);
 				}, plugin.delayStart * 1000);
 			}
 		});

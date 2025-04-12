@@ -6,7 +6,6 @@ import {
 	registerFileEventHandlers,
 } from "src/watchtowerPlugin/toolsFC";
 import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
-import { store } from "src/store";
 
 export interface WatchtowerMain {
 	plugin: WatchtowerPlugin;
@@ -26,19 +25,21 @@ export class WatchtowerMain {
 			this.plugin.settings,
 			this.plugin
 		);
-
-		// 数据初始化
-		init(this.plugin);
-
+		// 等待应用初始化完成
+		this.plugin.app.workspace.onLayoutReady(async () => {
+			// 数据初始化，必须在应用加载之后执行
+			init(this.plugin);
+		});
 		// 注册文件事件监听
 		registerFileEventHandlers(this.plugin);
 
+		if (this.plugin.settings.isFirstInstall) {
+			activateView(this.plugin);
+			this.plugin.settings.isFirstInstall = false;
+		}
 		this.plugin.addRibbonIcon("telescope", "瞭望塔", async () => {
 			await activateView(this.plugin);
 		});
-
-
-
 
 		this.plugin.addCommand({
 			id: "WatchtowerLeafView",
@@ -48,13 +49,11 @@ export class WatchtowerMain {
 			},
 		});
 
-
-
 		this.plugin.addCommand({
 			id: "WatchtowerMark",
 			name: "保存文件信息",
 			callback: async () => {
-                await this.plugin.fileHandler.saveFileInfo();
+				await this.plugin.fileHandler.saveFileInfo();
 			},
 		});
 
