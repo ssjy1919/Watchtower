@@ -103,7 +103,7 @@ export interface WatchtowerSettings {
 	/** 插件信息 */
 	pluginManager: PluginManager[];
 	/** 插件管理页面的排序字段 */
-	sortField: SortField;
+    sortField: SortField;
 }
 
 // 定义默认的 WatchtowerSettings 值

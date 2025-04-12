@@ -1,13 +1,12 @@
-import { TAbstractFile, WorkspaceLeaf } from "obsidian";
+import { TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
 import WatchtowerPlugin from "../main";
 import { VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
-import { DEFAULT_SETTINGS } from "../types";
 import {
-	store,
-	setFileStatList,
-	setDifferentFiles,
-	setSettings,
-} from "../store";
+	DEFAULT_SETTINGS,
+	settingsFileStats,
+	SettingsFileStats,
+} from "../types";
+import { store, setFileStatList, setSettings } from "../store";
 
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
@@ -15,32 +14,123 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		event: string,
 		file: TAbstractFile,
 		oldPath?: string
-	) => {
+    ) => {
+		if (!(file instanceof TFile) || !file) return;
 		const state = store.getState();
-		//把新创建文件、修改文件、重命名文件同样视为最近打开的文件更符合使用逻辑
-		if (event === "opened"|| event === "create"|| event === "modify"|| event === "rename") {
-			if (file?.path) {
-				// 找到 path 匹配的对象
-				const fileStatLists = state.counter.fileStatList;
-				const updatedFileStats = fileStatLists.map((fileStat) => {
-					if (fileStat.path === file.path) {
-						// 更新 recentOpen 为当前时间
-						return {
-							...fileStat,
-							recentOpen: new Date().getTime(),
-						};
-					}
-					return fileStat;
-				});
-				store.dispatch(setFileStatList(updatedFileStats));
+		let newSettings = state.settings;
+		if (event === "opened") {
+			const fileStatLists = newSettings.fileStats;
+			const updatedFileStats = fileStatLists.map((fileStat) => {
+				if (fileStat.path === file.path) {
+					return {
+						...fileStat,
+						recentOpen: new Date().getTime(),
+					};
+				}
+				return fileStat;
+			});
+			newSettings = {
+				...newSettings,
+				fileStats: updatedFileStats,
+			};
+		}
+		if (event === "created") {
+			const fileStatLists = newSettings.fileStats;
+			const addfile = fileStatLists.find(
+				(fileStat) => fileStat.path === file.path
+			);
+			if (!addfile) {
+				// 创建新的数组并添加新文件信息
+				const updatedFileStats = [
+					...fileStatLists,
+					{
+						basename: file.basename,
+						extension: file.extension,
+						name: file.name,
+						path: file.path,
+						stat: {
+							size: file.stat.size,
+							ctime: file.stat.ctime,
+							mtime: file.stat.mtime,
+						},
+						differents: "新增文件",
+						recentOpen: 0,
+					} as SettingsFileStats,
+				];
+				console.log("updatedFileStats", updatedFileStats);
+
+				// 更新 settings 并触发 Redux 更新
+				newSettings = {
+					...newSettings,
+					fileStats: updatedFileStats,
+				};
 			}
 		}
-        // 加载文件信息
-        const fileStats = plugin.fileHandler.loadFileStats();
-        store.dispatch(setFileStatList(fileStats));
-        // 比较文件差异
-        const differentFiles = plugin.fileHandler.compareFiles();
-        store.dispatch(setDifferentFiles(differentFiles));
+		if (event === "modified") {
+			// 找到 path 匹配的对象
+			const fileStatLists = newSettings.fileStats;
+			const updatedFileStats = fileStatLists.map((fileStat) => {
+				if (fileStat.path === file.path) {
+					if (file.stat.size !== fileStat.stat.size) {
+						if (file.stat.size !== fileStat.stat.size) {
+							return {
+								...fileStat,
+                                differents: file.stat.size > fileStat.stat.size
+                                ? `增加${file.stat.size - fileStat.stat.size}字节`
+                                : file.stat.size < fileStat.stat.size
+                                ? `减少${fileStat.stat.size - file.stat.size}字节`
+                                : "", 
+							};
+						}
+					}
+				}
+				return fileStat;
+			});
+			newSettings = {
+				...newSettings,
+				fileStats: updatedFileStats,
+			};
+        }
+        if (event === "deleted") {
+            const fileStatLists = newSettings.fileStats;
+			const updatedFileStats = fileStatLists.map((fileStat) => {
+				if (fileStat.path === file.path) {
+					return {
+						...fileStat,
+						differents: "文件删除",
+					};
+				}
+				return fileStat;
+			});
+			newSettings = {
+				...newSettings,
+				fileStats: updatedFileStats,
+			};
+        }
+        if (event === "renamed") {
+            const fileStatLists = newSettings.fileStats;
+			const updatedFileStats = fileStatLists.map((fileStat) => {
+				if (fileStat.path === oldPath) {
+					return {
+						...fileStat,
+                        differents: `路径：${oldPath} → ${file.path}`,
+                        path: file.path,
+                        name: file.name,
+                        stat: file.stat,
+                        recentOpen: fileStat.recentOpen,
+                        basename: file.basename,
+                        extension: file.extension,
+					};
+				}
+				return fileStat;
+			});
+			newSettings = {
+				...newSettings,
+				fileStats: updatedFileStats,
+			};
+        }
+		store.dispatch(setSettings(newSettings));
+		await plugin.saveData(newSettings);
 	};
 
 	// 订阅文件的增删改查事件
@@ -104,13 +194,37 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 		await plugin.loadData()
 	);
 }
-/** 插件启动初始化 */
+/** 初始化 */
 export async function init(plugin: WatchtowerPlugin) {
+	store.dispatch(setSettings(plugin.settings));
 	// 加载文件信息
 	const fileStatLists = plugin.fileHandler.loadFileStats();
 	store.dispatch(setFileStatList(fileStatLists));
 	// 比较文件差异
 	const differentFiles = plugin.fileHandler.compareFiles();
-	store.dispatch(setDifferentFiles(differentFiles));
-	store.dispatch(setSettings(plugin.settings));
+	const newSettings = {
+		...plugin.settings,
+		fileStats: differentFiles,
+	};
+	store.dispatch(setSettings(newSettings));
+	await plugin.saveData(newSettings);
+	// console.log(differentFiles);
+	// store.dispatch(setDifferentFiles(differentFiles));
+}
+
+/** TFile 转换 SettingsFileStats 工厂函数*/
+function createFileStats(file: TFile, differents: string): SettingsFileStats {
+	return {
+		basename: file.basename,
+		extension: file.extension,
+		name: file.name,
+		path: file.path,
+		stat: {
+			size: file.stat.size,
+			ctime: file.stat.ctime,
+			mtime: file.stat.mtime,
+		},
+		differents,
+		recentOpen: 0,
+	};
 }

@@ -9,8 +9,9 @@ import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
 import { activateMiddleView } from "src/pluginManagerPlugin/PMtools";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
-    const differentFiles = useSelector((state: RootState) => state.counter.differentFiles);
-    const dispatch = useDispatch();
+    const stoerSettings = useSelector((state: RootState) => state.settings);
+    const differentFiles = stoerSettings.fileStats.filter((file) => file.differents !== "");
+        const dispatch = useDispatch();
 
     useEffect(() => {
         // 可以在这里处理副作用逻辑

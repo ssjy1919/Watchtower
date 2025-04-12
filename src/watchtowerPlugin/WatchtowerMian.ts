@@ -6,6 +6,7 @@ import {
 	registerFileEventHandlers,
 } from "src/watchtowerPlugin/toolsFC";
 import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
+import { store } from "src/store";
 
 export interface WatchtowerMain {
 	plugin: WatchtowerPlugin;
@@ -53,7 +54,7 @@ export class WatchtowerMain {
 			id: "WatchtowerMark",
 			name: "保存文件信息",
 			callback: async () => {
-				await this.plugin.fileHandler.saveFileInfo();
+                await this.plugin.fileHandler.saveFileInfo();
 			},
 		});
 

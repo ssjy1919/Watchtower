@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu } from "obsidian"; // 引入 Obsidian 的 Menu API
+import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
 import { useSelector } from "react-redux";
 import { RootState, store, setFileStatList } from "../../store";
 import WatchtowerPlugin from "src/main";
@@ -12,18 +12,22 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
     const [className, setClassName] = React.useState('');
     const recentFilesOpenMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
 
-    const sortedFileStats = useSelector((state: RootState) => state.counter.fileStatList)
-        .slice().sort((a, b) => b.recentOpen - a.recentOpen);
+    const sortedFileStats = useSelector((state: RootState) => state.settings.fileStats).filter(
+        (fileStat) => fileStat.differents !== "文件丢失" && fileStat.differents !== "文件删除"
+    ).slice().sort((a, b) => b.recentOpen - a.recentOpen);
 
 
     const handleClick = (index: number) => {
         setClassName((prevClassName) =>
             prevClassName === 'is-active' ? '' : 'is-active'
         );
-        plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", recentFilesOpenMode);
-        store.dispatch(setFileStatList(sortedFileStats));
+        if (sortedFileStats[index].differents != "文件丢失" && sortedFileStats[index].differents != "文件删除") {
+            plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", recentFilesOpenMode);
+            store.dispatch(setFileStatList(sortedFileStats));
+        } else {
+            new Notice(`文件不存在：${sortedFileStats[index].path}`)
+        }
     };
-
     // 右键菜单处理函数
     const handleContextMenu = (event: React.MouseEvent, index: number) => {
         event.preventDefault(); // 阻止默认右键行为
@@ -78,8 +82,8 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                         <div className="tree-item-inner nav-file-title-content">{fileStat.name}</div>
                     </div>
                 </div>
-                // 限制历史文件的数量，太多了还不如去文件夹翻或搜索
-            )).slice(0, 30)}
+                // 限制历史文件的数量
+            )).slice(0, 100)}
         </div>
     );
 };
