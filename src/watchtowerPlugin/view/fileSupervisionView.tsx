@@ -34,7 +34,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         await plugin.fileHandler.saveFileInfo();
         // 提示用户保存成功
         new Notice("文件信息已保存！");
-        setClassName((prevClassName) =>
+        setClassName(prevClassName =>
             prevClassName = 'file-supervision-table-none'
         );
     };
@@ -51,9 +51,9 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         <div className="file-supervision">
             <div className={`${className} tips`} >
                 <div className="show-table" onClick={handleClick}>
-                    {differentFiles.length == 0 ? stoerSettings.markTime : <div>{stoerSettings.markTime}<br />{differentFiles.length}份变动文件</div>}
+                    {differentFiles.length == 0 ? `${stoerSettings.markTime} √`: <div>{stoerSettings.markTime}🐾{differentFiles.length}</div>}
                 </div>
-                <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>保存</div>
+                <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>🔄️</div>
             </div>
             <div className={className} >
                 {differentFiles.length > 0 ?

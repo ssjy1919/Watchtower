@@ -104,13 +104,17 @@ export class FileHandler {
 						(settingFile) => settingFile.path === currentFile.path
 					)
 				) {
-					return { ...currentFile, differents: "新增文件" };
+					return { ...currentFile, differents: "新建文件" };
 				}
 				return currentFile;
 			})
 			.filter(Boolean) as SettingsFileStats[];
 
-		return [...fileStatLists, ...missingFiles];
+		    // 合并并去重
+            const combinedFiles = [...fileStatLists, ...missingFiles];
+            const uniqueFiles = Array.from(new Map(combinedFiles.map(item => [item.path, item])).values());
+        
+            return uniqueFiles;
 	}
 	/** 保存文件信息到插件存储，并刷新文件差异信息。 */
 	saveFileInfo = async (): Promise<void> => {
@@ -120,7 +124,7 @@ export class FileHandler {
 			// 遍历 fileStats 并将 differents 设置为空字符串
 			const updatedFileStats = fileStats.map((file) => ({
 				...file,
-				differents: "", // 将 differents 显式赋值为空字符串
+				differents: "", 
 			}));
 			const newSettings = {
 				...store.getState().settings,

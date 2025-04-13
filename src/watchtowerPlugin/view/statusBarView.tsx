@@ -65,7 +65,7 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
             className={differentFiles.length > 0 ? "watchtowerPlugin-status-bar-item is-dirty" : "watchtowerPlugin-status-bar-item"}
             onClick={handleMenu} // 绑定点击事件
         >
-            {differentFiles.length > 0 ? `变动文件：${differentFiles.length}` : "文件完整"}
+            {differentFiles.length > 0 ? `🐾${differentFiles.length}` : "√"}
         </div>
     );
 };

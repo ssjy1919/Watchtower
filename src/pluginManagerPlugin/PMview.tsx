@@ -68,6 +68,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 return {
                     ...p,
                     delayStart: newDelayStart || 0,
+                    switchTime: new Date().getTime(),
                 };
             }
             return p;
@@ -95,6 +96,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 return {
                     ...p,
                     comment: newComment,
+                    switchTime: new Date().getTime(),
                 };
             }
             return p;
@@ -104,8 +106,21 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         await plugin.saveData(plugin.settings);
     }
 
-    const handleSettingClick = (iPlugin: IPlugin) => {
-        pluginHandler.openPluginSettings(iPlugin.id)
+    const handleSettingClick = async (iPlugin: IPlugin) => {
+        pluginHandler.openPluginSettings(iPlugin.id);
+        const updatedPlugins = plugin.settings.pluginManager.map(p => {
+            if (p.id === iPlugin.id) {
+                return {
+                    ...p,
+                    switchTime: new Date().getTime(),
+                };
+            }
+            return p;
+        });
+        plugin.settings.pluginManager = updatedPlugins;
+        dispatch(setSettings(plugin.settings));
+        await plugin.saveData(plugin.settings);
+
     }
 
 
@@ -123,7 +138,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         plugin.saveData(updatedSettings);
     };
 
-    // 点击表头时循环切换排序状态
+    // 循环切换排序状态
     const handleHeaderClick = (field: keyof PluginManager) => {
         let newOrder: "asc" | "desc" | "" = "";
         if (settings.sortField.field !== field || !settings.sortField.order) {
@@ -183,7 +198,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                             {settings.sortField.field === "delayStart" && settings.sortField.order === "desc" && "↓"}
                         </th>
                         <th onClick={() => handleHeaderClick('switchTime')} >
-                            开关时间{" "}
+                            更改时间{" "}
                             {settings.sortField.field === "switchTime" && settings.sortField.order === "asc" && "↑"}
                             {settings.sortField.field === "switchTime" && settings.sortField.order === "desc" && "↓"}
                         </th>

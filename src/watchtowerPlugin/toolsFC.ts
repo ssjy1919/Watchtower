@@ -53,7 +53,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 							ctime: file.stat.ctime,
 							mtime: file.stat.mtime,
 						},
-						differents: "新增文件",
+						differents: "新建文件",
 						recentOpen: 0,
 					} as SettingsFileStats,
 				];
@@ -75,11 +75,11 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 						if (file.stat.size !== fileStat.stat.size) {
 							return {
 								...fileStat,
-                                differents: file.stat.size > fileStat.stat.size
+                                differents: fileStat.differents !="新建文件"?file.stat.size > fileStat.stat.size
                                 ? `增加${file.stat.size - fileStat.stat.size}字节`
                                 : file.stat.size < fileStat.stat.size
                                 ? `减少${fileStat.stat.size - file.stat.size}字节`
-                                : "", 
+                                : "":fileStat.differents, 
 							};
 						}
 					}
@@ -208,23 +208,5 @@ export async function init(plugin: WatchtowerPlugin) {
 	};
 	store.dispatch(setSettings(newSettings));
 	await plugin.saveData(newSettings);
-	// console.log(differentFiles);
-	// store.dispatch(setDifferentFiles(differentFiles));
 }
 
-/** TFile 转换 SettingsFileStats 工厂函数*/
-function createFileStats(file: TFile, differents: string): SettingsFileStats {
-	return {
-		basename: file.basename,
-		extension: file.extension,
-		name: file.name,
-		path: file.path,
-		stat: {
-			size: file.stat.size,
-			ctime: file.stat.ctime,
-			mtime: file.stat.mtime,
-		},
-		differents,
-		recentOpen: 0,
-	};
-}
