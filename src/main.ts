@@ -18,7 +18,7 @@ export default class WatchtowerPlugin extends Plugin {
 	async onload() {
 		// 加载设置
 		await loadSettings(this);
-		
+
 		if (this.settings.watchtowerPlugin) {
 			const watchtowerMain = new WatchtowerMain(this);
 			await watchtowerMain.initialize();
@@ -32,10 +32,12 @@ export default class WatchtowerPlugin extends Plugin {
 
 		// 挂载插件设置页面
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
+
+
 	}
 
 	async onunload() {
-		/** 卸载标签叶子 */
+		/** 卸载标签页*/
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_PLUGIN_MANAGER);
 	}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, setFileChange, setSettings } from "src/store";
+import { RootState } from "src/store";
 import { Notice } from "obsidian";
 import "./fileSupervisionView.css"
 import WatchtowerPlugin from "src/main";
@@ -11,16 +11,10 @@ interface FileSupervisionProps {
 }
 
 const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
-    const fileChange = useSelector((state: RootState) => state.counter.fileChange);
     const stoerSettings = useSelector((state: RootState) => state.settings);
     const differentFiles = stoerSettings.fileStats.filter((file) => file.differents !== "");
     const [className, setClassName] = useState('file-supervision-table-none');
     const dispatch = useDispatch();
-    useEffect(() => {
-        if (fileChange) {
-            dispatch(setFileChange(false));
-        }
-    }, [fileChange, dispatch, differentFiles, stoerSettings, setFileChange]);
     const handleClick = () => {
         setClassName((prevClassName) =>
             prevClassName === 'file-supervision-table-none'
@@ -51,7 +45,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         <div className="file-supervision">
             <div className={`${className} tips`} >
                 <div className="show-table" onClick={handleClick}>
-                    {differentFiles.length == 0 ? `${stoerSettings.markTime} √`: <div>{stoerSettings.markTime}🐾{differentFiles.length}</div>}
+                    {differentFiles.length == 0 ? `${stoerSettings.markTime} √`: <div>{stoerSettings.markTime}  🐾{differentFiles.length}</div>}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>🔄️</div>
             </div>

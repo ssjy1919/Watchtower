@@ -3,10 +3,9 @@ import WatchtowerPlugin from "../main";
 import { VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import {
 	DEFAULT_SETTINGS,
-	settingsFileStats,
 	SettingsFileStats,
 } from "../types";
-import { store, setFileStatList, setSettings } from "../store";
+import { store, setSettings } from "../store";
 
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
@@ -196,15 +195,20 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 }
 /** 初始化 */
 export async function init(plugin: WatchtowerPlugin) {
-	store.dispatch(setSettings(plugin.settings));
-	// 加载文件信息
-	const fileStatLists = plugin.fileHandler.loadFileStats();
-	store.dispatch(setFileStatList(fileStatLists));
+    store.dispatch(setSettings(plugin.settings));
+    /** 文件监控功能保存设置时会和插件管理功能冲突，需要在应用启动时初始化，避免开关显示错误 */
+    const updatedPluginManager = store.getState().settings.pluginManager.map(p => ({
+        ...p,
+        //@ts-ignore
+        enabled: Object.keys(app.plugins.plugins).includes(p.id)?true:false,
+    }));
+    
 	// 比较文件差异
 	const differentFiles = plugin.fileHandler.compareFiles();
 	const newSettings = {
 		...plugin.settings,
-		fileStats: differentFiles,
+        fileStats: differentFiles,
+        pluginManager: updatedPluginManager,
 	};
 	store.dispatch(setSettings(newSettings));
 	await plugin.saveData(newSettings);

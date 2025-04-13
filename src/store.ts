@@ -1,56 +1,91 @@
-
-import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { DEFAULT_SETTINGS, settingsFileStats } from "./types";
-
+// store.ts（完整修改方案）
+import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+	DEFAULT_SETTINGS,
+	settingsFileStats,
+	WatchtowerSettings,
+	PluginManager,
+    pluginManager,
+} from "./types";
 
 const initialState = {
-	// - fileChange：布尔值，用于标识文件是否发生变化，默认值为 false
-	fileChange: false,
-	/** 当前文件列表，包含文件路径和状态 */
-    fileStatList: [...[settingsFileStats]], 
-    /* 记录差异文件列表 */
-    differentFiles: [...[settingsFileStats]], 
-
+     /** 最近打开的历史文件列表 */
+    fileStatList: [settingsFileStats],
 };
-
 
 const counterSlice = createSlice({
 	name: "counter",
-	initialState, 
-	reducers: {
-		setFileChange: (state, action) => {
-			state.fileChange = action.payload;
-		},
-        setFileStatList: (state, action) => {
-            state.fileStatList = action.payload;
-            
-        },
-        setDifferentFiles: (state, action) => {
-			state.differentFiles = action.payload;
+	initialState,
+    reducers: {
+        /** 控制最近打开的历史文件列表 */
+		setFileStatList: (state, action) => {
+			state.fileStatList = action.payload;
         },
 	},
 });
 
 const settingsSlice = createSlice({
-	name: "settings", 
-	initialState: DEFAULT_SETTINGS, 
+	name: "settings",
+	initialState: DEFAULT_SETTINGS,
 	reducers: {
-        setSettings: (state, action) => {
-			return { ...state, ...action.payload }; 
+		setSettings: (state, action) => {
+			return { ...state, ...action.payload };
 		},
 	},
 });
 
-// 导出 actions ，用于在组件中触发状态更新
-export const { setFileChange, setFileStatList ,setDifferentFiles} = counterSlice.actions;
-export const { setSettings } = settingsSlice.actions;
+// --------------------------- 新增 deepSettingsSlice 以后再迁移 ---------------------------
+const deepSettingsSlice = createSlice({
+	name: "deepSettings",
+	initialState: DEFAULT_SETTINGS,
+	reducers: {
+		// 更新单个插件
+		updatePlugin: (state, action: PayloadAction<PluginManager>) => {
+			const index = state.pluginManager.findIndex(
+				(p) => p.id === action.payload.id
+			);
+			if (index >= 0) {
+				state.pluginManager[index] = {
+					...state.pluginManager[index],
+					...action.payload,
+					switchTime: Date.now(),
+				};
+			}
+		},
 
-
-export const store = configureStore({
-	reducer: {
-		counter: counterSlice.reducer, 
-		settings: settingsSlice.reducer, 
+		// 通用深层更新方法
+		updateNestedField: <T extends keyof WatchtowerSettings>(
+			state: WatchtowerSettings,
+			action: PayloadAction<{
+				key: T;
+				value: WatchtowerSettings[T];
+			}>
+		) => {
+			const { key, value } = action.payload;
+			state[key] = value;
+		},
 	},
 });
 
+export const { updatePlugin, updateNestedField } = deepSettingsSlice.actions;
+
+// 扩展类型定义
+declare module "react-redux" {
+	interface DefaultRootState extends RootState {
+		deepSettings: WatchtowerSettings;
+	}
+}
+
+// 修改 store 配置（新增 deepSettings 不删除原有配置）
+export const store = configureStore({
+	reducer: {
+		counter: counterSlice.reducer,
+		settings: settingsSlice.reducer, 
+		deepSettings: deepSettingsSlice.reducer, 
+	},
+});
+
+// 保留原有类型导出
 export type RootState = ReturnType<typeof store.getState>;
+export const { setFileStatList  } = counterSlice.actions;
+export const { setSettings } = settingsSlice.actions;

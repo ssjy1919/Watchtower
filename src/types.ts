@@ -23,7 +23,7 @@ export interface PluginManager {
 	name: string;
 	/** obsidian应用捕获的插件启用状态，不包括延时启动的插件 */
 	enabled: boolean;
-	/** 最后开关时间 */
+	/** 最后更改时间 */
 	switchTime: number;
 	/** 用户备注 */
 	comment: string;
@@ -82,11 +82,6 @@ export interface SortField {
 	order: "asc" | "desc" | null;
 }
 
-
-
-
-
-
 export interface WatchtowerSettings {
 	/** 保存文件信息的时间 */
 	markTime: string;
@@ -103,7 +98,7 @@ export interface WatchtowerSettings {
 	/** 插件信息 */
 	pluginManager: PluginManager[];
 	/** 插件管理页面的排序字段 */
-    sortField: SortField;
+	sortField: SortField;
 }
 
 // 定义默认的 WatchtowerSettings 值

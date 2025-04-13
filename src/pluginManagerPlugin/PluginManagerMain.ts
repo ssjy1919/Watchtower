@@ -9,7 +9,6 @@ export interface PluginManagerPlugin {
 
 export class PluginManagerPlugin {
 	public plugin: WatchtowerPlugin;
-
 	constructor(plugin: WatchtowerPlugin) {
 		this.plugin = plugin;
 		this.plugin.addCommand({
@@ -26,11 +25,17 @@ export class PluginManagerPlugin {
 		this.plugin.registerView(
 			VIEW_TYPE_PLUGIN_MANAGER,
 			(leaf) => new PluginManagerLeft(leaf, this.plugin)
-		);
+        );
+        // this.plugin.registerInterval(
+        //     window.setInterval(() => 
+        //         store.getState().settings.startTime += 1
+        //         , 1000)
+        // );
+        
 		this.plugin.app.workspace.onLayoutReady(async () => {
-			plugin.settings.pluginManager.forEach((plugin) => {
+			store.getState().settings.pluginManager.forEach((plugin) => {
 				if (plugin.delayStart > 0) {
-					//延时启动
+                    //延时启动
 					setTimeout(async () => {
 						//@ts-ignore
 						app.plugins.enablePlugin(plugin.id);
@@ -50,7 +55,6 @@ export class PluginManagerPlugin {
 							pluginManager: updatedPlugins,
 						};
 						store.dispatch(setSettings(newSettings));
-						await this.plugin.saveData(newSettings);
 					}, plugin.delayStart * 1000);
 				}
 			});
