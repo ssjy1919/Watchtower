@@ -31,7 +31,7 @@ export class PluginManagerPlugin {
 			plugin.settings.pluginManager.forEach((plugin) => {
 				if (plugin.delayStart > 0) {
 					//延时启动
-					setTimeout(() => {
+					setTimeout(async () => {
 						//@ts-ignore
 						app.plugins.enablePlugin(plugin.id);
 						const updatedPlugins = store
@@ -50,8 +50,7 @@ export class PluginManagerPlugin {
 							pluginManager: updatedPlugins,
 						};
 						store.dispatch(setSettings(newSettings));
-						// await this.plugin.saveData(newSettings);
-						// console.log(`插件${plugin.id}启动`,this.plugin.settings.markTime);
+						await this.plugin.saveData(newSettings);
 					}, plugin.delayStart * 1000);
 				}
 			});

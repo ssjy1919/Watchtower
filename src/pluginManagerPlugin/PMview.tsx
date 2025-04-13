@@ -39,7 +39,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
-        //  单独用 forEach 处理调用逻辑， 如果和上面的 map 合并，调试时容易看蒙
+        
         updatedPlugins.forEach(p => {
             if (p.id === iPlugin.id) {
                 if (iPlugin.enabled) {
@@ -75,7 +75,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         });
         if (newDelayStart > 0) {
             if (iPlugin.enabled) {
-                //用户设置的延时时间大于0且插件处于启用状态时，禁用插件通知ob后再用disablePlugin临时启动
+                //用户设置的延时时间大于0且插件处于启用状态时，通知ob禁用插件后再用disablePlugin临时启动
                 pluginHandler.disablePlugin(iPlugin.id);
                 //@ts-ignore
                 app.plugins.enablePlugin(iPlugin.id);
