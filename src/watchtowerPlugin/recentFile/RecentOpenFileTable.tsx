@@ -13,7 +13,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
     const recentFilesOpenMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
 
     const sortedFileStats = useSelector((state: RootState) => state.settings.fileStats).filter(
-        (fileStat) => fileStat.differents !== "文件丢失" && fileStat.differents !== "文件删除"
+        (fileStat) => fileStat.differents !== "未找到" && fileStat.differents !== "已删除"
     ).slice().sort((a, b) => b.recentOpen - a.recentOpen);
 
 
@@ -21,7 +21,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
         setClassName((prevClassName) =>
             prevClassName === 'is-active' ? '' : 'is-active'
         );
-        if (sortedFileStats[index].differents != "文件丢失" && sortedFileStats[index].differents != "文件删除") {
+        if (sortedFileStats[index].differents != "未找到" && sortedFileStats[index].differents != "已删除") {
             plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", recentFilesOpenMode);
             store.dispatch(setFileStatList(sortedFileStats));
         } else {
@@ -55,15 +55,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                 });
         });
 
-        // 添加菜单项：删除文件记录
-        menu.addItem((item) => {
-            item.setTitle("Remove from List")
-                .setIcon("trash")
-                .onClick(() => {
-                    const updatedFileStats = sortedFileStats.filter((_, i) => i !== index);
-                    store.dispatch(setFileStatList(updatedFileStats));
-                });
-        });
+       
 
         // 显示菜单
         menu.showAtMouseEvent(event.nativeEvent);

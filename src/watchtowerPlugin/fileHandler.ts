@@ -74,7 +74,13 @@ export class FileHandler {
 					(file) => file.path === settingFile.path
 				);
 				if (!currentFile) {
-					return { ...settingFile, differents: "文件丢失" };
+					return {
+						...settingFile,
+						differents:
+							settingFile.differents === "已删除"
+								? "已删除"
+								: "未找到",
+					};
 				}
 				if (settingFile.stat.size !== currentFile.stat.size) {
 					if (settingFile.stat.size > currentFile.stat.size) {
@@ -110,11 +116,13 @@ export class FileHandler {
 			})
 			.filter(Boolean) as SettingsFileStats[];
 
-		    // 合并并去重
-            const combinedFiles = [...fileStatLists, ...missingFiles];
-            const uniqueFiles = Array.from(new Map(combinedFiles.map(item => [item.path, item])).values());
-        
-            return uniqueFiles;
+		// 合并并去重
+		const combinedFiles = [...fileStatLists, ...missingFiles];
+		const uniqueFiles = Array.from(
+			new Map(combinedFiles.map((item) => [item.path, item])).values()
+		);
+
+		return uniqueFiles;
 	}
 	/** 保存文件信息到插件存储，并刷新文件差异信息。 */
 	saveFileInfo = async (): Promise<void> => {
@@ -124,7 +132,7 @@ export class FileHandler {
 			// 遍历 fileStats 并将 differents 设置为空字符串
 			const updatedFileStats = fileStats.map((file) => ({
 				...file,
-				differents: "", 
+				differents: "",
 			}));
 			const newSettings = {
 				...store.getState().settings,

@@ -34,7 +34,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     };
 
     const handleOpenLink = (path: string, differents: string) => {
-        if (differents != "文件丢失" && differents != "文件删除") {
+        if (differents != "未找到" && differents != "已删除") {
             plugin.app.workspace.openLinkText(path, '', false);
         } else {
             new Notice(`文件不存在：${path}`)

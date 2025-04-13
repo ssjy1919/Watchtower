@@ -96,7 +96,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 				if (fileStat.path === file.path) {
 					return {
 						...fileStat,
-						differents: "文件删除",
+						differents: "已删除",
 					};
 				}
 				return fileStat;

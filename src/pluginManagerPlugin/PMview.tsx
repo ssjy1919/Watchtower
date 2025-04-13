@@ -20,7 +20,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const getDisabledPlugins = pluginManager.filter(p => !p.enabled).length;
     const storeField = storeSettings.sortField.field;
     const storeOrder = storeSettings.sortField.order;
-    const dispatch = useDispatch();    
+    const dispatch = useDispatch();
     /**处理开关 */
     const handleChange = async (iPlugin: IPlugin) => {
         const updatedPlugins = pluginManager.map(p => {
@@ -97,10 +97,10 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 //通知ob启动插件，并保存插件信息
                 pluginHandler.enablePlugin(iPlugin.id);
         }
-        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        await plugin.saveData(newSettings);
         const newStoreSettings = { ...storeSettings, pluginManager: upStoreDatedPlugins };
         dispatch(setSettings(newStoreSettings));
+        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
+        await plugin.saveData(newSettings);
     }
     // 处理备注
     const handleCommentChange = async (iPlugin: IPlugin, newComment: string) => {
@@ -118,7 +118,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         dispatch(setSettings(newSettings));
         await plugin.saveData(newSettings);
     }
-
+    // 打开插件设置
     const handleSettingClick = async (iPlugin: IPlugin) => {
         pluginHandler.openPluginSettings(iPlugin.id);
         const updatedPlugins = pluginManager.map(p => {
