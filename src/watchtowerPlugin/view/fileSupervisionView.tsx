@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { RootState } from "src/store";
 import { Notice } from "obsidian";
 import "./fileSupervisionView.css"
@@ -14,7 +14,6 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     const stoerSettings = useSelector((state: RootState) => state.settings);
     const differentFiles = stoerSettings.fileStats.filter((file) => file.differents !== "");
     const [className, setClassName] = useState('file-supervision-table-none');
-    const dispatch = useDispatch();
     const handleClick = () => {
         setClassName((prevClassName) =>
             prevClassName === 'file-supervision-table-none'
@@ -28,9 +27,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         await plugin.fileHandler.saveFileInfo();
         // 提示用户保存成功
         new Notice("文件信息已保存！");
-        setClassName(prevClassName =>
-            prevClassName = 'file-supervision-table-none'
-        );
+        setClassName(() => 'file-supervision-table-none');
     };
 
     const handleOpenLink = (path: string, differents: string) => {
@@ -45,7 +42,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         <div className="file-supervision">
             <div className={`${className} tips`} >
                 <div className="show-table" onClick={handleClick}>
-                    {differentFiles.length == 0 ? `${stoerSettings.markTime} √`: <div>{stoerSettings.markTime}  🐾{differentFiles.length}</div>}
+                    {differentFiles.length == 0 ? `${stoerSettings.markTime} √` : <div>{stoerSettings.markTime}  🐾{differentFiles.length}</div>}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>🔄️</div>
             </div>

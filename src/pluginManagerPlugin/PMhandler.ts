@@ -1,6 +1,5 @@
 import { Notice } from "obsidian";
 import WatchtowerPlugin from "src/main";
-import { setSettings, store } from "src/store";
 import { pluginManager, PluginManager } from "src/types";
 
 export interface IPlugin {
@@ -24,7 +23,7 @@ export class PluginHandler {
 	/** 获取所有已安装的插件 */
 	getAllPlugins(): PluginManager[] {
 		//@ts-ignore
-		const installedPlugins = Object.keys(app.plugins.manifests).map(
+		const installedPlugins:PluginManager[] = Object.keys(app.plugins.manifests).map(
 			(id) => {
 				//@ts-ignore
 				const manifest = app.plugins.manifests[id];
@@ -34,15 +33,16 @@ export class PluginHandler {
 					) || pluginManager;
 				return {
 					id,
+                    //@ts-ignore
+                    haveSettingTab:app.setting.pluginTabs.some(p =>p.id===pluginSetting.id)?true:false,
 					name: manifest.name,
 					enabled:
 						//@ts-ignore 直接获取已启动的插件
 						Object.keys(app.plugins.plugins).includes(id),
-					switchTime: pluginSetting.switchTime,
+                    switchTime: pluginSetting.switchTime,
+                    group: pluginSetting.group,
 					comment: pluginSetting.comment,
                     delayStart: pluginSetting.delayStart,
-                    //@ts-ignore
-					settingTab: app.setting.pluginTabs.some(p=>p.id===id),
 					author: manifest.author || "",
 					authorUrl: manifest.authorUrl || "",
 					description: manifest.description || "",
