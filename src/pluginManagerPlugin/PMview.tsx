@@ -120,7 +120,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     }
     // 打开插件设置
     const handleSettingClick = async (iPlugin: IPlugin) => {
-        pluginHandler.openPluginSettings(iPlugin.id);
+        pluginHandler.openPluginSettings(iPlugin);
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
@@ -227,9 +227,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                 <div className="plugin-name">
                                     <div>{plugin.name}</div>
 
-                                    <div>{plugin.enabled ? "  ⚙️" : " "}<div className="version">{plugin.version}</div></div>
+                                    <div>{plugin.enabled ? "  ⚙️" : "   "}<div className="version">{plugin.version}</div></div>
                                 </div>
-
                             </td>
                             <td>{plugin.id != "watchtower" ? <Switch
                                 label=""
@@ -242,9 +241,10 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                 {plugin.id != "watchtower" ?
                                     <input
                                         type="number"
-                                        defaultValue={plugin.delayStart || 0}
+                                        defaultValue={plugin.delayStart || ""}
                                         min="0"
-                                        max="99999"
+                                        max="999"
+                                        placeholder="0"
                                         onBlur={(e) => handleDelayStartChange(plugin, parseInt(e.target.value))}
                                     /> : "0"}
                             </td>

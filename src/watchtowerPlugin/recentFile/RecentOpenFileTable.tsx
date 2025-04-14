@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
+import { Menu, Notice } from "obsidian"; 
 import { useSelector } from "react-redux";
 import { RootState, store, setFileStatList } from "../../store";
 import WatchtowerPlugin from "src/main";
@@ -68,7 +68,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                     key={index}
                     className="nav-file"
                     onClick={() => handleClick(index)}
-                    onContextMenu={(event) => handleContextMenu(event, index)} // 监听右键点击
+                    onContextMenu={(event) => handleContextMenu(event, index)} 
                 >
                     <div className={`tree-item-self nav-file-title tappable is-clickable${className}`}>
                         <div className="tree-item-inner nav-file-title-content">{fileStat.name}</div>

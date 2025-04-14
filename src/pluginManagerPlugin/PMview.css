@@ -83,6 +83,8 @@
     height: 3em;
     cursor: pointer;
     border: #333 solid 1px;
+    font-size: 0.8em;
+    width: 3em;
 }
 
 
@@ -107,10 +109,7 @@
     font-size: 0.7em;
 }
 
-.PluginManagerView th:nth-child(1),
-.PluginManagerView td:nth-child(1) {
-    width: 20%;
-}
+
 
 .PluginManagerView .enabled {
     background-color: #f9f9f9;
@@ -122,15 +121,18 @@
     background-color: #ffffff;
     color: #333;
 }
-
+.PluginManagerView th:nth-child(1),
+.PluginManagerView td:nth-child(1) {
+    width: 20%;
+}
 .PluginManagerView th:nth-child(2),
 .PluginManagerView td:nth-child(2) {
-    min-width:3em;
     /* 设置第二列的宽度 */
     text-align: center;
     /* 让单元格内的文本居中 */
     vertical-align: middle;
     /* 让单元格内的内容垂直居中 */
+    width: 4em;
 }
 
 .PluginManagerView th:nth-child(3),
@@ -145,17 +147,18 @@
     display: inline-block;
     /* 确保宽度至少能容纳内容 */
     box-sizing: border-box;
-    /* 包括 padding 和 border 在宽度计算中 */
+    width: 3em;
 }
 
 .PluginManagerView th:nth-child(4),
 .PluginManagerView td:nth-child(4) {
-    width: 15%;
+    width: 4em;
     /* 设置第三列的宽度 */
     text-align: center;
     /* 让单元格内的文本居中 */
     vertical-align: middle;
     /* 让单元格内的内容垂直居中 */
+    font-size: 0.8em;
 }
 
 .PluginManagerView th:nth-child(5),

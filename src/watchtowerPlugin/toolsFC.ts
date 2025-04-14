@@ -56,9 +56,6 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 						recentOpen: 0,
 					} as SettingsFileStats,
 				];
-				console.log("updatedFileStats", updatedFileStats);
-
-				// 更新 settings 并触发 Redux 更新
 				newSettings = {
 					...newSettings,
 					fileStats: updatedFileStats,

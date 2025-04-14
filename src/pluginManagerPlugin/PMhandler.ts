@@ -1,6 +1,6 @@
 import { Notice } from "obsidian";
 import WatchtowerPlugin from "src/main";
-import { store } from "src/store";
+import { setSettings, store } from "src/store";
 import { pluginManager, PluginManager } from "src/types";
 
 export interface IPlugin {
@@ -40,7 +40,9 @@ export class PluginHandler {
 						Object.keys(app.plugins.plugins).includes(id),
 					switchTime: pluginSetting.switchTime,
 					comment: pluginSetting.comment,
-					delayStart: pluginSetting.delayStart,
+                    delayStart: pluginSetting.delayStart,
+                    //@ts-ignore
+					settingTab: app.setting.pluginTabs.some(p=>p.id===id),
 					author: manifest.author || "",
 					authorUrl: manifest.authorUrl || "",
 					description: manifest.description || "",
@@ -102,22 +104,15 @@ export class PluginHandler {
 	}
 	/**
 	 * 根据插件 id 打开对应插件的设置页面
-	 * @param pluginId 插件 id
+	 * @param IPlugin
 	 */
-	openPluginSettings(pluginId: string): void {
-		const stat = store.getState();
-		const pluginExists = stat.settings.pluginManager.some((p) => {
-			if (p.id === pluginId) {
-				if (p.enabled) return true;
-			}
-		});
-
-		if (!pluginExists) {
+	openPluginSettings(iplugin: IPlugin): void {
+		if (!iplugin.enabled) {
 			new Notice("插件未开启", 5000);
 			return;
 		}
 		//@ts-ignore
-		if (!app.setting.openTabById(pluginId)) {
+		if (!app.setting.openTabById(iplugin.id)) {
 			new Notice("此插件没有设置项", 5000);
 		} else {
 			//@ts-ignore

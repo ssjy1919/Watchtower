@@ -5,7 +5,6 @@ import {
 	settingsFileStats,
 	WatchtowerSettings,
 	PluginManager,
-    pluginManager,
 } from "./types";
 
 const initialState = {

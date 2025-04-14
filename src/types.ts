@@ -28,7 +28,9 @@ export interface PluginManager {
 	/** 用户备注 */
 	comment: string;
 	/** 插件延时启动 */
-	delayStart: number;
+    delayStart: number;
+    /** 有没有设置页面 */
+    settingTab: boolean;
 	/** 作者 */
 	author: string;
 	/** 仓库地址 */
@@ -50,7 +52,8 @@ export const pluginManager: PluginManager = {
 	enabled: false,
 	switchTime: 0,
 	comment: "",
-	delayStart: 0,
+    delayStart: 0,
+    settingTab:true,
 	author: "",
 	authorUrl: "",
 	description: "",
