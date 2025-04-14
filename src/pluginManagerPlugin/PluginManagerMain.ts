@@ -1,6 +1,6 @@
 import WatchtowerPlugin from "src/main";
-import { activateMiddleView } from "./PMtools";
-import { PluginManagerLeft, VIEW_TYPE_PLUGIN_MANAGER } from "./PMleft";
+import { activateMiddleView, getAllPlugins } from "./PMtools";
+import { PluginManagerLeft, VIEW_TYPE_PLUGIN_MANAGER } from "./PluginManagerLeft";
 import { setSettings, store } from "src/store";
 
 export interface PluginManagerPlugin {
@@ -10,7 +10,11 @@ export interface PluginManagerPlugin {
 export class PluginManagerPlugin {
 	public plugin: WatchtowerPlugin;
 	constructor(plugin: WatchtowerPlugin) {
-		this.plugin = plugin;
+        this.plugin = plugin;
+        
+        
+    /** 初始化插件信息 */
+    getAllPlugins();
 		this.plugin.addCommand({
 			id: "pluginManagerCenterLeafView",
 			name: "打开插件管理视图",

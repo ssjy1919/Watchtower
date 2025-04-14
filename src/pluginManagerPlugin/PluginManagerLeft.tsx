@@ -3,7 +3,7 @@ import { Root, createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import WatchtowerPlugin from "src/main";
 import { store } from "src/store";
-import PluginManagerView from "./PMview";
+import PluginManagerView from "./PluginManagerView";
 
 
 
@@ -14,7 +14,6 @@ export class PluginManagerLeft extends ItemView {
     constructor(leaf: WorkspaceLeaf, plugin: WatchtowerPlugin) {
         super(leaf);
         this.plugin = plugin;
-
     }
     //设置icon
     getIcon() {

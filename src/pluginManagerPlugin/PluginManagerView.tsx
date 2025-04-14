@@ -1,13 +1,14 @@
 import WatchtowerPlugin from "src/main";
-import { PluginHandler } from "./PMhandler";
-import { IPlugin } from "./PMhandler";
+import { PluginHandler } from "./PluginHandler";
+import { IPlugin } from "./PluginHandler";
 import { Switch } from "src/setting/components/Switch";
-import "./PMview.css"
+import "./PluginManagerView.css"
 import { useDispatch } from "react-redux";
 import { RootState, setSettings } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import GroupView from "./GroupView";
+import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
 
 
 interface PluginManagerView {
@@ -15,7 +16,6 @@ interface PluginManagerView {
 }
 
 const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
-    const pluginHandler = new PluginHandler(plugin);
     const storeSettings = useSelector((state: RootState) => state.settings);
     const pluginManager = storeSettings.pluginManager;
     const getEnabledPlugins = pluginManager.filter(p => p.enabled).length;
@@ -23,6 +23,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const storeField = storeSettings.sortField.field;
     const storeOrder = storeSettings.sortField.order;
     const dispatch = useDispatch();
+
+  
     /**处理开关 */
     const handleChange = async (iPlugin: IPlugin) => {        
         const updatedPlugins = pluginManager.map(p => {
@@ -39,12 +41,12 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         updatedPlugins.forEach(p => {
             if (p.id === iPlugin.id) {
                 if (iPlugin.enabled) {
-                    pluginHandler.disablePlugin(iPlugin.id);
+                    disablePlugin(iPlugin.id);
                 } else if (!iPlugin.enabled && p.delayStart > 0) {
                     //@ts-ignore
                     app.plugins.enablePlugin(iPlugin.id);
                 } else if (!iPlugin.enabled && p.delayStart <= 0) {
-                    pluginHandler.enablePlugin(iPlugin.id);
+                    enablePlugin(iPlugin.id);
 
                 }
             }
@@ -90,14 +92,14 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         if (newDelayStart > 0) {
             if (iPlugin.enabled) {
                 //用户设置的延时时间大于0且插件处于启用状态时，通知ob禁用插件后再用disablePlugin临时启动
-                pluginHandler.disablePlugin(iPlugin.id);
+                disablePlugin(iPlugin.id);
                 //@ts-ignore
                 app.plugins.enablePlugin(iPlugin.id);
             }
         } else {
             if (iPlugin.enabled)
                 //通知ob启动插件，并保存插件信息
-                pluginHandler.enablePlugin(iPlugin.id);
+                enablePlugin(iPlugin.id);
         }
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         await plugin.saveData(newSettings);
@@ -121,10 +123,10 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         await plugin.saveData(newSettings);
     }
     // 打开插件设置
-    const handleSettingClick = async (iPlugin: IPlugin) => {
-        pluginHandler.openPluginSettings(iPlugin);
+    const handleSettingClick = async ( Iplugin: PluginManager) => {
+        openPluginSettings(Iplugin);
         const updatedPlugins = pluginManager.map(p => {
-            if (p.id === iPlugin.id) {
+            if (p.id === Iplugin.id) {
                 return {
                     ...p,
                     switchTime: new Date().getTime(),
@@ -252,9 +254,9 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                     /> : "0"}
                             </td>
                             <td>
-                                {pluginHandler.getSwitchTimeByPluginId(plugin.id) === 0
+                                {getSwitchTimeByPluginId(plugin.id) === 0
                                     ? 0
-                                    : new Date(pluginHandler.getSwitchTimeByPluginId(plugin.id)).toLocaleString()}
+                                    : new Date(getSwitchTimeByPluginId(plugin.id)).toLocaleString()}
                             </td>
                             <td>
                                 <textarea

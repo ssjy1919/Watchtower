@@ -9,7 +9,7 @@ import {
 	VIEW_TYPE_FILE_SUPERVISION,
 } from "./watchtowerPlugin/view/leafView";
 import { PluginManagerPlugin } from "./pluginManagerPlugin/PluginManagerMain";
-import { VIEW_TYPE_PLUGIN_MANAGER } from "./pluginManagerPlugin/PMleft";
+import { VIEW_TYPE_PLUGIN_MANAGER } from "./pluginManagerPlugin/PluginManagerLeft";
 
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;
