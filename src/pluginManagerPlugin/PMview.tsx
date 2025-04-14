@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux";
 import { RootState, setSettings } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
-import GroupView from "./GroupView";
-
 
 interface PluginManagerView {
     plugin: WatchtowerPlugin;
@@ -24,7 +22,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const storeOrder = storeSettings.sortField.order;
     const dispatch = useDispatch();
     /**处理开关 */
-    const handleChange = async (iPlugin: IPlugin) => {        
+    const handleChange = async (iPlugin: IPlugin) => {
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
@@ -49,7 +47,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 }
             }
         });
-        
+
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         dispatch(setSettings(newSettings));
         // 保存数据到插件存储
@@ -99,10 +97,10 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 //通知ob启动插件，并保存插件信息
                 pluginHandler.enablePlugin(iPlugin.id);
         }
-        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        await plugin.saveData(newSettings);
         const newStoreSettings = { ...storeSettings, pluginManager: upStoreDatedPlugins };
         dispatch(setSettings(newStoreSettings));
+        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
+        await plugin.saveData(newSettings);
     }
     // 处理备注
     const handleCommentChange = async (iPlugin: IPlugin, newComment: string) => {
@@ -191,7 +189,6 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
     return (
         <div className="PluginManagerView">
-            <GroupView plugin={plugin} />
             <table>
                 <thead>
                     <tr>
@@ -229,8 +226,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
                                 <div className="plugin-name">
                                     <div>{plugin.name}</div>
-                                    {/* @ts-ignore */}
-                                    <div className="plugin-setting">{plugin.enabled &&plugin.haveSettingTab? "  ⚙️" : "   "}<div className="version">{plugin.version}</div></div>
+
+                                    <div>{plugin.enabled ? "  ⚙️" : "   "}<div className="version">{plugin.version}</div></div>
                                 </div>
                             </td>
                             <td>{plugin.id != "watchtower" ? <Switch

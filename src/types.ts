@@ -29,6 +29,8 @@ export interface PluginManager {
 	comment: string;
 	/** 插件延时启动 */
     delayStart: number;
+    /** 有没有设置页面 */
+    settingTab: boolean;
 	/** 作者 */
 	author: string;
 	/** 仓库地址 */
@@ -43,10 +45,6 @@ export interface PluginManager {
 	minAppVersion: string;
 	/** 插件版本 */
 	version: string;
-    /** 是否有设置页 */
-    haveSettingTab:boolean;
-    /** 分组 */
-    group: string[],
 }
 export const pluginManager: PluginManager = {
 	id: "",
@@ -55,6 +53,7 @@ export const pluginManager: PluginManager = {
 	switchTime: 0,
 	comment: "",
     delayStart: 0,
+    settingTab:true,
 	author: "",
 	authorUrl: "",
 	description: "",
@@ -62,8 +61,6 @@ export const pluginManager: PluginManager = {
 	isDesktopOnly: false,
 	minAppVersion: "",
 	version: "",
-    haveSettingTab: false,
-    group: [],
 };
 
 // 定义默认的 FileStatus 值

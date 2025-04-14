@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
 import { activateMiddleView } from "src/pluginManagerPlugin/PMtools";
 
-export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ plugin }) => {
+export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ container, plugin }) => {
     const stoerSettings = useSelector((state: RootState) => state.settings);
     const differentFiles = stoerSettings.fileStats.filter((file) => file.differents !== "");
         const dispatch = useDispatch();

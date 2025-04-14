@@ -219,18 +219,13 @@
   color: #333;
   cursor: pointer;
 }
-.PluginManagerView .plugin-setting {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
 .PluginManagerView .enabled:hover {
   background-color: #ffffff;
   color: #333;
 }
 .PluginManagerView th:nth-child(1),
 .PluginManagerView td:nth-child(1) {
-  width: 5em;
+  width: 20%;
 }
 .PluginManagerView th:nth-child(2),
 .PluginManagerView td:nth-child(2) {

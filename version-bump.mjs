@@ -1,6 +1,5 @@
 import { readFileSync, writeFileSync } from "fs";
 
-// eslint-disable-next-line no-undef
 const targetVersion = process.env.npm_package_version;
 
 // read minAppVersion from manifest.json and bump version to target version
