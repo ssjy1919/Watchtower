@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import WatchtowerPlugin from "src/main";
 import "./RecentOpenFileTable.css"
+import { useMemo } from "react";
 
 interface RecentOpenFileTableProps {
     plugin: WatchtowerPlugin,
@@ -12,11 +13,13 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
     const [className, setClassName] = React.useState('');
     const recentFilesOpenMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
 
-    const sortedFileStats = useSelector((state: RootState) => state.settings.fileStats).filter(
-        (fileStat) => fileStat.differents !== "未找到" && fileStat.differents !== "已删除"
-    ).slice().sort((a, b) => b.recentOpen - a.recentOpen);
+    const fileStats = useSelector((state: RootState) => state.settings.fileStats);
 
-
+    const sortedFileStats = useMemo(() => {
+        return fileStats.filter(
+            (fileStat) => fileStat.differents !== "未找到" && fileStat.differents !== "已删除"
+        ).sort((a, b) => b.recentOpen - a.recentOpen);
+    }, [fileStats]);
     const handleClick = (index: number) => {
         setClassName((prevClassName) =>
             prevClassName === 'is-active' ? '' : 'is-active'

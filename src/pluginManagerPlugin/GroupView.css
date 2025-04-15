@@ -1,0 +1,25 @@
+.GroupView {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.GroupView-container input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.GroupView-setting button {
+    /* background-color: #007bff; */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.GroupView-setting button:hover {
+    background-color: #0056b3;
+}

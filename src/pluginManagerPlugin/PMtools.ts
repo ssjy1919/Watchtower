@@ -57,7 +57,7 @@ export function getAllPlugins(plugin: WatchtowerPlugin) {
 			id,
 			haveSettingTab:
 				//@ts-ignore
-				app.setting.pluginTabs.some((p) => p.id === id) ? true : false,
+				!storePlugin.haveSettingTab?app.setting.pluginTabs.some((p) => p.id === id) : true ,
 			name: manifest.name,
 			enabled:
 				//@ts-ignore 直接获取已启动的插件
@@ -86,7 +86,7 @@ export function getAllPlugins(plugin: WatchtowerPlugin) {
 		...storeSettings,
 		pluginManager: finalPlugins,
 	};
-	plugin.saveData(newSettings);
+	// plugin.saveData(newSettings);
 	store.dispatch(setSettings(newSettings));
 }
 

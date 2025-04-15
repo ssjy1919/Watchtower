@@ -19,14 +19,6 @@ export class WatchtowerMain {
 	}
 
 	async initialize() {
-		// 初始化 FileHandler
-		this.plugin.fileHandler = new FileHandler(
-			this.plugin.app,
-			this.plugin.settings,
-			this.plugin
-		);
-        // 数据初始化，,先后不能乱
-        init(this.plugin);
         // 注册文件事件监听，数据初始化后执行
         registerFileEventHandlers(this.plugin);
 

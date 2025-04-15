@@ -43,15 +43,21 @@ export class PluginManagerPlugin {
 					//延时启动
 					setTimeout(async () => {
 						//@ts-ignore
-						app.plugins.enablePlugin(plugin.id);
+						await app.plugins.enablePlugin(plugin.id);
 						const updatedPlugins = store
 							.getState()
 							.settings.pluginManager.map((p) => {
 								if (p.id === plugin.id) {
 									return {
 										...p,
-                                        enabled: true,
-                                        haveSettingTab: true,
+										enabled: true,
+										haveSettingTab: plugin.haveSettingTab
+											? true
+											: //@ts-ignore
+											app.setting.pluginTabs.some(
+													(g: { id: string }) =>
+														g.id === plugin.id
+											),
 									};
 								}
 								return p;

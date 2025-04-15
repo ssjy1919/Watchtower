@@ -1,24 +1,12 @@
-import { App, Notice } from "obsidian";
-import {
-	WatchtowerSettings,
-	SettingsFileStats,
-	settingsFileStats,
-} from "../types";
+import { Notice } from "obsidian";
+import { SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
 import { setSettings, store } from "src/store";
 
 export class FileHandler {
-	app: App;
-	settings: WatchtowerSettings;
 	plugin: WatchtowerPlugin;
 
-	constructor(
-		app: App,
-		settings: WatchtowerSettings,
-		plugin: WatchtowerPlugin
-	) {
-		this.app = app;
-		this.settings = settings;
+	constructor(plugin: WatchtowerPlugin) {
 		this.plugin = plugin;
 	}
 
@@ -33,16 +21,15 @@ export class FileHandler {
 	 */
 	loadFileStats(): SettingsFileStats[] {
 		// 获取所有 Markdown 文件
-		const markdownFiles = this.app.vault.getMarkdownFiles();
+		const markdownFiles = this.plugin.app.vault.getMarkdownFiles();
 
+        const fileStats = this.plugin.settings.fileStats;
 		// 将 settings.fileStats 转换为 Map，提高查找效率，得到 [{path:fileStat}]
-		const fileStats = store.getState().settings.fileStats;
 		const fileStatsMap = new Map(
 			fileStats.map((file) => [file.path, file])
 		);
 		// 遍历文件列表，收集所有文件的信息
-		const filesInfo = markdownFiles.map((file) => {
-			// 找不到就使用 settingsFileStats 提供的默认值
+        const filesInfo = markdownFiles.map((file) => {
 			const fileStat = fileStatsMap.get(file.path) || settingsFileStats;
 			return {
 				basename: file.basename,
@@ -67,7 +54,7 @@ export class FileHandler {
 	 */
 	compareFiles(): SettingsFileStats[] {
 		const currentFiles = this.loadFileStats();
-		const fileStats = store.getState().settings.fileStats;
+		const fileStats = this.plugin.settings.fileStats;
 		const fileStatLists = fileStats
 			.map((settingFile) => {
 				const currentFile = currentFiles.find(
@@ -82,7 +69,7 @@ export class FileHandler {
 								: "未找到",
 					};
 				}
-				if (settingFile.stat.size !== currentFile.stat.size) {
+                if (settingFile.stat.size !== currentFile.stat.size) {
 					if (settingFile.stat.size > currentFile.stat.size) {
 						return {
 							...settingFile,
@@ -106,7 +93,7 @@ export class FileHandler {
 		const missingFiles = currentFiles
 			.map((currentFile) => {
 				if (
-					!this.settings.fileStats.find(
+					!this.plugin.settings.fileStats.find(
 						(settingFile) => settingFile.path === currentFile.path
 					)
 				) {
@@ -119,8 +106,13 @@ export class FileHandler {
 		// 合并并去重
 		const combinedFiles = [...fileStatLists, ...missingFiles];
 		const uniqueFiles = Array.from(
-			new Map(combinedFiles.map((item) => [item.path, item])).values()
-		);
+            new Map(
+                combinedFiles.map((item) => [
+                    item.path,
+                    item.differents ? item : combinedFiles.find(f => f.path === item.path),
+                ])
+            ).values() 
+        ) as SettingsFileStats[];
 
 		return uniqueFiles;
 	}

@@ -126,7 +126,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			};
         }
 		store.dispatch(setSettings(newSettings));
-		await plugin.saveData(newSettings);
+		// await plugin.saveData(newSettings);
 	};
 
 	// 订阅文件的增删改查事件
@@ -192,22 +192,23 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 }
 /** 初始化 */
 export async function init(plugin: WatchtowerPlugin) {
-    store.dispatch(setSettings(plugin.settings));
     /** 文件监控功能保存设置时会和插件管理功能冲突，
      * 需要在应用启动时初始化为关闭，实际需要开启的按钮有插件管理功能初始化 */
-    const updatedPluginManager = store.getState().settings.pluginManager.map(p => ({
+    const updatedPluginManager = plugin.settings.pluginManager.map(p => ({
         ...p,
         //@ts-ignore
         enabled: Object.keys(app.plugins.plugins).includes(p.id)?true:false,
     }));
 	// 比较文件差异
-	const differentFiles = plugin.fileHandler.compareFiles();
+    const differentFiles = plugin.fileHandler.compareFiles();    
 	const newSettings = {
 		...plugin.settings,
         fileStats: differentFiles,
         pluginManager: updatedPluginManager,
 	};
+	// store.dispatch(updateFileStats(differentFiles));
+    // store.dispatch(updatePluginManager(updatedPluginManager));
 	store.dispatch(setSettings(newSettings));
-	await plugin.saveData(newSettings);
+	// await plugin.saveData(newSettings);
 }
 

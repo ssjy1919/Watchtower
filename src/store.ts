@@ -29,6 +29,15 @@ const settingsSlice = createSlice({
 	reducers: {
 		setSettings: (state, action) => {
 			return { ...state, ...action.payload };
+        },
+        updateMarkTime: (state, action) => {
+			state.markTime = action.payload;
+		},
+		updateFileStats: (state, action) => {
+			state.fileStats = action.payload;
+		},
+		updatePluginManager: (state, action) => {
+			state.pluginManager = action.payload;
 		},
 	},
 });
@@ -87,4 +96,4 @@ export const store = configureStore({
 // 保留原有类型导出
 export type RootState = ReturnType<typeof store.getState>;
 export const { setFileStatList  } = counterSlice.actions;
-export const { setSettings } = settingsSlice.actions;
+export const { setSettings ,updateMarkTime,updateFileStats,updatePluginManager} = settingsSlice.actions;

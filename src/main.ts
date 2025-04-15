@@ -2,7 +2,7 @@ import { Plugin } from "obsidian";
 import { WatchtowerSettings } from "./types";
 import { WatchtowerSettingTab } from "./setting/settingTab";
 import { FileHandler } from "./watchtowerPlugin/fileHandler";
-import { loadSettings } from "./watchtowerPlugin/toolsFC";
+import { init, loadSettings } from "./watchtowerPlugin/toolsFC";
 import { WatchtowerMain } from "./watchtowerPlugin/WatchtowerMian";
 import {
 	File_supervision,
@@ -18,21 +18,20 @@ export default class WatchtowerPlugin extends Plugin {
 	async onload() {
 		// 加载设置
 		await loadSettings(this);
-
-		if (this.settings.watchtowerPlugin) {
-			// 等待应用初始化完成
-			this.app.workspace.onLayoutReady(async () => {
+		this.app.workspace.onLayoutReady(async () => {
+			this.fileHandler = new FileHandler(this);
+			// 数据初始化，,先后不能乱
+			init(this);
+			if (this.settings.watchtowerPlugin) {
+				// 等待应用初始化完成
 				const watchtowerMain = new WatchtowerMain(this);
 				await watchtowerMain.initialize();
-			});
 
-			this.registerView(
-				VIEW_TYPE_FILE_SUPERVISION,
-				(leaf) => new File_supervision(leaf, this)
-			);
-		}
-		// 插件管理功能
-		this.app.workspace.onLayoutReady(async () => {
+				this.registerView(
+					VIEW_TYPE_FILE_SUPERVISION,
+					(leaf) => new File_supervision(leaf, this)
+				);
+			}
 			if (this.settings.pluginManagerPlugin) {
 				new PluginManagerPlugin(this);
 			}

@@ -2,11 +2,12 @@ import WatchtowerPlugin from "src/main";
 import { Switch } from "src/setting/components/Switch";
 import "./PluginManagerView.css"
 import { useDispatch } from "react-redux";
-import { RootState, setSettings } from "src/store";
+import { RootState, setSettings, updatePluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
 import { useMemo } from "react";
+import GroupView from "./GroupView";
 
 
 interface PluginManagerView {
@@ -33,30 +34,31 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     ...p,
                     enabled: !iPlugin.enabled,
                     switchTime: new Date().getTime(),
+                    //@ts-ignore
+                    haveSettingTab: !p.haveSettingTab ? app.setting.pluginTabs.some((a) => a.id === iPlugin.id) : true,
                 };
+
             }
             return p;
         });
 
-        updatedPlugins.forEach(p => {
+        updatedPlugins.forEach(async p => {
             if (p.id === iPlugin.id) {
                 if (iPlugin.enabled) {
-                    disablePlugin(iPlugin.id);
-                } else if (!iPlugin.enabled && p.delayStart > 0) {
+                    await disablePlugin(iPlugin.id);
+                } else if (p.delayStart > 0) {
                     //@ts-ignore
-                    app.plugins.enablePlugin(iPlugin.id);
-                } else if (!iPlugin.enabled && p.delayStart <= 0) {
-                    enablePlugin(iPlugin.id);
+                    await app.plugins.enablePlugin(iPlugin.id);
+                } else if (p.delayStart <= 0) {
+                    await enablePlugin(iPlugin.id);
 
                 }
             }
         });
 
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        dispatch(setSettings(newSettings));
-        // 保存数据到插件存储
+        dispatch(updatePluginManager(updatedPlugins));
         await plugin.saveData(newSettings);
-
     }
     /**处理延时启动*/
     const handleDelayStartChange = async (iPlugin: PluginManager, newDelayStart: number) => {
@@ -92,9 +94,9 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         if (newDelayStart > 0) {
             if (iPlugin.enabled) {
                 //用户设置的延时时间大于0且插件处于启用状态时，通知ob禁用插件后再用disablePlugin临时启动
-                disablePlugin(iPlugin.id);
+                await disablePlugin(iPlugin.id);
                 //@ts-ignore
-                app.plugins.enablePlugin(iPlugin.id);
+                await app.plugins.enablePlugin(iPlugin.id);
             }
         } else {
             if (iPlugin.enabled)
@@ -103,8 +105,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         }
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         await plugin.saveData(newSettings);
-        const newStoreSettings = { ...storeSettings, pluginManager: upStoreDatedPlugins };
-        dispatch(setSettings(newStoreSettings));
+        dispatch(updatePluginManager(upStoreDatedPlugins));
     }
     // 处理备注
     const handleCommentChange = async (iPlugin: PluginManager, newComment: string) => {
@@ -191,7 +192,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
     return (
         <div className="PluginManagerView">
-            {/* <GroupView plugin={plugin} /> */}
+            <GroupView plugin={plugin} />
             <table>
                 <thead>
                     <tr>
@@ -261,7 +262,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                     value={plugin.comment}
                                     placeholder={plugin.description}
                                     rows={2}
-                                    onChange={(e) => handleCommentChange(plugin, e.target.value)} 
+                                    onChange={(e) => handleCommentChange(plugin, e.target.value)}
                                 />
                             </td>
                         </tr>

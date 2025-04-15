@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "src/store";
 import { Notice } from "obsidian";
@@ -12,8 +12,12 @@ interface FileSupervisionProps {
 
 const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     const stoerSettings = useSelector((state: RootState) => state.settings);
-    const differentFiles = stoerSettings.fileStats.filter((file) => file.differents !== "");
+    const fileStats = useSelector((state: RootState) => state.settings.fileStats);
     const [className, setClassName] = useState('file-supervision-table-none');
+
+    const differentFiles = useMemo(() => {
+        return fileStats.filter((file) => file.differents !== "");
+    }, [fileStats]);
     const handleClick = () => {
         setClassName((prevClassName) =>
             prevClassName === 'file-supervision-table-none'
