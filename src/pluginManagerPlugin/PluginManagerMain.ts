@@ -44,22 +44,7 @@ export class PluginManagerPlugin {
 					setTimeout(async () => {
 						//@ts-ignore
 						app.plugins.enablePlugin(plugin.id);
-						const updatedPlugins = store
-							.getState()
-							.settings.pluginManager.map((p) => {
-								if (p.id === plugin.id) {
-									return {
-										...p,
-										enabled: true,
-									};
-								}
-								return p;
-							});
-						const newSettings = {
-							...store.getState().settings,
-							pluginManager: updatedPlugins,
-						};
-						store.dispatch(setSettings(newSettings));
+						getAllPlugins(this.plugin);
 					}, plugin.delayStart * 1000);
 				}
 			});
