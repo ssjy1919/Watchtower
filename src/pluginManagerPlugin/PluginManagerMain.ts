@@ -44,7 +44,23 @@ export class PluginManagerPlugin {
 					setTimeout(async () => {
 						//@ts-ignore
 						app.plugins.enablePlugin(plugin.id);
-						getAllPlugins(this.plugin);
+						const updatedPlugins = store
+							.getState()
+							.settings.pluginManager.map((p) => {
+								if (p.id === plugin.id) {
+									return {
+										...p,
+                                        enabled: true,
+                                        haveSettingTab: true,
+									};
+								}
+								return p;
+							});
+						const newSettings = {
+							...store.getState().settings,
+							pluginManager: updatedPlugins,
+						};
+						store.dispatch(setSettings(newSettings));
 					}, plugin.delayStart * 1000);
 				}
 			});
