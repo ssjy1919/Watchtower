@@ -1,14 +1,12 @@
 import WatchtowerPlugin from "src/main";
-import { PluginHandler } from "./PluginHandler";
-import { IPlugin } from "./PluginHandler";
 import { Switch } from "src/setting/components/Switch";
 import "./PluginManagerView.css"
 import { useDispatch } from "react-redux";
 import { RootState, setSettings } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
-import GroupView from "./GroupView";
-import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
+import { disablePlugin, enablePlugin, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
+import { useMemo } from "react";
 
 
 interface PluginManagerView {
@@ -17,16 +15,18 @@ interface PluginManagerView {
 
 const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const storeSettings = useSelector((state: RootState) => state.settings);
-    const pluginManager = storeSettings.pluginManager;
-    const getEnabledPlugins = pluginManager.filter(p => p.enabled).length;
-    const getDisabledPlugins = pluginManager.filter(p => !p.enabled).length;
-    const storeField = storeSettings.sortField.field;
-    const storeOrder = storeSettings.sortField.order;
+    const pluginManager = useSelector((state: RootState) => state.settings.pluginManager);
+    const storeField = useSelector((state: RootState) => state.settings.sortField.field);
+    const storeOrder = useSelector((state: RootState) => state.settings.sortField.order);
     const dispatch = useDispatch();
 
-  
+    // 计算属性建议用 useMemo 
+    const [getEnabledPlugins, getDisabledPlugins] = useMemo(() => [
+        pluginManager.filter(p => p.enabled).length,
+        pluginManager.filter(p => !p.enabled).length
+    ], [pluginManager]);
     /**处理开关 */
-    const handleChange = async (iPlugin: IPlugin) => {        
+    const handleChange = async (iPlugin: PluginManager) => {
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
@@ -51,7 +51,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 }
             }
         });
-        
+
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         dispatch(setSettings(newSettings));
         // 保存数据到插件存储
@@ -59,7 +59,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
     }
     /**处理延时启动*/
-    const handleDelayStartChange = async (iPlugin: IPlugin, newDelayStart: number) => {
+    const handleDelayStartChange = async (iPlugin: PluginManager, newDelayStart: number) => {
         //记录到设置的启动状态，下次重启obsidian使用这个配置显示
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
@@ -107,7 +107,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         dispatch(setSettings(newStoreSettings));
     }
     // 处理备注
-    const handleCommentChange = async (iPlugin: IPlugin, newComment: string) => {
+    const handleCommentChange = async (iPlugin: PluginManager, newComment: string) => {
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
@@ -123,7 +123,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         await plugin.saveData(newSettings);
     }
     // 打开插件设置
-    const handleSettingClick = async ( Iplugin: PluginManager) => {
+    const handleSettingClick = async (Iplugin: PluginManager) => {
         openPluginSettings(Iplugin);
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === Iplugin.id) {
@@ -144,9 +144,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         const newSortField = order === ""
             ? { field: null, order: null }
             : { field, order: order as "asc" | "desc" };
-
         const updatedSettings = { ...storeSettings, sortField: newSortField };
-
         // 更新插件配置和 Redux 状态
         plugin.settings = updatedSettings;
         dispatch(setSettings(updatedSettings));
@@ -170,7 +168,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const sortedPlugins = (storeField && storeOrder)
         ? (() => {
             const sortField = storeField as keyof PluginManager;
-            return [...storeSettings.pluginManager].sort((a, b) => {
+            return [...pluginManager].sort((a, b) => {
                 let aVal = a[sortField] ?? "";
                 let bVal = b[sortField] ?? "";
                 if (sortField === "enabled") {
@@ -189,11 +187,11 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 return 0;
             });
         })()
-        : storeSettings.pluginManager;
+        : pluginManager;
 
     return (
         <div className="PluginManagerView">
-            <GroupView plugin={plugin} />
+            {/* <GroupView plugin={plugin} /> */}
             <table>
                 <thead>
                     <tr>
@@ -232,7 +230,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                 <div className="plugin-name">
                                     <div>{plugin.name}</div>
                                     {/* @ts-ignore */}
-                                    <div className="plugin-setting">{plugin.enabled &&plugin.haveSettingTab? "  ⚙️" : "   "}<div className="version">{plugin.version}</div></div>
+                                    <div className="plugin-setting">{plugin.enabled && plugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{plugin.version}</div></div>
                                 </div>
                             </td>
                             <td>{plugin.id != "watchtower" ? <Switch
@@ -260,10 +258,10 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                             </td>
                             <td>
                                 <textarea
-                                    defaultValue={plugin.comment === "" ? plugin.description : plugin.comment}
+                                    value={plugin.comment}
                                     placeholder={plugin.description}
                                     rows={2}
-                                    onBlur={(e) => handleCommentChange(plugin, e.target.value)}
+                                    onChange={(e) => handleCommentChange(plugin, e.target.value)} 
                                 />
                             </td>
                         </tr>

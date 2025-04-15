@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Menu, Notice } from "obsidian"; 
+import { Menu, Notice } from "obsidian";
 import { useSelector } from "react-redux";
-import { RootState, store, setFileStatList } from "../../store";
+import { RootState } from "../../store";
 import WatchtowerPlugin from "src/main";
 import "./RecentOpenFileTable.css"
 
@@ -23,7 +23,6 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
         );
         if (sortedFileStats[index].differents != "未找到" && sortedFileStats[index].differents != "已删除") {
             plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", recentFilesOpenMode);
-            store.dispatch(setFileStatList(sortedFileStats));
         } else {
             new Notice(`文件不存在：${sortedFileStats[index].path}`)
         }
@@ -39,23 +38,32 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
 
         // 添加菜单项：打开文件
         menu.addItem((item) => {
-            item.setTitle("Open File")
+            item.setTitle("在当前标签页打开")
                 .setIcon("document")
                 .onClick(() => {
-                    plugin.app.workspace.openLinkText(fileStat.path, "", recentFilesOpenMode);
+                    plugin.app.workspace.openLinkText(fileStat.path, "", false);
+                });
+        });
+
+        // 添加菜单项：新标签页打开文件
+        menu.addItem((item) => {
+            item.setTitle("在新标签页中打开")
+                .setIcon("lucide-file-plus")
+                .onClick(() => {
+                    plugin.app.workspace.openLinkText(fileStat.path, "", true);
                 });
         });
 
         // 添加菜单项：复制文件路径
         menu.addItem((item) => {
-            item.setTitle("Copy File Path")
+            item.setTitle("复制路径")
                 .setIcon("clipboard-copy")
                 .onClick(() => {
                     navigator.clipboard.writeText(fileStat.path);
                 });
         });
 
-       
+
 
         // 显示菜单
         menu.showAtMouseEvent(event.nativeEvent);
@@ -68,7 +76,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                     key={index}
                     className="nav-file"
                     onClick={() => handleClick(index)}
-                    onContextMenu={(event) => handleContextMenu(event, index)} 
+                    onContextMenu={(event) => handleContextMenu(event, index)}
                 >
                     <div className={`tree-item-self nav-file-title tappable is-clickable${className}`}>
                         <div className="tree-item-inner nav-file-title-content">{fileStat.name}</div>

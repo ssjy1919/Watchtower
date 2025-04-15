@@ -25,13 +25,10 @@ export class WatchtowerMain {
 			this.plugin.settings,
 			this.plugin
 		);
-		// 等待应用初始化完成
-		this.plugin.app.workspace.onLayoutReady(async () => {
-            // 数据初始化，,先后不能乱
-            init(this.plugin);
-            // 注册文件事件监听，数据初始化后执行
-            registerFileEventHandlers(this.plugin);
-		});
+        // 数据初始化，,先后不能乱
+        init(this.plugin);
+        // 注册文件事件监听，数据初始化后执行
+        registerFileEventHandlers(this.plugin);
 
 		if (this.plugin.settings.isFirstInstall) {
 			activateView(this.plugin);

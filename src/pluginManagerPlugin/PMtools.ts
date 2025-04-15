@@ -35,26 +35,29 @@ export async function activateMiddleView(plugin: WatchtowerPlugin) {
 }
 
 /** 刷新所有插件信息 */
-export function getAllPlugins() {
+export function getAllPlugins(plugin: WatchtowerPlugin) {
 	const storeSettings = store.getState().settings;
-	const installedPlugins = Object.keys(
+	// 获取当前安装的所有插件 ID
+	const installedPluginIds = Object.keys(
 		//@ts-ignore
 		app.plugins.manifests
-	).map((id) => {
+	);
+
+	// 更新插件信息：新增插件或更新已有插件
+	const updatedPlugins = installedPluginIds.map((id) => {
 		//@ts-ignore
 		const manifest = app.plugins.manifests[id] as PluginManifest;
 		const storePlugin =
-			storeSettings.pluginManager.find((p) => p.id === id) ||
-			pluginManager;
+			storeSettings.pluginManager.find((p) => {
+				const isMatch = p.id === id;
+				return isMatch;
+			}) || pluginManager;
+
 		return {
 			id,
-			//@ts-ignore
-			haveSettingTab: app.setting.pluginTabs.some(
+			haveSettingTab:
 				//@ts-ignore
-				(p) => p.id === storePlugin.id
-			)
-				? true
-				: false,
+				app.setting.pluginTabs.some((p) => p.id === id) ? true : false,
 			name: manifest.name,
 			enabled:
 				//@ts-ignore 直接获取已启动的插件
@@ -72,10 +75,18 @@ export function getAllPlugins() {
 			version: manifest.version || "",
 		};
 	}) as PluginManager[];
+
+	// 仅保留当前安装的插件
+	const finalPlugins = updatedPlugins.filter((p) =>
+		installedPluginIds.includes(p.id)
+	);
+
+	// 更新设置并保存
 	const newSettings = {
 		...storeSettings,
-		pluginManager: installedPlugins,
+		pluginManager: finalPlugins,
 	};
+	plugin.saveData(newSettings);
 	store.dispatch(setSettings(newSettings));
 }
 
@@ -121,8 +132,8 @@ export function openPluginSettings(iplugin: PluginManager): void {
  * @returns 对应插件项的 switchTime，未找到时返回 0
  */
 export function getSwitchTimeByPluginId(pluginId: string): number {
-	const pluginEntry = store.getState().settings.pluginManager.find(
-		(pm) => pm.id === pluginId
-	);
+	const pluginEntry = store
+		.getState()
+		.settings.pluginManager.find((pm) => pm.id === pluginId);
 	return pluginEntry ? pluginEntry.switchTime : 0;
 }

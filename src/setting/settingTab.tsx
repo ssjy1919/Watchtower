@@ -13,14 +13,15 @@ interface SettingComponentProps {
 }
 const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(plugin.settings.watchtowerPlugin);
+    const storeSettings = useSelector((state: RootState) => state.settings);
     const recentFilesMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
     const pluginManagerMode = useSelector((state: RootState) => state.settings.pluginManagerPlugin);
     const dispatch = useDispatch();
     const handleChangeFileSupervision = async (value: boolean) => {
         setIsSwitchOn(value);
-
-        plugin.settings.watchtowerPlugin = value;
-        await plugin.saveData(plugin.settings);
+        
+        const newSettings = { ...storeSettings,watchtowerPlugin: value };
+        await plugin.saveData(newSettings);
         if (value) {
             await init(plugin);
         }
@@ -30,14 +31,14 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 
 
     const handleChange = async (value: boolean) => {
-        plugin.settings.recentFilesOpenMode = value;
-        dispatch(setSettings(plugin.settings));
-        await plugin.saveData(plugin.settings);
+        const newSettings = { ...storeSettings,recentFilesOpenMode: value };
+        dispatch(setSettings(newSettings));
+        await plugin.saveData(newSettings);
     };
     const handlePluginManagerChange = async (value: boolean) => {
-        plugin.settings.pluginManagerPlugin = value;
-        dispatch(setSettings(plugin.settings));
-        await plugin.saveData(plugin.settings);
+        const newSettings = { ...storeSettings,pluginManagerPlugin: value };
+        dispatch(setSettings(newSettings));
+        await plugin.saveData(newSettings);
     };
 
     return (

@@ -20,20 +20,25 @@ export default class WatchtowerPlugin extends Plugin {
 		await loadSettings(this);
 
 		if (this.settings.watchtowerPlugin) {
-			const watchtowerMain = new WatchtowerMain(this);
-			await watchtowerMain.initialize();
+			// 等待应用初始化完成
+			this.app.workspace.onLayoutReady(async () => {
+				const watchtowerMain = new WatchtowerMain(this);
+				await watchtowerMain.initialize();
+			});
+
 			this.registerView(
 				VIEW_TYPE_FILE_SUPERVISION,
 				(leaf) => new File_supervision(leaf, this)
 			);
 		}
 		// 插件管理功能
-		if (this.settings.pluginManagerPlugin) new PluginManagerPlugin(this);
-
+		this.app.workspace.onLayoutReady(async () => {
+			if (this.settings.pluginManagerPlugin) {
+				new PluginManagerPlugin(this);
+			}
+		});
 		// 挂载插件设置页面
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
-
-
 	}
 
 	async onunload() {
