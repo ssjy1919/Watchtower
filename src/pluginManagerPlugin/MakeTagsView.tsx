@@ -114,9 +114,9 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
                         onChange={(e) => handleTagChange(e.target.value)}
                         onBlur={(e) => handleTagChange(e.target.value)}
                     >
-                        {/* <option value="" disabled>
-                            分组
-                        </option> */}
+                         <option value="" disabled>
+                            选择分组
+                        </option> 
                         {/* 过滤掉当前插件已有的标签 */}
                         {pluginGroups
                             .filter((option) => !currentTags.includes(option)) // 排除已有的标签

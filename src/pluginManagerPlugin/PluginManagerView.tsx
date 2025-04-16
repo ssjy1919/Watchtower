@@ -22,11 +22,11 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const storeOrder = useSelector((state: RootState) => state.settings.sortField.order);
     const dispatch = useDispatch();
     // 根据 showPluginGroups 过滤插件列表
-    const filteredPlugins = pluginManager.filter(plugin => {
+    const filteredPlugins = pluginManager.filter(Iplugin => {
         // 如果 showPluginGroups 为空，则显示所有插件
         if (!storeSettings.showPluginGroups) return true;
         // 否则仅显示 tags 包含 showPluginGroups 的插件
-        return plugin.tags.includes(storeSettings.showPluginGroups);
+        return Iplugin.tags.includes(storeSettings.showPluginGroups);
     });
     // 计算属性建议用 useMemo 
     const [getEnabledPlugins, getDisabledPlugins] = useMemo(() => [

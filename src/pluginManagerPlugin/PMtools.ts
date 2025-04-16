@@ -58,14 +58,14 @@ export function getAllPlugins() {
 			haveSettingTab:
 				//@ts-ignore
 				!storePlugin.haveSettingTab?app.setting.pluginTabs.some((p) => p.id === id) : true ,
-			name: manifest.name,
+			name: manifest.name||"",
 			enabled:
 				//@ts-ignore 直接获取已启动的插件
-				Object.keys(app.plugins.plugins).includes(id),
-			switchTime: storePlugin.switchTime,
-			tags: storePlugin.tags,
-			comment: storePlugin.comment,
-			delayStart: storePlugin.delayStart,
+				Object.keys(app.plugins.plugins).includes(id)|| false,
+			switchTime: storePlugin.switchTime||0,
+			tags: storePlugin.tags||[],
+			comment: storePlugin.comment||"",
+			delayStart: storePlugin.delayStart||0,
 			author: manifest.author || "",
 			authorUrl: manifest.authorUrl || "",
 			description: manifest.description || "",
