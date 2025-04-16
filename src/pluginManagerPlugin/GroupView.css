@@ -1,18 +1,38 @@
-.GroupView {
+.PluginManagerView .GroupView {
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    align-items: center;
-    padding: 5px;
+    flex-wrap: wrap;
+    min-width: 51em;
+    margin-bottom: 5px;
 }
 .GroupView .GroupView-group{
-    border: #cccccc75 solid 1px;
+    border: #8e8d8d75 solid 1px;
     padding: 0 5PX;
     background-color: #cccccc84;
     cursor: pointer;
-    border-radius: 10%;
+    border-radius: 0.5em;
+    /* 外阴影 */
+    box-shadow: 0 0 2px  rgba(0, 0, 0, 0.2);
+    margin:0 2px;
 }
-
+.GroupView .GroupView-group:hover{
+    background-color:  var(--titlebar-background-focused);
+    /* 外阴影 */
+    box-shadow: 0 0  2px  rgba(0, 0, 0, 0.2);
+}
+.GroupView .GroupView-delete{
+    border: 1px solid rgba(103, 108, 108, 0.313);
+    border-radius: 0.5em;
+    cursor: pointer;
+    background: var(--titlebar-background-focused);
+    margin-left: 0.3em;
+    position: relative; /* 添加相对定位 */
+    left: 5px; /* 向右移动 5px */
+    
+}
+.GroupView .GroupView-delete:hover {
+    background-color: var(--background-modifier-hover);
+}
 .GroupView .GroupView-active{
     background-color: var(--titlebar-background-focused);
 
@@ -24,13 +44,7 @@
     border-radius: 4px;
     width: 5em;
 }
-.GroupView .GroupView-delete{
-    cursor: pointer;
-    border-radius: 30%;
-}
-.GroupView .GroupView-delete:hover {
-    background-color: var(--background-modifier-hover);
-}
+
 .GroupView-setting button {
     /* background-color: #007bff; */
     color: var(--icon-color);

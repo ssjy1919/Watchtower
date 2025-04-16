@@ -42,7 +42,6 @@ export function getAllPlugins() {
 		//@ts-ignore
 		app.plugins.manifests
 	);
-
 	// 更新插件信息：新增插件或更新已有插件
 	const updatedPlugins = installedPluginIds.map((id) => {
 		//@ts-ignore
@@ -56,16 +55,19 @@ export function getAllPlugins() {
 		return {
 			id,
 			haveSettingTab:
-				//@ts-ignore
-				!storePlugin.haveSettingTab?app.setting.pluginTabs.some((p) => p.id === id) : true ,
-			name: manifest.name||"",
+				//@ts-ignore 获取已启动的插件
+				Object.keys(app.plugins.plugins).includes(id)
+					? //@ts-ignore 查找设置页面的存在
+					app.setting.pluginTabs.some((p) => p.id === id)
+					: storePlugin.haveSettingTab,
+			name: manifest.name || "",
 			enabled:
-				//@ts-ignore 直接获取已启动的插件
-				Object.keys(app.plugins.plugins).includes(id)|| false,
-			switchTime: storePlugin.switchTime||0,
-			tags: storePlugin.tags||[],
-			comment: storePlugin.comment||"",
-			delayStart: storePlugin.delayStart||0,
+				//@ts-ignore 获取已启动的插件
+				Object.keys(app.plugins.plugins).includes(id) ?true:false,
+			switchTime: storePlugin.switchTime || 0,
+			tags: storePlugin.tags || [],
+			comment: storePlugin.comment || "",
+			delayStart: storePlugin.delayStart || 0,
 			author: manifest.author || "",
 			authorUrl: manifest.authorUrl || "",
 			description: manifest.description || "",

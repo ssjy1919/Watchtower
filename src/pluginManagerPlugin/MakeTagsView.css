@@ -1,8 +1,16 @@
 .MakeTagsView {
     display: flex;
+    flex-direction: row;
+    width: fit-content;
     flex-wrap: wrap;
 }
 
+.MakeTagsView select, .MakeTagsView .dropdown {
+    max-width: 8em;
+    background-color: var(--background-modifier-hover);
+    padding: 0 0.3em;
+    height: 2em;
+}
 .MakeTagsView .MakeTagsView-setting span {
     background-color: transparent;
     cursor: pointer;
@@ -19,27 +27,62 @@
 }
 
 .MakeTagsView .MakeTagsView-tag {
-    border: 1px solid rgba(103, 108, 108, 0.696);
-    border-radius: 10px;
-    margin: 2px;
-    padding: 0 3px;
-    padding-bottom: 3px;
-}
-.MakeTagsView .MakeTagsView-delete{
-
-    border: 1px solid rgba(103, 108, 108, 0.313);
-    border-radius: 50%;
+    border: #8e8d8d75 solid 1px;
+    padding: 0 5px;
+    background-color: #cccccc84;
     cursor: pointer;
+    border-radius: 0.5em;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* 修复了错误的 box-shadow 值 */
+    margin: 2px 3px;
+
+    white-space: nowrap; /* 禁止换行 */
+    /* overflow: hidden; 隐藏超出部分 */
+    /* text-overflow: ellipsis; 显示省略号 */
 }
-.MakeTagsView .MakeTagsView-enter{
+
+.MakeTagsView .MakeTagsView-tag:hover {
+    background-color: var(--titlebar-background-focused);
+    /* 外阴影 */
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.MakeTagsView .MakeTagsView-delete {
+    border: 1px solid rgba(103, 108, 108, 0.313);
+    border-radius: 0.5em;
+    cursor: pointer;
+    background: var(--titlebar-background-focused);
+    position: relative;
+    /* 添加相对定位 */
+    left: 5px;
+    /* 向右移动 5px */
+}
+
+.MakeTagsView .MakeTagsView-delete:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.MakeTagsView .MakeTagsView-enter {
     display: flex;
+    flex-direction: column;
 }
-.MakeTagsView .MakeTagsView-enter span{
+
+.MakeTagsView .MakeTagsView-enter span {
+    border: 1px solid rgba(103, 108, 108, 0.313);
+    background-color: var(--background-modifier-hover);
+    border-radius: 0.5em;
     display: flex;
     flex-direction: row;
     font-size: 0.7em;
-    margin-left: 1em;
-    cursor: pointer ;
+    margin: 2px 0 2px 1em;
+    cursor: pointer;
+    width: 2.5em;
+    line-height: 1.5em;
+    justify-content: center;
+    align-items: center;
+}
+
+.MakeTagsView .MakeTagsView-enter span:hover {
+    background: var(--titlebar-background-focused);
 }
 
 .MakeTagsView .MakeTagsView-setting span {
@@ -52,7 +95,13 @@
     padding-right: 3px;
     color: #0000004c;
 }
+
 .MakeTagsView .MakeTagsView-setting {
     display: flex;
     justify-content: space-around;
+}
+
+.MakeTagsView .GroupView-active{
+    background-color: var(--titlebar-background-focused);
+
 }

@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { RootState, setSettings, updatePluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
-import { disablePlugin, enablePlugin, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
+import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
 import { useMemo } from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
@@ -28,13 +28,14 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         // 否则仅显示 tags 包含 showPluginGroups 的插件
         return Iplugin.tags.includes(storeSettings.showPluginGroups);
     });
-    // 计算属性建议用 useMemo 
+    // 计算属用 useMemo 
     const [getEnabledPlugins, getDisabledPlugins] = useMemo(() => [
         pluginManager.filter(p => p.enabled).length,
         pluginManager.filter(p => !p.enabled).length
     ], [pluginManager]);
     /**处理开关 */
     const handleChange = async (iPlugin: PluginManager) => {
+
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
@@ -66,9 +67,12 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         dispatch(updatePluginManager(updatedPlugins));
         await plugin.saveData(newSettings);
+        getAllPlugins();
     }
     /**处理延时启动*/
     const handleDelayStartChange = async (iPlugin: PluginManager, newDelayStart: number) => {
+        if (iPlugin.delayStart === newDelayStart ||!iPlugin.delayStart && !newDelayStart) return;
+        
         //记录到设置的启动状态，下次重启obsidian使用这个配置显示
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
@@ -78,15 +82,16 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     switchTime: new Date().getTime(),
                     enabled: newDelayStart ? false : true,
                 };
-            } else {
+            }
+            else {
                 return {
                     ...p,
-                    // 避免写入配置时被真实插件状态覆盖
+                    // 其他插件检查一遍延时启动，避免写入配置时被真实插件状态覆盖
                     enabled: p.delayStart ? false : true,
                 };
             }
         });
-        //配置给store用于显示的启动状态，用户更改延迟时间，避免开关被关闭
+        //配置给store用于当前启动状态的显示，用户只更改延迟时间，开关不应该是关闭
         const upStoreDatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
@@ -113,6 +118,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         await plugin.saveData(newSettings);
         dispatch(updatePluginManager(upStoreDatedPlugins));
+        getAllPlugins();
     }
     // 处理备注
     const handleCommentChange = async (iPlugin: PluginManager, newComment: string) => {
@@ -129,10 +135,13 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         dispatch(setSettings(newSettings));
         await plugin.saveData(newSettings);
+        getAllPlugins();
     }
     // 打开插件设置
     const handleSettingClick = async (Iplugin: PluginManager) => {
+       
         openPluginSettings(Iplugin);
+        if (!Iplugin.enabled)return;
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === Iplugin.id) {
                 return {
@@ -145,56 +154,52 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         dispatch(setSettings(newSettings));
         await plugin.saveData(newSettings);
-
+        getAllPlugins();
     }
     // 处理下拉菜单排序选择（保留，用于内部调用）
-    const handleSortChange = (field: keyof PluginManager, order: string) => {
-        const newSortField = order === ""
-            ? { field: null, order: null }
-            : { field, order: order as "asc" | "desc" };
+    const handleSortChange = (field: keyof PluginManager, order: "asc" | "desc") => {
+        const newSortField = { field, order };
+
         const updatedSettings = { ...storeSettings, sortField: newSortField };
         // 更新插件配置和 Redux 状态
         plugin.settings = updatedSettings;
         dispatch(setSettings(updatedSettings));
         plugin.saveData(updatedSettings);
+        getAllPlugins();
     };
 
     // 循环切换排序状态
     const handleHeaderClick = (field: keyof PluginManager) => {
         let newOrder: "asc" | "desc" | "" = "";
-        if (storeField !== field || !storeOrder) {
+        if (storeField !== field) {
             newOrder = "asc";
-        } else if (storeOrder === "asc") {
-            newOrder = "desc";
-        } else if (storeOrder === "desc") {
-            newOrder = "";
+        } else {
+            newOrder = storeOrder === "asc" ? "desc" : "asc";
+
         }
         handleSortChange(field, newOrder);
     };
 
     // 根据排序状态返回排序后的列表
     const sortedPlugins = (storeField && storeOrder)
-        ? (() => {
-            const sortField = storeField as keyof PluginManager;
-            return [...filteredPlugins].sort((a, b) => {
-                let aVal = a[sortField] ?? "";
-                let bVal = b[sortField] ?? "";
-                if (sortField === "enabled") {
-                    aVal = a.enabled ? 1 : 0;
-                    bVal = b.enabled ? 1 : 0;
-                }
-                // 主排序逻辑
-                if (aVal > bVal) return storeOrder === "asc" ? 1 : -1;
-                if (aVal < bVal) return storeOrder === "asc" ? -1 : 1;
+        ? [...filteredPlugins].sort((a, b) => {
+            const sortField = storeField;
+            let aVal = a[sortField] ?? "";
+            let bVal = b[sortField] ?? "";
 
-                // 相等时按name二次排序
-                const aName = a.name.toLowerCase();
-                const bName = b.name.toLowerCase();
-                if (aName > bName) return 1;
-                if (aName < bName) return -1;
-                return 0;
-            });
-        })()
+            // 特殊处理布尔值
+            if (sortField === "enabled") {
+                aVal = a.enabled ? 1 : 0;
+                bVal = b.enabled ? 1 : 0;
+            }
+
+            // 主排序
+            if (aVal > bVal) return storeOrder === "asc" ? 1 : -1;
+            if (aVal < bVal) return storeOrder === "asc" ? -1 : 1;
+
+            // 次排序（按名称）
+            return a.name.localeCompare(b.name);
+        })
         : filteredPlugins;
 
     return (
@@ -239,11 +244,10 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     {sortedPlugins.map((Iplugin) => (
                         <tr key={Iplugin.id}>
                             <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
-
                                 <div className="plugin-name">
                                     <div>{Iplugin.name}</div>
-                                    {/* @ts-ignore */}
-                                    <div className="plugin-setting">{plugin.enabled && plugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{plugin.version}</div></div>
+
+                                    <div className="plugin-setting">{Iplugin.enabled && Iplugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{Iplugin.version}</div></div>
                                 </div>
                             </td>
                             <td>{Iplugin.id != "watchtower" ? <Switch

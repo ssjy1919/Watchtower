@@ -23,7 +23,7 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
     // 当前插件的 tags
     const currentTags = Iplugin.tags || [];
 
-    // 切换下拉选单显示状态的函数
+    // 确定按钮 切换下拉选单显示状态的函数 
     const handleAddTagClick = async () => {
         if (selectedTag && !currentTags.includes(selectedTag)) {
             const updatedTags = [...currentTags, selectedTag];
@@ -32,6 +32,7 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
             const updatedPlugin = {
                 ...Iplugin,
                 tags: updatedTags,
+                switchTime: new Date().getTime(),
             };
 
             const newPluginManager = storeSettings.pluginManager.map((p) =>
@@ -61,6 +62,7 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
         const updatedPlugin = {
             ...Iplugin,
             tags: updatedTags,
+            switchTime: new Date().getTime(),
         };
 
         const newPluginManager = storeSettings.pluginManager.map((p) =>
@@ -73,7 +75,7 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
                 p.id === Iplugin.id ? updatedPlugin : p
             ),
         };
-        await plugin.saveData(newSettings); 
+        await plugin.saveData(newSettings);
     };
 
     // 显示标签
@@ -83,14 +85,15 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
             showPluginGroups: tag,
         };
         dispatch(setSettings(newSettings));
-        await plugin.saveData(newSettings); 
+        await plugin.saveData(newSettings);
     };
 
     return (
         <div className="MakeTagsView">
             {/* 标签列表 */}
             {currentTags.map((tag, index) => (
-                <div key={index} className="MakeTagsView-tag" onClick={() => handleShowTagClick(tag)}>
+                <div key={index} className={`MakeTagsView-tag ${storeSettings.showPluginGroups === tag ? "GroupView-active" : ""
+                    }`} onClick={() => handleShowTagClick(tag)}>
                     {tag}
                     {/* 删除按钮：仅在 isDropdownVisible 为 true 时显示 */}
                     {isDropdownVisible && (
@@ -114,9 +117,9 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
                         onChange={(e) => handleTagChange(e.target.value)}
                         onBlur={(e) => handleTagChange(e.target.value)}
                     >
-                         <option value="" disabled>
+                        <option value="" disabled>
                             选择分组
-                        </option> 
+                        </option>
                         {/* 过滤掉当前插件已有的标签 */}
                         {pluginGroups
                             .filter((option) => !currentTags.includes(option)) // 排除已有的标签

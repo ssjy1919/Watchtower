@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Notice, Plugin } from "obsidian";
 import { WatchtowerSettings } from "./types";
 import { WatchtowerSettingTab } from "./setting/settingTab";
 import { FileHandler } from "./watchtowerPlugin/fileHandler";
@@ -10,6 +10,7 @@ import {
 } from "./watchtowerPlugin/view/leafView";
 import { PluginManagerPlugin } from "./pluginManagerPlugin/PluginManagerMain";
 import { VIEW_TYPE_PLUGIN_MANAGER } from "./pluginManagerPlugin/PluginManagerLeft";
+import { getAllPlugins } from "./pluginManagerPlugin/PMtools";
 
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;
@@ -17,10 +18,10 @@ export default class WatchtowerPlugin extends Plugin {
 
 	async onload() {
 		// 加载设置
-		await loadSettings(this);
+        await loadSettings(this);
 		this.app.workspace.onLayoutReady(async () => {
 			this.fileHandler = new FileHandler(this);
-			// 数据初始化，,先后不能乱
+			
 			init(this);
 			if (this.settings.watchtowerPlugin) {
 				// 等待应用初始化完成
@@ -44,5 +45,12 @@ export default class WatchtowerPlugin extends Plugin {
 		/** 卸载标签页*/
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_PLUGIN_MANAGER);
-	}
+    }
+    async onExternalSettingsChange() {
+       new Notice("Watchtower：插件配置被修改，重载插件配置。",5);
+        await loadSettings(this);
+        await init(this);
+        getAllPlugins();
+        new Notice("Watchtower：重载完毕。",5);
+    }
 }

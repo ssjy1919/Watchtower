@@ -83,9 +83,9 @@ export const settingsFileStats: SettingsFileStats = {
 
 export interface SortField {
 	/** 排序字段 */
-	field: keyof PluginManager | null;
+	field: keyof PluginManager ;
 	/** 排序顺序 */
-	order: "asc" | "desc" | null;
+	order: "asc" | "desc" ;
 }
 
 export interface WatchtowerSettings {
@@ -113,7 +113,7 @@ export interface WatchtowerSettings {
 
 // 定义默认的 WatchtowerSettings 值
 export const DEFAULT_SETTINGS: WatchtowerSettings = {
-	markTime: "1970-01-01 00:00:00",
+	markTime: "记录时间为空",
 	fileStats: [settingsFileStats],
 	isFirstInstall: true,
 	watchtowerPlugin: true,
