@@ -16,10 +16,8 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
     // 点击状态栏时显示菜单
     const handleMenu = (event: React.MouseEvent) => {
         event.preventDefault(); // 阻止默认行为
-
         // 创建右键菜单
         const menu = new Menu();
-
         // 添加菜单项：刷新文件状态
         menu.addItem((item) => {
             item.setTitle("打开历史文件")

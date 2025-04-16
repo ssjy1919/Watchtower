@@ -1,8 +1,6 @@
-import { FileHandler } from "src/watchtowerPlugin/fileHandler";
 import WatchtowerPlugin from "src/main";
 import {
 	activateView,
-	init,
 	registerFileEventHandlers,
 } from "src/watchtowerPlugin/toolsFC";
 import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";

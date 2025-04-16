@@ -8,18 +8,18 @@ import {
 } from "./types";
 
 const initialState = {
-     /** 最近打开的历史文件列表 */
-    fileStatList: [settingsFileStats],
+	/** 最近打开的历史文件列表 */
+	fileStatList: [settingsFileStats],
 };
 
 const counterSlice = createSlice({
 	name: "counter",
 	initialState,
-    reducers: {
-        /** 控制最近打开的历史文件列表 */
+	reducers: {
+		/** 控制最近打开的历史文件列表 */
 		setFileStatList: (state, action) => {
 			state.fileStatList = action.payload;
-        },
+		},
 	},
 });
 
@@ -29,8 +29,8 @@ const settingsSlice = createSlice({
 	reducers: {
 		setSettings: (state, action) => {
 			return { ...state, ...action.payload };
-        },
-        updateMarkTime: (state, action) => {
+		},
+		updateMarkTime: (state, action) => {
 			state.markTime = action.payload;
 		},
 		updateFileStats: (state, action) => {
@@ -38,6 +38,9 @@ const settingsSlice = createSlice({
 		},
 		updatePluginManager: (state, action) => {
 			state.pluginManager = action.payload;
+		},
+		updatePluginGroups: (state, action) => {
+			state.pluginGroups = action.payload;
 		},
 	},
 });
@@ -88,12 +91,18 @@ declare module "react-redux" {
 export const store = configureStore({
 	reducer: {
 		counter: counterSlice.reducer,
-		settings: settingsSlice.reducer, 
-		deepSettings: deepSettingsSlice.reducer, 
+		settings: settingsSlice.reducer,
+		deepSettings: deepSettingsSlice.reducer,
 	},
 });
 
 // 保留原有类型导出
 export type RootState = ReturnType<typeof store.getState>;
-export const { setFileStatList  } = counterSlice.actions;
-export const { setSettings ,updateMarkTime,updateFileStats,updatePluginManager} = settingsSlice.actions;
+export const { setFileStatList } = counterSlice.actions;
+export const {
+	setSettings,
+	updateMarkTime,
+	updateFileStats,
+	updatePluginManager,
+    updatePluginGroups,
+} = settingsSlice.actions;

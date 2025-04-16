@@ -15,7 +15,7 @@ export class PluginManagerPlugin {
 	constructor(plugin: WatchtowerPlugin) {
 		this.plugin = plugin;
 		/** 初始化插件信息 */
-		getAllPlugins(this.plugin);
+		getAllPlugins();
 		this.plugin.addCommand({
 			id: "pluginManagerCenterLeafView",
 			name: "打开插件管理视图",

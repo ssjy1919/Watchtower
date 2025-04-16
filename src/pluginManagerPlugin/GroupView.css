@@ -1,25 +1,53 @@
 .GroupView {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 10px;
+    align-items: center;
+    padding: 5px;
+}
+.GroupView .GroupView-group{
+    border: #cccccc75 solid 1px;
+    padding: 0 5PX;
+    background-color: #cccccc84;
+    cursor: pointer;
+    border-radius: 10%;
+}
+
+.GroupView .GroupView-active{
+    background-color: var(--titlebar-background-focused);
+
 }
 
 .GroupView-container input {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    width: 5em;
 }
-
+.GroupView .GroupView-delete{
+    cursor: pointer;
+    border-radius: 30%;
+}
+.GroupView .GroupView-delete:hover {
+    background-color: var(--background-modifier-hover);
+}
 .GroupView-setting button {
     /* background-color: #007bff; */
-    color: white;
+    color: var(--icon-color);
     border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    border-radius: 30%;
+    width: 1.5em;
+    height: 1.5em;
     cursor: pointer;
 }
 
 .GroupView-setting button:hover {
-    background-color: #0056b3;
+    background-color: var(--background-modifier-hover);
+}
+
+.GroupView .GroupView-setting {
+    display: flex;
+    width: 5em;
+    flex-direction: row;
+    justify-content: space-between;
 }

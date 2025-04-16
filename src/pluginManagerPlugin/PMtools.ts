@@ -35,7 +35,7 @@ export async function activateMiddleView(plugin: WatchtowerPlugin) {
 }
 
 /** 刷新所有插件信息 */
-export function getAllPlugins(plugin: WatchtowerPlugin) {
+export function getAllPlugins() {
 	const storeSettings = store.getState().settings;
 	// 获取当前安装的所有插件 ID
 	const installedPluginIds = Object.keys(
@@ -63,7 +63,7 @@ export function getAllPlugins(plugin: WatchtowerPlugin) {
 				//@ts-ignore 直接获取已启动的插件
 				Object.keys(app.plugins.plugins).includes(id),
 			switchTime: storePlugin.switchTime,
-			group: storePlugin.group,
+			tags: storePlugin.tags,
 			comment: storePlugin.comment,
 			delayStart: storePlugin.delayStart,
 			author: manifest.author || "",

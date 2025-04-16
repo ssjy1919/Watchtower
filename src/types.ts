@@ -28,7 +28,7 @@ export interface PluginManager {
 	/** 用户备注 */
 	comment: string;
 	/** 插件延时启动 */
-    delayStart: number;
+	delayStart: number;
 	/** 作者 */
 	author: string;
 	/** 仓库地址 */
@@ -43,10 +43,10 @@ export interface PluginManager {
 	minAppVersion: string;
 	/** 插件版本 */
 	version: string;
-    /** 是否有设置页 */
-    haveSettingTab:boolean;
-    /** 分组 */
-    group: string[],
+	/** 是否有设置页 */
+	haveSettingTab: boolean;
+	/** 分组 */
+	tags: string[];
 }
 export const pluginManager: PluginManager = {
 	id: "",
@@ -54,7 +54,7 @@ export const pluginManager: PluginManager = {
 	enabled: false,
 	switchTime: 0,
 	comment: "",
-    delayStart: 0,
+	delayStart: 0,
 	author: "",
 	authorUrl: "",
 	description: "",
@@ -62,8 +62,8 @@ export const pluginManager: PluginManager = {
 	isDesktopOnly: false,
 	minAppVersion: "",
 	version: "",
-    haveSettingTab: false,
-    group: [],
+	haveSettingTab: false,
+	tags: [],
 };
 
 // 定义默认的 FileStatus 值
@@ -105,6 +105,10 @@ export interface WatchtowerSettings {
 	pluginManager: PluginManager[];
 	/** 插件管理页面的排序字段 */
 	sortField: SortField;
+	/** 插件分组标签 */
+	pluginGroups: string[];
+	/** 显示插件分组标签 */
+	showPluginGroups: string;
 }
 
 // 定义默认的 WatchtowerSettings 值
@@ -116,6 +120,8 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	pluginManagerPlugin: true,
 	recentFilesOpenMode: false,
 	pluginManager: [pluginManager],
+    pluginGroups: [],
+    showPluginGroups: "",
 	sortField: {
 		field: "enabled",
 		order: "desc",

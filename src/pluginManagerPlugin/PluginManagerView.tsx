@@ -8,6 +8,7 @@ import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
 import { useMemo } from "react";
 import GroupView from "./GroupView";
+import MakeTagsView from "./MakeTagsView";
 
 
 interface PluginManagerView {
@@ -20,7 +21,13 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const storeField = useSelector((state: RootState) => state.settings.sortField.field);
     const storeOrder = useSelector((state: RootState) => state.settings.sortField.order);
     const dispatch = useDispatch();
-
+    // 根据 showPluginGroups 过滤插件列表
+    const filteredPlugins = pluginManager.filter(plugin => {
+        // 如果 showPluginGroups 为空，则显示所有插件
+        if (!storeSettings.showPluginGroups) return true;
+        // 否则仅显示 tags 包含 showPluginGroups 的插件
+        return plugin.tags.includes(storeSettings.showPluginGroups);
+    });
     // 计算属性建议用 useMemo 
     const [getEnabledPlugins, getDisabledPlugins] = useMemo(() => [
         pluginManager.filter(p => p.enabled).length,
@@ -169,7 +176,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const sortedPlugins = (storeField && storeOrder)
         ? (() => {
             const sortField = storeField as keyof PluginManager;
-            return [...pluginManager].sort((a, b) => {
+            return [...filteredPlugins].sort((a, b) => {
                 let aVal = a[sortField] ?? "";
                 let bVal = b[sortField] ?? "";
                 if (sortField === "enabled") {
@@ -188,7 +195,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 return 0;
             });
         })()
-        : pluginManager;
+        : filteredPlugins;
 
     return (
         <div className="PluginManagerView">
@@ -216,6 +223,11 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                             {storeField === "switchTime" && storeOrder === "asc" && "↑"}
                             {storeField === "switchTime" && storeOrder === "desc" && "↓"}
                         </th>
+                        <th onClick={() => handleHeaderClick('tags')} >
+                            标签{" "}
+                            {storeField === "tags" && storeOrder === "asc" && "↑"}
+                            {storeField === "tags" && storeOrder === "desc" && "↓"}
+                        </th>
                         <th onClick={() => handleHeaderClick('comment')} >
                             备注{" "}
                             {storeField === "comment" && storeOrder === "asc" && "↑"}
@@ -224,45 +236,49 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedPlugins.map((plugin) => (
-                        <tr key={plugin.id}>
-                            <td className={plugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(plugin) }}>
+                    {sortedPlugins.map((Iplugin) => (
+                        <tr key={Iplugin.id}>
+                            <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
 
                                 <div className="plugin-name">
-                                    <div>{plugin.name}</div>
+                                    <div>{Iplugin.name}</div>
                                     {/* @ts-ignore */}
                                     <div className="plugin-setting">{plugin.enabled && plugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{plugin.version}</div></div>
                                 </div>
                             </td>
-                            <td>{plugin.id != "watchtower" ? <Switch
+                            <td>{Iplugin.id != "watchtower" ? <Switch
                                 label=""
                                 description=""
-                                value={plugin.enabled}
-                                onChange={() => { handleChange(plugin) }}
+                                value={Iplugin.enabled}
+                                onChange={() => { handleChange(Iplugin) }}
                             /> : "⚪"}
                             </td>
                             <td>
-                                {plugin.id != "watchtower" ?
+                                {Iplugin.id != "watchtower" ?
                                     <input
                                         type="number"
-                                        defaultValue={plugin.delayStart || ""}
+                                        defaultValue={Iplugin.delayStart || ""}
                                         min="0"
                                         max="999"
                                         placeholder="0"
-                                        onBlur={(e) => handleDelayStartChange(plugin, parseInt(e.target.value))}
+                                        onBlur={(e) => handleDelayStartChange(Iplugin, parseInt(e.target.value))}
                                     /> : "0"}
                             </td>
                             <td>
-                                {getSwitchTimeByPluginId(plugin.id) === 0
+                                {getSwitchTimeByPluginId(Iplugin.id) === 0
                                     ? 0
-                                    : new Date(getSwitchTimeByPluginId(plugin.id)).toLocaleString()}
+                                    : new Date(getSwitchTimeByPluginId(Iplugin.id)).toLocaleString()}
+                            </td>
+                            <td>
+                                {/* 标签组件 */}
+                                <MakeTagsView Iplugin={Iplugin} plugin={plugin} />
                             </td>
                             <td>
                                 <textarea
-                                    value={plugin.comment}
-                                    placeholder={plugin.description}
+                                    value={Iplugin.comment}
+                                    placeholder={Iplugin.description}
                                     rows={2}
-                                    onChange={(e) => handleCommentChange(plugin, e.target.value)}
+                                    onChange={(e) => handleCommentChange(Iplugin, e.target.value)}
                                 />
                             </td>
                         </tr>

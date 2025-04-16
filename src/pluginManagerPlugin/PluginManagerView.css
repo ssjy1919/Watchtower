@@ -166,9 +166,13 @@
     /* 让单元格内的内容垂直居中 */
     font-size: 0.8em;
 }
-
 .PluginManagerView th:nth-child(5),
 .PluginManagerView td:nth-child(5) {
+    width: 12em;
+}
+
+.PluginManagerView th:nth-child(6),
+.PluginManagerView td:nth-child(6) {
     min-width: 8em;
     width: auto;
 }

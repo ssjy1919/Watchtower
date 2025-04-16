@@ -1,0 +1,58 @@
+.MakeTagsView {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.MakeTagsView .MakeTagsView-setting span {
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.MakeTagsView .MakeTagsView-setting span:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.MakeTagsView .MakeTagsView-container {
+    display: flex;
+    align-items: center;
+}
+
+.MakeTagsView .MakeTagsView-tag {
+    border: 1px solid rgba(103, 108, 108, 0.696);
+    border-radius: 10px;
+    margin: 2px;
+    padding: 0 3px;
+    padding-bottom: 3px;
+}
+.MakeTagsView .MakeTagsView-delete{
+
+    border: 1px solid rgba(103, 108, 108, 0.313);
+    border-radius: 50%;
+    cursor: pointer;
+}
+.MakeTagsView .MakeTagsView-enter{
+    display: flex;
+}
+.MakeTagsView .MakeTagsView-enter span{
+    display: flex;
+    flex-direction: row;
+    font-size: 0.7em;
+    margin-left: 1em;
+    cursor: pointer ;
+}
+
+.MakeTagsView .MakeTagsView-setting span {
+    background-color: transparent;
+    border-radius: 50%;
+    font-size: unset;
+    display: block;
+    align-items: center;
+    padding-left: 3px;
+    padding-right: 3px;
+    color: #0000004c;
+}
+.MakeTagsView .MakeTagsView-setting {
+    display: flex;
+    justify-content: space-around;
+}
