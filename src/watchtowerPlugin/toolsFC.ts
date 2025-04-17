@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
 import WatchtowerPlugin from "../main";
 import { VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
@@ -75,13 +76,13 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 											? `增加${
 													file.stat.size -
 													fileStat.stat.size
-										}字节`
+											  }字节`
 											: file.stat.size <
-											fileStat.stat.size
+											  fileStat.stat.size
 											? `减少${
 													fileStat.stat.size -
 													file.stat.size
-											}字节`
+											  }字节`
 											: ""
 										: fileStat.differents,
 							};
@@ -158,27 +159,23 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			fileEventHandler("created", file)
 		)
 	);
-    // 订阅文件打开事件
-    plugin.registerEvent(
-        plugin.app.workspace.on(
-            "file-open",
-            (file: TAbstractFile | null) => {
-                if (file) {
-                    // 调用文件事件处理器或其他逻辑
-                    fileEventHandler("opened", file);
-                }
-            }
-        )
+	// 订阅文件打开事件
+	plugin.registerEvent(
+		plugin.app.workspace.on("file-open", (file: TAbstractFile | null) => {
+			if (file) {
+				// 调用文件事件处理器或其他逻辑
+				fileEventHandler("opened", file);
+			}
+		})
 	);
-    plugin.registerEvent(
-        //@ts-ignore
-        plugin.app.vault.on("raw", (file: TAbstractFile | null) => {
-            if (file) {
-                // 调用文件事件处理器或其他逻辑                
-                fileEventHandler("raw", file);
-            }
-        })
-    
+	plugin.registerEvent(
+		//@ts-ignore
+		plugin.app.vault.on("raw", (file: TAbstractFile | null) => {
+			if (file) {
+				// 调用文件事件处理器或其他逻辑
+				fileEventHandler("raw", file);
+			}
+		})
 	);
 }
 /** 激活右边视图 */

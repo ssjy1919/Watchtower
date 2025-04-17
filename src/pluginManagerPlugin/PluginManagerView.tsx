@@ -71,8 +71,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     }
     /**处理延时启动*/
     const handleDelayStartChange = async (iPlugin: PluginManager, newDelayStart: number) => {
-        if (iPlugin.delayStart === newDelayStart ||!iPlugin.delayStart && !newDelayStart) return;
-        
+        if (iPlugin.delayStart === newDelayStart ||(!iPlugin.delayStart && !newDelayStart)) return;
         //记录到设置的启动状态，下次重启obsidian使用这个配置显示
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {

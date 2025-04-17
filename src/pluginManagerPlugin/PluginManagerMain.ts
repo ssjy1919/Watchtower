@@ -4,7 +4,7 @@ import {
 	PluginManagerLeft,
 	VIEW_TYPE_PLUGIN_MANAGER,
 } from "./PluginManagerLeft";
-import { setSettings, store } from "src/store";
+import { store } from "src/store";
 
 export interface PluginManagerPlugin {
 	plugin: WatchtowerPlugin;
@@ -44,29 +44,30 @@ export class PluginManagerPlugin {
 					setTimeout(async () => {
 						//@ts-ignore
 						await app.plugins.enablePlugin(plugin.id);
-						const updatedPlugins = store
-							.getState()
-							.settings.pluginManager.map((p) => {
-								if (p.id === plugin.id) {
-									return {
-										...p,
-										enabled: true,
-										haveSettingTab: plugin.haveSettingTab
-											? true
-											: //@ts-ignore
-											app.setting.pluginTabs.some(
-													(g: { id: string }) =>
-														g.id === plugin.id
-											),
-									};
-								}
-								return p;
-							});
-						const newSettings = {
-							...store.getState().settings,
-							pluginManager: updatedPlugins,
-						};
-						store.dispatch(setSettings(newSettings));
+						// const updatedPlugins = store
+						// 	.getState()
+						// 	.settings.pluginManager.map((p) => {
+						// 		if (p.id === plugin.id) {
+						// 			return {
+						// 				...p,
+						// 				enabled: true,
+						// 				haveSettingTab: plugin.haveSettingTab
+						// 					? true
+						// 					: //@ts-ignore
+						// 					app.setting.pluginTabs.some(
+						// 							(g: { id: string }) =>
+						// 								g.id === plugin.id
+						// 					),
+						// 			};
+						// 		}
+						// 		return p;
+						// 	});
+						// const newSettings = {
+						// 	...store.getState().settings,
+						// 	pluginManager: updatedPlugins,
+						// };
+						// store.dispatch(setSettings(newSettings));
+						getAllPlugins();
 					}, plugin.delayStart * 1000);
 				}
 			});
