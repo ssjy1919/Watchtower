@@ -169,10 +169,9 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 		})
 	);
 	plugin.registerEvent(
-		//@ts-ignore
+		//@ts-ignore 注册配置文件事件处理器
 		plugin.app.vault.on("raw", (file: TAbstractFile | null) => {
 			if (file) {
-				// 调用文件事件处理器或其他逻辑
 				fileEventHandler("raw", file);
 			}
 		})

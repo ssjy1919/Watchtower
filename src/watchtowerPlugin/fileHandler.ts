@@ -118,16 +118,17 @@ export class FileHandler {
 	}
 	/** 保存文件信息到插件存储，并刷新文件差异信息。 */
 	saveFileInfo = async (): Promise<void> => {
-		try {
+        try {
+            const storeSettings = store.getState().settings
 			// 加载文件信息
-			const fileStats = this.loadFileStats();
+			const fileStats = storeSettings.fileStats;
 			// 遍历 fileStats 并将 differents 设置为空字符串
 			const updatedFileStats = fileStats.map((file) => ({
 				...file,
 				differents: "",
 			}));
 			const newSettings = {
-				...store.getState().settings,
+				...storeSettings,
 				fileStats: updatedFileStats,
 				markTime: new Date().toLocaleString(),
 			};
