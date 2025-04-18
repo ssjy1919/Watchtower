@@ -40,33 +40,14 @@ export class PluginManagerPlugin {
 		this.plugin.app.workspace.onLayoutReady(async () => {
 			store.getState().settings.pluginManager.forEach((plugin) => {
 				if (plugin.delayStart > 0) {
+					//@ts-ignore
+					if (this.plugin.app.isMobile && plugin.isDesktopOnly) {
+						return;
+					}
 					//延时启动
 					setTimeout(async () => {
 						//@ts-ignore
 						await app.plugins.enablePlugin(plugin.id);
-						// const updatedPlugins = store
-						// 	.getState()
-						// 	.settings.pluginManager.map((p) => {
-						// 		if (p.id === plugin.id) {
-						// 			return {
-						// 				...p,
-						// 				enabled: true,
-						// 				haveSettingTab: plugin.haveSettingTab
-						// 					? true
-						// 					: //@ts-ignore
-						// 					app.setting.pluginTabs.some(
-						// 							(g: { id: string }) =>
-						// 								g.id === plugin.id
-						// 					),
-						// 			};
-						// 		}
-						// 		return p;
-						// 	});
-						// const newSettings = {
-						// 	...store.getState().settings,
-						// 	pluginManager: updatedPlugins,
-						// };
-						// store.dispatch(setSettings(newSettings));
 						getAllPlugins();
 					}, plugin.delayStart * 1000);
 				}

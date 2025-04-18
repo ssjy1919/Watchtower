@@ -9,6 +9,7 @@ import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, op
 import { useMemo } from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
+import { Notice } from "obsidian";
 
 
 interface PluginManagerView {
@@ -38,6 +39,11 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
+                //@ts-ignore
+                if (plugin.app.isMobile && iPlugin.isDesktopOnly) {
+                    new Notice("该插件不支持移动端使用", 10000);
+                    return p;
+                }
                 return {
                     ...p,
                     enabled: !iPlugin.enabled,
@@ -49,9 +55,12 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
-
         updatedPlugins.forEach(async p => {
             if (p.id === iPlugin.id) {
+                //@ts-ignore
+                if (plugin.app.isMobile && iPlugin.isDesktopOnly) {
+                    return ;
+                }
                 if (iPlugin.enabled) {
                     await disablePlugin(iPlugin.id);
                 } else if (p.delayStart > 0) {
@@ -63,7 +72,6 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 }
             }
         });
-
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
         dispatch(updatePluginManager(updatedPlugins));
         await plugin.saveData(newSettings);
@@ -71,7 +79,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     }
     /**处理延时启动*/
     const handleDelayStartChange = async (iPlugin: PluginManager, newDelayStart: number) => {
-        if (iPlugin.delayStart === newDelayStart ||(!iPlugin.delayStart && !newDelayStart)) return;
+        if (iPlugin.delayStart === newDelayStart || (!iPlugin.delayStart && !newDelayStart)) return;
         //记录到设置的启动状态，下次重启obsidian使用这个配置显示
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
@@ -138,9 +146,9 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     }
     // 打开插件设置
     const handleSettingClick = async (Iplugin: PluginManager) => {
-       
+
         openPluginSettings(Iplugin);
-        if (!Iplugin.enabled)return;
+        if (!Iplugin.enabled) return;
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === Iplugin.id) {
                 return {
@@ -243,7 +251,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     {sortedPlugins.map((Iplugin) => (
                         <tr key={Iplugin.id}>
                             <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
-                                <div className="plugin-name">
+                                {/* @ts-ignore */}
+                                <div className={`plugin-name ${plugin.app.isMobile && Iplugin.isDesktopOnly ? "isDesktopOnly" : ""}`}>
                                     <div>{Iplugin.name}</div>
 
                                     <div className="plugin-setting">{Iplugin.enabled && Iplugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{Iplugin.version}</div></div>

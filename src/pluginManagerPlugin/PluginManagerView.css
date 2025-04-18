@@ -121,7 +121,9 @@
     font-size: 0.7em;
 }
 
-
+.PluginManagerView .plugin-name.isDesktopOnly{
+    color: var(--background-modifier-border-hover);
+}
 
 .PluginManagerView .enabled {
     background-color: #f9f9f9;
