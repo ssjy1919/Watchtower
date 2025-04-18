@@ -47,7 +47,7 @@ export default class WatchtowerPlugin extends Plugin {
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_PLUGIN_MANAGER);
 	}
 	async onExternalSettingsChange() {
-		new Notice("Watchtower：插件配置被外部修改。10000");
+		new Notice("Watchtower：插件配置被外部修改。",10000);
 		await loadSettings(this);
 		await init(this);
 		getAllPlugins();

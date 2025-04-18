@@ -19,11 +19,11 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	loadFileStats(): SettingsFileStats[] {
+	loadFileStats(fileStats:SettingsFileStats[]): SettingsFileStats[] {
 		// 获取所有 Markdown 文件
 		const markdownFiles = this.plugin.app.vault.getMarkdownFiles();
 
-        const fileStats = this.plugin.settings.fileStats;
+        // const fileStats = store.getState().settings.fileStats;
 		// 将 settings.fileStats 转换为 Map，提高查找效率，得到 [{path:fileStat}]
 		const fileStatsMap = new Map(
 			fileStats.map((file) => [file.path, file])
@@ -53,8 +53,8 @@ export class FileHandler {
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
 	compareFiles(): SettingsFileStats[] {
-		const currentFiles = this.loadFileStats();
 		const fileStats = this.plugin.settings.fileStats;
+		const currentFiles = this.loadFileStats(fileStats);
 		const fileStatLists = fileStats
 			.map((settingFile) => {
 				const currentFile = currentFiles.find(
@@ -119,11 +119,13 @@ export class FileHandler {
 	/** 保存文件信息到插件存储，并刷新文件差异信息。 */
 	saveFileInfo = async (): Promise<void> => {
         try {
+            
             const storeSettings = store.getState().settings
 			// 加载文件信息
-			const fileStats = storeSettings.fileStats;
+			const storeFileStats = storeSettings.fileStats;
+            const currentFiles = this.loadFileStats(storeFileStats);
 			// 遍历 fileStats 并将 differents 设置为空字符串
-			const updatedFileStats = fileStats.map((file) => ({
+			const updatedFileStats = currentFiles.map((file) => ({
 				...file,
 				differents: "",
 			}));
