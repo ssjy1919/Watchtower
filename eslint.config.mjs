@@ -22,6 +22,8 @@ export default [
         },
         rules: {
             // 启用 TypeScript 推荐规则
+            "require-await": "error", // 确保 async 函数中使用了 await
+            "@typescript-eslint/require-await": "error", // 针对 TypeScript 的规则
             ...tsPlugin.configs["recommended"].rules,
             // 自定义规则，"off" 或 0：关闭规则。
             // "warn" 或 1：将规则设置为警告（不会导致构建失败）。

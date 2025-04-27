@@ -47,7 +47,7 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
             item.setTitle("打开插件管理")
                 .setIcon("blocks")
                 .onClick(async () => {
-                    activateMiddleView(plugin);
+                    await activateMiddleView(plugin);
                 });
         });
         // 显示菜单
