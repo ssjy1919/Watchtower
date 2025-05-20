@@ -6,7 +6,7 @@ import { RootState, setSettings, updatePluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
-import { useMemo, useState } from "react";
+import { useMemo} from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
 import { Notice } from "obsidian";
