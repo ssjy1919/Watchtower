@@ -9,7 +9,7 @@ import {
 
 const initialState = {
 	/** 最近打开的历史文件列表 */
-	fileStatList: [settingsFileStats],
+    fileStatList: [settingsFileStats],
 };
 
 const counterSlice = createSlice({
@@ -92,7 +92,7 @@ export const store = configureStore({
 	reducer: {
 		counter: counterSlice.reducer,
 		settings: settingsSlice.reducer,
-		deepSettings: deepSettingsSlice.reducer,
+        deepSettings: deepSettingsSlice.reducer,
 	},
 });
 
