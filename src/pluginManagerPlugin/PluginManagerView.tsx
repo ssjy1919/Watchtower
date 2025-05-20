@@ -21,7 +21,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const pluginManager = useSelector((state: RootState) => state.settings.pluginManager);
     const storeField = useSelector((state: RootState) => state.settings.sortField.field);
     const storeOrder = useSelector((state: RootState) => state.settings.sortField.order);
-    const [showPluginGroups, setShowPluginGroups] = useState("#");
+    const showPluginInitial = useSelector((state: RootState) => state.settings.showPluginInitial);
     const dispatch = useDispatch();
     // 根据 showPluginGroups 过滤插件列表
     const filteredPlugins = pluginManager.filter(Iplugin => {
@@ -30,6 +30,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         // 否则仅显示 tags 包含 showPluginGroups 的插件
         return Iplugin.tags.includes(storeSettings.showPluginGroups);
     });
+
     // 计算属用 useMemo 
     const [getEnabledPlugins, getDisabledPlugins] = useMemo(() => [
         pluginManager.filter(p => p.enabled).length,
@@ -231,22 +232,27 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             return 0;
         });
     // 左侧字母分组按钮
-    const handleLetterClick = (letter: string | undefined) => {
-        setShowPluginGroups(letter ?? "#")
+    const handleLetterClick = (initial: string | undefined) => {
+        if (initial) {
+            const newSettings = { ...storeSettings, showPluginInitial: initial };
+            plugin.saveData(newSettings);
+            dispatch(setSettings(newSettings));
+        }
     }
+    
     return (
         <div className="PluginManagerView">
             <div className="grouping">
                 <div className="tag-container">
-                    <span className={`letter-tag ${showPluginGroups === "#" ? "active-letter" : ""}`} onClick={() => handleLetterClick("#")}>✲</span>
+                    <span className={`initial-tag ${showPluginInitial === "#" ? "active-initial" : ""}`} onClick={() => handleLetterClick("#")}>✲</span>
                     {/* // 使用去重后的数组渲染 */}
-                    {uniqueLetters.map((letter, index) => (
+                    {uniqueLetters.map((initial, index) => (
                         <span
                             key={index}
-                            className={`letter-tag ${showPluginGroups === letter ? "active-letter" : ""}`}
-                            onClick={() => handleLetterClick(letter)}
+                            className={`initial-tag ${showPluginInitial === initial ? "active-initial" : ""}`}
+                            onClick={() => handleLetterClick(initial)}
                         >
-                            {letter}
+                            {initial}
                         </span>
                     ))}
                 </div>
@@ -289,7 +295,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedPlugins.filter(Iplugin => showPluginGroups == "#" || showPluginGroups == Iplugin.name.at(0))
+                        {sortedPlugins.filter(Iplugin => showPluginInitial == "#" || showPluginInitial == Iplugin.name.at(0))
                             .map((Iplugin) => (
                                 <tr key={Iplugin.id}>
                                     <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>

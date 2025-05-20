@@ -16,7 +16,7 @@
     padding-top: 2em;
     width: 3em;
 }
-.PluginManagerView .letter-tag {
+.PluginManagerView .initial-tag {
     display: inline-block;
     width: 24px;
     height: 24px;
@@ -28,13 +28,13 @@
     transition: 0.2s;
     margin-bottom: 3px;
 }
-.PluginManagerView .letter-tag.active-letter {
+.PluginManagerView .initial-tag.active-initial {
     background-color: var(--background-modifier-border-hover);
 }
 
 
 
-.PluginManagerView .letter-tag:hover {
+.PluginManagerView .initial-tag:hover {
     background-color: var(--background-modifier-border-hover);
 }
 

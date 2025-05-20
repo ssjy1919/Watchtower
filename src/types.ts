@@ -108,7 +108,9 @@ export interface WatchtowerSettings {
 	/** 插件分组标签 */
 	pluginGroups: string[];
 	/** 显示插件分组标签 */
-	showPluginGroups: string;
+    showPluginGroups: string;
+    /** 插件首字母分组 */
+	showPluginInitial: string;
 }
 
 // 定义默认的 WatchtowerSettings 值
@@ -122,6 +124,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	pluginManager: [pluginManager],
     pluginGroups: [],
     showPluginGroups: "",
+    showPluginInitial:"#",
 	sortField: {
 		field: "enabled",
 		order: "desc",

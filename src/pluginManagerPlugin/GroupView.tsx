@@ -58,9 +58,10 @@ const GroupView: React.FC<GroupView> = ({ plugin }) => {
         const newSettings = {
             ...storeSettings,
             showPluginGroups: group,
+            showPluginInitial: "#",
         };
-        dispatch(setSettings(newSettings));
         plugin.saveData(newSettings);
+        dispatch(setSettings(newSettings));
     };
     return (
         <div className="GroupView">

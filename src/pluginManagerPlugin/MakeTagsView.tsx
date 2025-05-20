@@ -83,6 +83,7 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
         const newSettings = {
             ...storeSettings,
             showPluginGroups: tag,
+            showPluginInitial: "#",
         };
         dispatch(setSettings(newSettings));
         await plugin.saveData(newSettings);
