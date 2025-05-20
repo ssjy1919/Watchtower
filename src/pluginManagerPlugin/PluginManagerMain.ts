@@ -19,11 +19,11 @@ export class PluginManagerPlugin {
 		this.plugin.addCommand({
 			id: "pluginManagerCenterLeafView",
 			name: "打开插件管理视图",
-			callback: async () => {
+			callback:  () => {
 				activateMiddleView(this.plugin);
 			},
 		});
-		this.plugin.addRibbonIcon("blocks", "插件管理", async () => {
+		this.plugin.addRibbonIcon("blocks", "插件管理",  () => {
 			activateMiddleView(this.plugin);
 		});
 		// 注册插件管理视图
@@ -37,7 +37,7 @@ export class PluginManagerPlugin {
 		//         , 1000)
 		// );
 
-		this.plugin.app.workspace.onLayoutReady(async () => {
+		this.plugin.app.workspace.onLayoutReady( () => {
 			store.getState().settings.pluginManager.forEach((plugin) => {
 				if (plugin.delayStart > 0) {
 					//@ts-ignore

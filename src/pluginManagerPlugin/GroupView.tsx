@@ -90,7 +90,7 @@ const GroupView: React.FC<GroupView> = ({ plugin }) => {
                                 handleDeleteItemClick(group);
                             }}
                         >
-                            🗑️
+                            ×
                         </span>
                     )}
                 </div>

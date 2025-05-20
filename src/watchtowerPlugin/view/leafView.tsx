@@ -27,17 +27,19 @@ export class File_supervision extends ItemView {
         return '瞭望塔';
     }
 
-    async onOpen() {
+    onOpen() {
         this.root = createRoot(this.containerEl.children[1]);
         this.root.render(
             <Provider store={store}>
                 <FileSupervision plugin={this.plugin} />
             </Provider>
         );
+        return Promise.resolve();
     }
 
-    async onClose() {
+    onClose() {
         this.root?.unmount();
+        return Promise.resolve();
     }
 }
 

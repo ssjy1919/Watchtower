@@ -16,7 +16,7 @@ export class WatchtowerMain {
 		this.plugin = plugin;
 	}
 
-	async initialize() {
+	initialize() {
 		// 注册文件事件监听，数据初始化后执行
 		registerFileEventHandlers(this.plugin);
 

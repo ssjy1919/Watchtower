@@ -6,7 +6,7 @@ import { RootState, setSettings, updatePluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
 import { Notice } from "obsidian";
@@ -21,6 +21,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const pluginManager = useSelector((state: RootState) => state.settings.pluginManager);
     const storeField = useSelector((state: RootState) => state.settings.sortField.field);
     const storeOrder = useSelector((state: RootState) => state.settings.sortField.order);
+    const [showPluginGroups, setShowPluginGroups] = useState("#");
     const dispatch = useDispatch();
     // 根据 showPluginGroups 过滤插件列表
     const filteredPlugins = pluginManager.filter(Iplugin => {
@@ -41,7 +42,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             if (p.id === iPlugin.id) {
                 //@ts-ignore
                 if (plugin.app.isMobile && iPlugin.isDesktopOnly) {
-                    new Notice("该插件不支持移动端使用", 10000);
+                    new Notice("该插件不支持移动端使用");
                     return p;
                 }
                 return {
@@ -59,7 +60,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             if (p.id === iPlugin.id) {
                 //@ts-ignore
                 if (plugin.app.isMobile && iPlugin.isDesktopOnly) {
-                    return ;
+                    return;
                 }
                 if (iPlugin.enabled) {
                     await disablePlugin(iPlugin.id);
@@ -209,94 +210,136 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         })
         : filteredPlugins;
 
+    // 先提取并去重首字母
+    // 修改后的排序比较函数
+    const uniqueLetters = Array.from(new Set(
+        sortedPlugins
+            .map(p => p.name.at(0))
+    ))
+        .filter(Boolean)
+        .sort((a, b) => {
+            // 强制转换为字符串并设置默认值
+            const strA = String(a || '');
+            const strB = String(b || '');
+            const isAUpper = /[A-Z]/.test(strA);
+            const isBUpper = /[A-Z]/.test(strB);
+            if (isAUpper && !isBUpper) return 1;
+            if (!isAUpper && isBUpper) return -1;
+            // 使用转换后的字符串进行比较
+            if (strA < strB) return -1;
+            if (strA > strB) return 1;
+            return 0;
+        });
+    // 左侧字母分组按钮
+    const handleLetterClick = (letter: string | undefined) => {
+        setShowPluginGroups(letter ?? "#")
+    }
     return (
         <div className="PluginManagerView">
-            <GroupView plugin={plugin} />
-            <table>
-                <thead>
-                    <tr>
-                        <th onClick={() => handleHeaderClick('name')} >
-                            一共{pluginManager.length}个插件，开启{getEnabledPlugins}关闭{getDisabledPlugins}{" "}
-                            {storeField === "name" && storeOrder === "asc" && "↑"}
-                            {storeField === "name" && storeOrder === "desc" && "↓"}
-                        </th>
-                        <th onClick={() => handleHeaderClick('enabled')} >
-                            状态{" "}
-                            {storeField === "enabled" && storeOrder === "asc" && "↑"}
-                            {storeField === "enabled" && storeOrder === "desc" && "↓"}
-                        </th>
-                        <th onClick={() => handleHeaderClick('delayStart')} >
-                            延时启动(秒)
-                            {storeField === "delayStart" && storeOrder === "asc" && "↑"}
-                            {storeField === "delayStart" && storeOrder === "desc" && "↓"}
-                        </th>
-                        <th onClick={() => handleHeaderClick('switchTime')} >
-                            更改时间{" "}
-                            {storeField === "switchTime" && storeOrder === "asc" && "↑"}
-                            {storeField === "switchTime" && storeOrder === "desc" && "↓"}
-                        </th>
-                        <th onClick={() => handleHeaderClick('tags')} >
-                            标签{" "}
-                            {storeField === "tags" && storeOrder === "asc" && "↑"}
-                            {storeField === "tags" && storeOrder === "desc" && "↓"}
-                        </th>
-                        <th onClick={() => handleHeaderClick('comment')} >
-                            备注{" "}
-                            {storeField === "comment" && storeOrder === "asc" && "↑"}
-                            {storeField === "comment" && storeOrder === "desc" && "↓"}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedPlugins.map((Iplugin) => (
-                        <tr key={Iplugin.id}>
-                            <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
-                                {/* @ts-ignore */}
-                                <div className={`plugin-name ${plugin.app.isMobile && Iplugin.isDesktopOnly ? "isDesktopOnly" : ""}`}>
-                                    <div>{Iplugin.name}</div>
-
-                                    <div className="plugin-setting">{Iplugin.enabled && Iplugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{Iplugin.version}</div></div>
-                                </div>
-                            </td>
-                            <td>{Iplugin.id != "watchtower" ? <Switch
-                                label=""
-                                description=""
-                                value={Iplugin.enabled}
-                                onChange={() => { handleChange(Iplugin) }}
-                            /> : "⚪"}
-                            </td>
-                            <td>
-                                {Iplugin.id != "watchtower" ?
-                                    <input
-                                        type="number"
-                                        defaultValue={Iplugin.delayStart || ""}
-                                        min="0"
-                                        max="999"
-                                        placeholder="0"
-                                        onBlur={(e) => handleDelayStartChange(Iplugin, parseInt(e.target.value))}
-                                    /> : "0"}
-                            </td>
-                            <td>
-                                {getSwitchTimeByPluginId(Iplugin.id) === 0
-                                    ? 0
-                                    : new Date(getSwitchTimeByPluginId(Iplugin.id)).toLocaleString()}
-                            </td>
-                            <td>
-                                {/* 标签组件 */}
-                                <MakeTagsView Iplugin={Iplugin} plugin={plugin} />
-                            </td>
-                            <td>
-                                <textarea
-                                    value={Iplugin.comment}
-                                    placeholder={Iplugin.description}
-                                    rows={2}
-                                    onChange={(e) => handleCommentChange(Iplugin, e.target.value)}
-                                />
-                            </td>
-                        </tr>
+            <div className="grouping">
+                <div className="tag-container">
+                    <span className={`letter-tag ${showPluginGroups === "#" ? "active-letter" : ""}`} onClick={() => handleLetterClick("#")}>✲</span>
+                    {/* // 使用去重后的数组渲染 */}
+                    {uniqueLetters.map((letter, index) => (
+                        <span
+                            key={index}
+                            className={`letter-tag ${showPluginGroups === letter ? "active-letter" : ""}`}
+                            onClick={() => handleLetterClick(letter)}
+                        >
+                            {letter}
+                        </span>
                     ))}
-                </tbody>
-            </table>
+                </div>
+            </div>
+            <div>
+                <GroupView plugin={plugin} />
+                <table>
+                    <thead>
+                        <tr>
+                            <th onClick={() => handleHeaderClick('name')} >
+                                一共{pluginManager.length}个插件，开启{getEnabledPlugins}关闭{getDisabledPlugins}{" "}
+                                {storeField === "name" && storeOrder === "asc" && "↑"}
+                                {storeField === "name" && storeOrder === "desc" && "↓"}
+                            </th>
+                            <th onClick={() => handleHeaderClick('enabled')} >
+                                状态{" "}
+                                {storeField === "enabled" && storeOrder === "asc" && "↑"}
+                                {storeField === "enabled" && storeOrder === "desc" && "↓"}
+                            </th>
+                            <th onClick={() => handleHeaderClick('delayStart')} >
+                                延时启动(秒)
+                                {storeField === "delayStart" && storeOrder === "asc" && "↑"}
+                                {storeField === "delayStart" && storeOrder === "desc" && "↓"}
+                            </th>
+                            <th onClick={() => handleHeaderClick('switchTime')} >
+                                更改时间{" "}
+                                {storeField === "switchTime" && storeOrder === "asc" && "↑"}
+                                {storeField === "switchTime" && storeOrder === "desc" && "↓"}
+                            </th>
+                            <th onClick={() => handleHeaderClick('tags')} >
+                                标签{" "}
+                                {storeField === "tags" && storeOrder === "asc" && "↑"}
+                                {storeField === "tags" && storeOrder === "desc" && "↓"}
+                            </th>
+                            <th onClick={() => handleHeaderClick('comment')} >
+                                备注{" "}
+                                {storeField === "comment" && storeOrder === "asc" && "↑"}
+                                {storeField === "comment" && storeOrder === "desc" && "↓"}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {sortedPlugins.filter(Iplugin => showPluginGroups == "#" || showPluginGroups == Iplugin.name.at(0))
+                            .map((Iplugin) => (
+                                <tr key={Iplugin.id}>
+                                    <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
+                                        {/* @ts-ignore */}
+                                        <div className={`plugin-name ${plugin.app.isMobile && Iplugin.isDesktopOnly ? "isDesktopOnly" : ""}`}>
+                                            <div>{Iplugin.name}</div>
+
+                                            <div className="plugin-setting">{Iplugin.enabled && Iplugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{Iplugin.version}</div></div>
+                                        </div>
+                                    </td>
+                                    <td>{Iplugin.id != "watchtower" ? <Switch
+                                        label=""
+                                        description=""
+                                        value={Iplugin.enabled}
+                                        onChange={() => { handleChange(Iplugin) }}
+                                    /> : "⚪"}
+                                    </td>
+                                    <td>
+                                        {Iplugin.id != "watchtower" ?
+                                            <input
+                                                type="number"
+                                                defaultValue={Iplugin.delayStart || ""}
+                                                min="0"
+                                                max="999"
+                                                placeholder="0"
+                                                onBlur={(e) => handleDelayStartChange(Iplugin, parseInt(e.target.value))}
+                                            /> : "0"}
+                                    </td>
+                                    <td>
+                                        {getSwitchTimeByPluginId(Iplugin.id) === 0
+                                            ? 0
+                                            : new Date(getSwitchTimeByPluginId(Iplugin.id)).toLocaleString()}
+                                    </td>
+                                    <td>
+                                        {/* 标签组件 */}
+                                        <MakeTagsView Iplugin={Iplugin} plugin={plugin} />
+                                    </td>
+                                    <td>
+                                        <textarea
+                                            value={Iplugin.comment}
+                                            placeholder={Iplugin.description}
+                                            rows={2}
+                                            onChange={(e) => handleCommentChange(Iplugin, e.target.value)}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

@@ -19,40 +19,40 @@ export default class WatchtowerPlugin extends Plugin {
 	async onload() {
 		// 加载设置
 		await loadSettings(this);
-		this.app.workspace.onLayoutReady(async () => {
+		this.app.workspace.onLayoutReady(() => {
 			this.fileHandler = new FileHandler(this);
-
 			init(this);
 			if (this.settings.watchtowerPlugin) {
 				// 等待应用初始化完成
 				const watchtowerMain = new WatchtowerMain(this);
-				await watchtowerMain.initialize();
-
-				this.registerView(
-					VIEW_TYPE_FILE_SUPERVISION,
-					(leaf) => new File_supervision(leaf, this)
-				);
+				watchtowerMain.initialize();
 			}
 			if (this.settings.pluginManagerPlugin) {
 				new PluginManagerPlugin(this);
 			}
 		});
+		if (this.settings.watchtowerPlugin) {
+			this.registerView(
+				VIEW_TYPE_FILE_SUPERVISION,
+				(leaf) => new File_supervision(leaf, this)
+			);
+        }
+        
+        
 		// 挂载插件设置页面
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
 	}
 
-	async onunload() {
+	onunload() {
 		/** 卸载标签页*/
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_PLUGIN_MANAGER);
 	}
 	async onExternalSettingsChange() {
-		new Notice("Watchtower：插件配置被外部修改。",10000);
+		new Notice("Watchtower：插件配置被外部修改。", 10000);
 		await loadSettings(this);
-		await init(this);
+		init(this);
 		getAllPlugins();
-		new Notice("Watchtower：重载完毕。",20000 );
+		new Notice("Watchtower：重载完毕。", 20000);
 	}
 }
-
-
