@@ -104,7 +104,7 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
                                 handleDeleteTagClick(tag);
                             }}
                         >
-                            🗑️
+                            ×
                         </span>
                     )}
                 </div>
@@ -134,8 +134,8 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
                 <div className="MakeTagsView-enter">
                     {isDropdownVisible && (
                         <>
-                            <span onClick={() => setDropdownVisible(false)}>取消</span>
                             <span onClick={handleAddTagClick}>确定</span>
+                            <span onClick={() => setDropdownVisible(false)}>取消</span>
                         </>
                     )}
                 </div>

@@ -5,36 +5,36 @@
     min-width: 51em;
     margin-bottom: 5px;
 }
-.GroupView .GroupView-group{
-    border: #8e8d8d75 solid 1px;
-    padding: 0 5PX;
-    background-color: #cccccc84;
+.GroupView .GroupView-group {
+    display: flex;
+    padding: 0.5em 0.5em;
     cursor: pointer;
-    border-radius: 0.5em;
-    /* 外阴影 */
-    box-shadow: 0 0 2px  rgba(0, 0, 0, 0.2);
-    margin:0 2px;
+    border-radius: 1em;
+    margin-right: 0.5em;
+    height: 1.5em;
+    align-content: center;
+    align-items: center;
+
 }
 .GroupView .GroupView-group:hover{
-    background-color:  var(--titlebar-background-focused);
+    background-color:  var(--background-modifier-hover);
     /* 外阴影 */
     box-shadow: 0 0  2px  rgba(0, 0, 0, 0.2);
 }
-.GroupView .GroupView-delete{
-    border: 1px solid rgba(103, 108, 108, 0.313);
-    border-radius: 0.5em;
+.GroupView .GroupView-delete {
+    /* border: 1px solid rgba(103, 108, 108, 0.313); */
+    /* border-radius: 0.5em; */
     cursor: pointer;
-    background: var(--titlebar-background-focused);
+    /* background: var(--background-modifier-hover); */
     margin-left: 0.3em;
-    position: relative; /* 添加相对定位 */
-    left: 5px; /* 向右移动 5px */
-    
+    position: relative;
+    left: 5px;
 }
 .GroupView .GroupView-delete:hover {
-    background-color: var(--background-modifier-hover);
+    background-color: var(--titlebar-background-focused);
 }
 .GroupView .GroupView-active{
-    background-color: var(--titlebar-background-focused);
+    background-color: var(--background-modifier-hover);
 
 }
 
@@ -56,7 +56,7 @@
 }
 
 .GroupView-setting button:hover {
-    background-color: var(--background-modifier-hover);
+    background-color: var(--titlebar-background-focused);
 }
 
 .GroupView .GroupView-setting {

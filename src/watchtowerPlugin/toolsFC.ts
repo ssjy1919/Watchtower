@@ -7,7 +7,7 @@ import { store, setSettings } from "../store";
 
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
-	const fileEventHandler = async (
+	const fileEventHandler = (
 		event: string,
 		file: TAbstractFile,
 		oldPath?: string
@@ -216,7 +216,7 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 	);
 }
 /** 初始化 */
-export async function init(plugin: WatchtowerPlugin) {
+export function init(plugin: WatchtowerPlugin) {
 	// 比较文件差异
 	const differentFiles = plugin.fileHandler.compareFiles();
 	const newSettings = {

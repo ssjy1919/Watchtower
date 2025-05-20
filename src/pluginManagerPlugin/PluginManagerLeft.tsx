@@ -10,7 +10,7 @@ import PluginManagerView from "./PluginManagerView";
 export const VIEW_TYPE_PLUGIN_MANAGER = 'plugin-manager-left-view';
 export class PluginManagerLeft extends ItemView {
     root: Root | null = null;
-    plugin: WatchtowerPlugin; 
+    plugin: WatchtowerPlugin;
     constructor(leaf: WorkspaceLeaf, plugin: WatchtowerPlugin) {
         super(leaf);
         this.plugin = plugin;
@@ -27,17 +27,19 @@ export class PluginManagerLeft extends ItemView {
         return '插件管理';
     }
 
-    async onOpen() {
+    onOpen() {
         this.root = createRoot(this.containerEl.children[1]);
         this.root.render(
             <Provider store={store}>
                 <PluginManagerView plugin={this.plugin} />
             </Provider>
         );
+        return Promise.resolve();
     }
 
-    async onClose() {
+    onClose() {
         this.root?.unmount();
+        return Promise.resolve();
     }
 }
 

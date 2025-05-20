@@ -1,7 +1,41 @@
 .PluginManagerView {
     display: inline-flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
+    flex-wrap: nowrap;
+}
+.PluginManagerView .grouping {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+.PluginManagerView .tag-container{
+    padding: 0;
+    /* 字体加粗 */
+    font-weight: bold;
+    padding-top: 2em;
+    width: 3em;
+}
+.PluginManagerView .letter-tag {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    margin: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-bottom: 3px;
+}
+.PluginManagerView .letter-tag.active-letter {
+    background-color: var(--background-modifier-border-hover);
+}
+
+
+
+.PluginManagerView .letter-tag:hover {
+    background-color: var(--background-modifier-border-hover);
 }
 
 .PluginManagerView .GroupView {
