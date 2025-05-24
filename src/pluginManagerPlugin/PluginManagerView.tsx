@@ -6,7 +6,7 @@ import { RootState, setSettings, updatePluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
-import { useMemo} from "react";
+import { useMemo } from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
 import { Notice } from "obsidian";
@@ -75,8 +75,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
         });
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        dispatch(updatePluginManager(updatedPlugins));
         await plugin.saveData(newSettings);
+        dispatch(updatePluginManager(updatedPlugins));
         getAllPlugins();
     }
     /**处理延时启动*/
@@ -125,8 +125,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 enablePlugin(iPlugin.id);
         }
         const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        await plugin.saveData(newSettings);
         dispatch(updatePluginManager(upStoreDatedPlugins));
+        await plugin.saveData(newSettings);
         getAllPlugins();
     }
     // 处理备注
@@ -149,7 +149,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     // 打开插件设置
     const handleSettingClick = async (Iplugin: PluginManager) => {
 
-        openPluginSettings(Iplugin);
+        openPluginSettings(Iplugin, plugin);
         if (!Iplugin.enabled) return;
         const updatedPlugins = pluginManager.map(p => {
             if (p.id === Iplugin.id) {
@@ -166,14 +166,14 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
         getAllPlugins();
     }
     // 处理下拉菜单排序选择（保留，用于内部调用）
-    const handleSortChange = (field: keyof PluginManager, order: "asc" | "desc") => {
+    const handleSortChange = async (field: keyof PluginManager, order: "asc" | "desc") => {
         const newSortField = { field, order };
 
         const updatedSettings = { ...storeSettings, sortField: newSortField };
         // 更新插件配置和 Redux 状态
         plugin.settings = updatedSettings;
         dispatch(setSettings(updatedSettings));
-        plugin.saveData(updatedSettings);
+        await plugin.saveData(updatedSettings);
         getAllPlugins();
     };
 
@@ -232,14 +232,41 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             return 0;
         });
     // 左侧字母分组按钮
-    const handleLetterClick = (initial: string | undefined) => {
+    const handleLetterClick = async (initial: string | undefined) => {
         if (initial) {
             const newSettings = { ...storeSettings, showPluginInitial: initial };
-            plugin.saveData(newSettings);
             dispatch(setSettings(newSettings));
+            await plugin.saveData(newSettings);
+            getAllPlugins();
         }
     }
-    
+    const saveConfig = async () => {
+        const newSettings = { ...storeSettings, secondPluginManager: storeSettings.pluginManager };
+        dispatch(setSettings(newSettings));
+        await plugin.saveData(newSettings);
+        getAllPlugins();
+        new Notice('插件配置保存成功');
+    }
+    const restoreConfig = () => {
+        storeSettings.secondPluginManager.forEach(async (p) => {
+            //@ts-ignore
+            if (plugin.app.isMobile && p.isDesktopOnly) {
+                return;
+            }
+            if (p.delayStart > 0) {
+                //@ts-ignore
+                p.enabled ? await plugin.app.plugins.enablePlugin(p.id) : await plugin.app.plugins.disablePlugin(p.id);
+            } else {
+                //通知ob启动插件，并保存插件信息
+                p.enabled ? enablePlugin(p.id) : disablePlugin(p.id);
+            }
+            const newSettings = { ...storeSettings, pluginManager: storeSettings.secondPluginManager };
+            dispatch(setSettings(newSettings));
+            await plugin.saveData(newSettings);
+            getAllPlugins();
+        });
+        new Notice('按配置恢复插件状态');
+    };
     return (
         <div className="PluginManagerView">
             <div className="grouping">
@@ -257,8 +284,14 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                     ))}
                 </div>
             </div>
-            <div>
-                <GroupView plugin={plugin} />
+            <div className="pluginManager-table">
+                <div className="pluginManager-table-header">
+                    <GroupView plugin={plugin} />
+                    <div>
+                        <button onClick={() => restoreConfig()}>恢复</button>
+                        <button onClick={() => saveConfig()}>保存</button>
+                    </div>
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -345,6 +378,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                             ))}
                     </tbody>
                 </table>
+
             </div>
         </div>
     );

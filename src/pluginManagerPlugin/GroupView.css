@@ -37,7 +37,10 @@
     background-color: var(--background-modifier-hover);
 
 }
-
+div.GroupView div.GroupView-container {
+    display: flex;
+    align-items: center;
+}
 .GroupView-container input {
     padding: 5px;
     border: 1px solid #ccc;

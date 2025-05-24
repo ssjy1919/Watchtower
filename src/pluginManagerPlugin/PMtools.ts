@@ -11,22 +11,37 @@ import { setSettings, store } from "src/store";
  */
 export async function activateMiddleView(plugin: WatchtowerPlugin) {
 	const { workspace } = plugin.app;
+	const storeSettings = store.getState().settings;
+	//@ts-ignore
+	const isNewWindow = !plugin.app.isMobile && storeSettings.pluginSettingNewWindow;
 
-	// 使用 iterateAllLeaves 遍历所有叶子节点，检查是否已有目标视图类型打开
 	let existingLeaf: WorkspaceLeaf | undefined;
+
 	workspace.iterateAllLeaves((leaf) => {
 		if (leaf.view.getViewType() === VIEW_TYPE_PLUGIN_MANAGER) {
-			existingLeaf = leaf;
+			// 如果要求新窗口，优先找新窗口里的 leaf
+			if (isNewWindow) {
+				existingLeaf = leaf;
+			}
+			// 如果不是新窗口，或者没找到新窗口里的 leaf，则先记下
+			if (!existingLeaf) existingLeaf = leaf;
 		}
 	});
 
 	if (existingLeaf) {
-		// 如果找到已打开的视图，直接激活它
 		workspace.setActiveLeaf(existingLeaf);
 		return;
 	}
+	if (isNewWindow) {
+		const newLeaf = plugin.app.workspace.getLeaf("window");
+		await newLeaf.setViewState({
+			type: VIEW_TYPE_PLUGIN_MANAGER,
+			active: true,
+		});
+		return;
+	}
 
-	// 如果没有找到，创建一个新的叶子并设置视图状态
+	// 默认在主窗口右侧打开
 	const rightLeaf = workspace.getLeaf("split", "vertical");
 	await rightLeaf.setViewState({
 		type: VIEW_TYPE_PLUGIN_MANAGER,
@@ -63,7 +78,7 @@ export function getAllPlugins() {
 			name: manifest.name || "",
 			enabled:
 				//@ts-ignore 获取已启动的插件
-				Object.keys(app.plugins.plugins).includes(id) ?true:false,
+				Object.keys(app.plugins.plugins).includes(id) ? true : false,
 			switchTime: storePlugin.switchTime || 0,
 			tags: storePlugin.tags || [],
 			comment: storePlugin.comment || "",
@@ -114,17 +129,22 @@ export async function enablePlugin(pluginId: string) {
  * 根据插件 id 打开对应插件的设置页面
  * @param IPlugin
  */
-export function openPluginSettings(iplugin: PluginManager): void {
+export function openPluginSettings(
+	iplugin: PluginManager,
+	plugin: WatchtowerPlugin
+) {
 	if (!iplugin.enabled) {
 		new Notice("插件未开启", 5000);
 		return;
 	}
 	//@ts-ignore
-	if (!app.setting.openTabById(iplugin.id)) {
+	if (!plugin.app.setting.pluginTabs.find((P) => P.id === iplugin.id)) {
 		new Notice("此插件没有设置项", 5000);
 	} else {
 		//@ts-ignore
-		app.setting.open();
+		plugin.app.setting.open();
+		//@ts-ignore
+		plugin.app.setting.openTabById(iplugin.id);
 	}
 }
 
