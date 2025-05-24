@@ -31,7 +31,9 @@
 .PluginManagerView .initial-tag.active-initial {
     background-color: var(--background-modifier-border-hover);
 }
-
+.pluginManager-table{
+    width: 100%;
+}
 
 
 .PluginManagerView .initial-tag:hover {
@@ -233,4 +235,16 @@
 
 .PluginManagerView textarea {
     width: 100%;
+}
+
+
+.pluginManager-table-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pluginManager-table-header div:last-child {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 2em;
 }

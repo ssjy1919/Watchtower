@@ -99,9 +99,13 @@ export interface WatchtowerSettings {
 	watchtowerPlugin: boolean;
 	/** 是否启动插件管理功能 */
 	pluginManagerPlugin: boolean;
+	/** 插件的设置页面是否在新窗口打开 */
+    pluginSettingNewWindow: boolean;
+    /** 保存第二套插件配置信息 */
+    secondPluginManager: PluginManager[];
 	/** 历史文件列表配置 */
 	recentFilesOpenMode: boolean;
-	/** 插件信息 */
+	/** 插件配置信息 */
 	pluginManager: PluginManager[];
 	/** 插件管理页面的排序字段 */
 	sortField: SortField;
@@ -120,8 +124,10 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	isFirstInstall: true,
 	watchtowerPlugin: true,
 	pluginManagerPlugin: true,
+	pluginSettingNewWindow: true,
 	recentFilesOpenMode: false,
-	pluginManager: [pluginManager],
+    pluginManager: [pluginManager],
+    secondPluginManager:[pluginManager],
     pluginGroups: [],
     showPluginGroups: "",
     showPluginInitial:"#",

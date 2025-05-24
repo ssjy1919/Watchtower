@@ -42,7 +42,7 @@
   margin-top: 1em;
   border-bottom: 1px solid var(--background-modifier-border-hover);
 }
-.file-Supervision-setting-container .recent-file-open-new-tab {
+.file-Supervision-setting-container .setting-item-2 {
   margin-left: 2em;
 }
 .file-supervision-table-show {
@@ -127,15 +127,6 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
-.file-supervision {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
 .PluginManagerView {
   display: inline-flex;
   flex-direction: row;
@@ -167,6 +158,9 @@
 }
 .PluginManagerView .initial-tag.active-initial {
   background-color: var(--background-modifier-border-hover);
+}
+.pluginManager-table {
+  width: 100%;
 }
 .PluginManagerView .initial-tag:hover {
   background-color: var(--background-modifier-border-hover);
@@ -311,6 +305,15 @@
 .PluginManagerView textarea {
   width: 100%;
 }
+.pluginManager-table-header {
+  display: flex;
+  justify-content: space-between;
+}
+.pluginManager-table-header div:last-child {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 2em;
+}
 .PluginManagerView .GroupView {
   display: flex;
   flex-direction: row;
@@ -343,6 +346,10 @@
 }
 .GroupView .GroupView-active {
   background-color: var(--background-modifier-hover);
+}
+div.GroupView div.GroupView-container {
+  display: flex;
+  align-items: center;
 }
 .GroupView-container input {
   padding: 5px;

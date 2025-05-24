@@ -16,14 +16,15 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
     const storeSettings = useSelector((state: RootState) => state.settings);
     const recentFilesMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
     const pluginManagerMode = useSelector((state: RootState) => state.settings.pluginManagerPlugin);
+    const pluginSettingNewWindow = useSelector((state: RootState) => state.settings.pluginSettingNewWindow);
     const dispatch = useDispatch();
     const handleChangeFileSupervision = async (value: boolean) => {
         setIsSwitchOn(value);
-        
-        const newSettings = { ...storeSettings,watchtowerPlugin: value };
+
+        const newSettings = { ...storeSettings, watchtowerPlugin: value };
         await plugin.saveData(newSettings);
         if (value) {
-            await init(plugin);
+            init(plugin);
         }
     };
 
@@ -31,15 +32,21 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 
 
     const handleChange = async (value: boolean) => {
-        const newSettings = { ...storeSettings,recentFilesOpenMode: value };
+        const newSettings = { ...storeSettings, recentFilesOpenMode: value };
         dispatch(setSettings(newSettings));
         await plugin.saveData(newSettings);
     };
     const handlePluginManagerChange = async (value: boolean) => {
-        const newSettings = { ...storeSettings,pluginManagerPlugin: value };
+        const newSettings = { ...storeSettings, pluginManagerPlugin: value };
         dispatch(setSettings(newSettings));
         await plugin.saveData(newSettings);
     };
+    const handlePluginSettingNewWindowChange = async (value: boolean) => {
+        const newSettings = { ...storeSettings, pluginSettingNewWindow: value };
+        dispatch(setSettings(newSettings));
+        await plugin.saveData(newSettings);
+    };
+
 
     return (
         <>
@@ -54,14 +61,14 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                         value={isSwitchOn}
                         onChange={handleChangeFileSupervision}
                     />
-                    {plugin.settings.watchtowerPlugin && <div className="recent-file-open-new-tab">
+                    {isSwitchOn && <div className="setting-item-2">
                         <Switch
                             label="最近文件在新标签页打开"
                             description="开启按钮时，打开历史文件在新页面打开。"
                             value={recentFilesMode}
                             onChange={handleChange}
                         />
-                        
+
                     </div>}
 
                 </div>
@@ -73,7 +80,14 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                         onChange={handlePluginManagerChange}
                     />
                 </div>
-
+                {pluginManagerMode && <div className="plugin-setting-new-window-switch setting-item-2">
+                    <Switch
+                        label="插件设置页面在新窗口打开"
+                        description="开启时，插件的设置页面在新窗口打开。(只有桌面端有效)"
+                        value={pluginSettingNewWindow}
+                        onChange={handlePluginSettingNewWindowChange}
+                    />
+                </div>}
             </div>
         </>
     );

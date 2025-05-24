@@ -110,16 +110,16 @@ const GroupView: React.FC<GroupView> = ({ plugin }) => {
                         onBlur={(e) => handleDelayStartChange(e.target.value.trim())}
                     />
                 )}
-            </div>
-            <div className="GroupView-setting">
-                {/* 加号按钮，点击切换输入框显示状态 */}
-                <button onClick={handleAddItemClik}>
-                    {isInputVisible ? "添加" : `➕`}
-                </button>
-                {/* 取消按钮 */}
-                <button onClick={handleCancelClik} style={{ display: isInputVisible ? "inline-flex" : "none" }}>
-                    {isInputVisible ? "取消" : ``}
-                </button>
+                <div className="GroupView-setting">
+                    {/* 加号按钮，点击切换输入框显示状态 */}
+                    <button onClick={handleAddItemClik}>
+                        {isInputVisible ? "添加" : `➕`}
+                    </button>
+                    {/* 取消按钮 */}
+                    <button onClick={handleCancelClik} style={{ display: isInputVisible ? "inline-flex" : "none" }}>
+                        {isInputVisible ? "取消" : ``}
+                    </button>
+                </div>
             </div>
         </div>
     );
