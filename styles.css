@@ -1,4 +1,7 @@
 /* main.css */
+.file-Supervision-setting-container .link {
+  margin-bottom: 3em;
+}
 .file-Supervision-setting-container .switch {
   position: relative;
   display: inline-block;
@@ -39,24 +42,29 @@
   transform: translateX(20px);
 }
 .file-Supervision-setting-container .setting-item {
-  margin-top: 1em;
   border-bottom: 1px solid var(--background-modifier-border-hover);
+  margin-top: 0.5em;
+  border-top: 0;
+  &:hover {
+    background-color: #c6c6c61b;
+  }
 }
 .file-Supervision-setting-container .setting-item-2 {
   margin-left: 2em;
+}
+.setting-item .setting-item-description {
+  font-size: 0.7em;
 }
 .file-supervision-table-show {
   width: auto;
   max-width: 100%;
   margin-left: 0.5em;
-  font-size: 0.8em;
 }
 .file-supervision-table-none {
   display: none;
 }
 .recent-open-file-table {
   margin-bottom: 1em;
-  border: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
 }
 .file-supervision table {
   width: auto;
@@ -93,6 +101,12 @@
   flex-direction: row;
   justify-content: space-between;
   min-height: 1.5em;
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  margin-left: 0.1em;
+  margin-right: 0;
+  padding: 3px 0 3px 8px;
+  font-size: 1em;
 }
 .file-supervision .save-file-info,
 .file-supervision .show-table {
@@ -104,11 +118,6 @@
   background-color: var(--nav-item-background-hover);
   font-weight: var(--nav-item-weight-hover);
 }
-.file-supervision .file-supervision-table-show.tips,
-.file-supervision .file-supervision-table-none.tips {
-  margin: 0.1em;
-  padding: 3px 8px;
-}
 .file-supervision-table-show table {
   margin: 0 0.5em 0.5em 0;
   padding: 0.5em;
@@ -116,7 +125,7 @@
   border-inline-end: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
 }
 .file-supervision .markTime {
-  font-size: 0.5em;
+  font-size: 0.8em;
 }
 .file-supervision-left-view {
   width: 100%;
@@ -144,6 +153,9 @@
   padding-top: 2em;
   width: 3em;
 }
+.pluginManager-table {
+  width: inherit;
+}
 .PluginManagerView .initial-tag {
   display: inline-block;
   width: 24px;
@@ -159,7 +171,9 @@
 .PluginManagerView .initial-tag.active-initial {
   background-color: var(--background-modifier-border-hover);
 }
-.pluginManager-table {
+.PluginManagerView table {
+  table-layout: auto;
+  border-collapse: collapse;
   width: 100%;
 }
 .PluginManagerView .initial-tag:hover {
@@ -216,15 +230,12 @@
   flex-direction: column;
   justify-content: center;
 }
-.PluginManagerView table {
-  border-collapse: collapse;
-  width: 100%;
-}
 .PluginManagerView tr {
   border: 1px solid #ddd;
 }
 .PluginManagerView td {
-  padding-left: 5px;
+  padding: 0 5px;
+  min-width: 0;
 }
 .PluginManagerView th {
   background-color: #9e9d9d51;
@@ -232,7 +243,6 @@
   cursor: pointer;
   border: #333 solid 1px;
   font-size: 0.8em;
-  width: 3em;
 }
 .PluginManagerView td:nth-child(odd) {
   background-color: #e1e1e159;
@@ -265,19 +275,22 @@
   background-color: #ffffff;
   color: #333;
 }
-.PluginManagerView th:nth-child(1),
-.PluginManagerView td:nth-child(1) {
-  width: 5em;
+.PluginManagerView table th:nth-child(1),
+.PluginManagerView table td:nth-child(1) {
+  width: 9.5em;
+  min-width: 9.5em;
 }
 .PluginManagerView th:nth-child(2),
 .PluginManagerView td:nth-child(2) {
   text-align: center;
   vertical-align: middle;
-  width: 3.5em;
+  width: 3em;
+  min-width: 3em;
 }
 .PluginManagerView th:nth-child(3),
 .PluginManagerView td:nth-child(3) {
   width: 3em;
+  min-width: 3em;
   text-align: center;
   vertical-align: middle;
 }
@@ -285,29 +298,37 @@
   display: inline-block;
   box-sizing: border-box;
   width: 3em;
+  min-width: 3em;
+  padding: 0;
+  border: 0;
 }
 .PluginManagerView th:nth-child(4),
 .PluginManagerView td:nth-child(4) {
-  width: 4em;
+  min-width: 0em;
+  padding: 0;
+}
+.PluginManagerView th:nth-child(5),
+.PluginManagerView td:nth-child(5) {
+  min-width: 5.5em;
   text-align: center;
   vertical-align: middle;
   font-size: 0.8em;
 }
-.PluginManagerView th:nth-child(5),
-.PluginManagerView td:nth-child(5) {
-  min-width: 10.8em;
-}
 .PluginManagerView th:nth-child(6),
 .PluginManagerView td:nth-child(6) {
   width: 100%;
-  min-width: 20.8em;
 }
 .PluginManagerView textarea {
   width: 100%;
+  box-sizing: border-box;
 }
 .pluginManager-table-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-end;
+  & button {
+    cursor: pointer;
+  }
 }
 .pluginManager-table-header div:last-child {
   display: flex;
@@ -318,7 +339,6 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  min-width: 51em;
   margin-bottom: 5px;
 }
 .GroupView .GroupView-group {
@@ -350,6 +370,8 @@
 div.GroupView div.GroupView-container {
   display: flex;
   align-items: center;
+  margin-left: 1em;
+  width: 8em;
 }
 .GroupView-container input {
   padding: 5px;
@@ -368,17 +390,20 @@ div.GroupView div.GroupView-container {
 .GroupView-setting button:hover {
   background-color: var(--titlebar-background-focused);
 }
-.GroupView .GroupView-setting {
+div.GroupView div.GroupView-setting {
   display: flex;
   width: 5em;
   flex-direction: row;
   justify-content: space-between;
+  margin-left: 0;
+}
+.GroupView-setting button {
+  margin-left: 1em;
 }
 .MakeTagsView {
   display: flex;
-  flex-direction: row;
-  width: fit-content;
   flex-wrap: wrap;
+  min-width: 11em;
 }
 .MakeTagsView .dropdown {
   max-width: 8em;
@@ -409,7 +434,6 @@ div.GroupView div.GroupView-container {
   cursor: pointer;
   border-radius: 1em;
   margin: 2px 0;
-  margin-right: 0.5em;
   white-space: nowrap;
 }
 .MakeTagsView .MakeTagsView-tag:hover {

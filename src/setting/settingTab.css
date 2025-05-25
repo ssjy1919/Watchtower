@@ -1,3 +1,7 @@
+.file-Supervision-setting-container .link{
+    margin-bottom: 3em;
+}
+
 /* 开关按钮样式 */
 .file-Supervision-setting-container .switch {
     position: relative;
@@ -47,8 +51,12 @@
 }
 
 .file-Supervision-setting-container .setting-item {
-    margin-top: 1em;
     border-bottom: 1px solid var(--background-modifier-border-hover);
+    margin-top: 0.5em;
+    border-top: 0;
+    &:hover {
+        background-color: #c6c6c61b;
+    }
 }
 
 .file-Supervision-setting-container .setting-item-2{

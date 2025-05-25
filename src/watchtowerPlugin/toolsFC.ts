@@ -66,29 +66,23 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			const fileStatLists = newSettings.fileStats;
 			const updatedFileStats = fileStatLists.map((fileStat) => {
 				if (fileStat.path === file.path) {
-					if (file.stat.size !== fileStat.stat.size) {
-						if (file.stat.size !== fileStat.stat.size) {
-							return {
-								...fileStat,
-								differents:
-									fileStat.differents != "新建文件"
-										? file.stat.size > fileStat.stat.size
-											? `增加${
-													file.stat.size -
-													fileStat.stat.size
-											  }字节`
-											: file.stat.size <
-											  fileStat.stat.size
-											? `减少${
-													fileStat.stat.size -
-													file.stat.size
-											  }字节`
-											: ""
-										: fileStat.differents,
-							};
-						}
-					}
+					return {
+						...fileStat,
+						differents:
+							fileStat.differents != "新建文件"
+								? file.stat.size > fileStat.stat.size
+									? `增加${
+											file.stat.size - fileStat.stat.size
+									  }字节`
+									: file.stat.size < fileStat.stat.size
+									? `减少${
+											fileStat.stat.size - file.stat.size
+									  }字节`
+									: ""
+								: fileStat.differents,
+					};
 				}
+
 				return fileStat;
 			});
 			newSettings = {
@@ -165,14 +159,6 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			if (file) {
 				// 调用文件事件处理器或其他逻辑
 				fileEventHandler("opened", file);
-			}
-		})
-	);
-	plugin.registerEvent(
-		//@ts-ignore 注册配置文件事件处理器
-		plugin.app.vault.on("raw", (file: TAbstractFile | null) => {
-			if (file) {
-				fileEventHandler("raw", file);
 			}
 		})
 	);

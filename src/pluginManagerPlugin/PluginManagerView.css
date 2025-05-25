@@ -4,18 +4,25 @@
     width: 100%;
     flex-wrap: nowrap;
 }
+
 .PluginManagerView .grouping {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
 }
-.PluginManagerView .tag-container{
+
+.PluginManagerView .tag-container {
     padding: 0;
     /* 字体加粗 */
     font-weight: bold;
     padding-top: 2em;
     width: 3em;
 }
+
+.pluginManager-table {
+    width: inherit;
+}
+
 .PluginManagerView .initial-tag {
     display: inline-block;
     width: 24px;
@@ -28,10 +35,19 @@
     transition: 0.2s;
     margin-bottom: 3px;
 }
+
 .PluginManagerView .initial-tag.active-initial {
     background-color: var(--background-modifier-border-hover);
 }
-.pluginManager-table{
+
+.PluginManagerView table {
+    table-layout: auto;
+    /* 替代原来的 fixed */
+    /* 使列宽由 CSS 控制 */
+    border-collapse: collapse;
+    /* width: fit-content; */
+    /* 让表格宽度由内容决定 */
+
     width: 100%;
 }
 
@@ -107,23 +123,17 @@
 /* 表格样式 */
 
 
-.PluginManagerView table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-
 
 .PluginManagerView tr {
     border: 1px solid #ddd;
     /* 添加下边框作为分割线 */
-
 }
 
 
 .PluginManagerView td {
-    padding-left: 5px;
-
+    padding: 0 5px;
+    min-width: 0;
+    /* 允许单元格宽度自由收缩 */
 }
 
 .PluginManagerView th {
@@ -132,7 +142,6 @@
     cursor: pointer;
     border: #333 solid 1px;
     font-size: 0.8em;
-    width: 3em;
 }
 
 
@@ -157,7 +166,7 @@
     font-size: 0.7em;
 }
 
-.PluginManagerView .plugin-name.isDesktopOnly{
+.PluginManagerView .plugin-name.isDesktopOnly {
     color: var(--background-modifier-border-hover);
 }
 
@@ -179,24 +188,26 @@
     color: #333;
 }
 
-.PluginManagerView th:nth-child(1),
-.PluginManagerView td:nth-child(1) {
-    width: 5em;
+.PluginManagerView table th:nth-child(1),
+.PluginManagerView table td:nth-child(1) {
+    width: 9.5em;
+    min-width: 9.5em;
 }
 
 .PluginManagerView th:nth-child(2),
 .PluginManagerView td:nth-child(2) {
-    /* 设置第二列的宽度 */
     text-align: center;
     /* 让单元格内的文本居中 */
     vertical-align: middle;
     /* 让单元格内的内容垂直居中 */
-    width: 3.5em;
+    width: 3em;
+    min-width: 3em;
 }
 
 .PluginManagerView th:nth-child(3),
 .PluginManagerView td:nth-child(3) {
     width: 3em;
+    min-width: 3em;
     text-align: center;
     /* 让单元格内的文本居中 */
     vertical-align: middle;
@@ -204,14 +215,22 @@
 
 .PluginManagerView td:nth-child(3) input {
     display: inline-block;
-    /* 确保宽度至少能容纳内容 */
     box-sizing: border-box;
     width: 3em;
+    min-width: 3em;
+    padding: 0;
+    border: 0;
 }
 
 .PluginManagerView th:nth-child(4),
 .PluginManagerView td:nth-child(4) {
-    width: 4em;
+    min-width: 0em;
+    padding: 0;
+}
+
+.PluginManagerView th:nth-child(5),
+.PluginManagerView td:nth-child(5) {
+    min-width: 5.5em;
     /* 设置第三列的宽度 */
     text-align: center;
     /* 让单元格内的文本居中 */
@@ -220,27 +239,27 @@
     font-size: 0.8em;
 }
 
-.PluginManagerView th:nth-child(5),
-.PluginManagerView td:nth-child(5) {
-
-    /* width: 100%; */
-    min-width: 10.8em;
-}
 
 .PluginManagerView th:nth-child(6),
 .PluginManagerView td:nth-child(6) {
+
     width: 100%;
-    min-width: 20.8em;
 }
 
 .PluginManagerView textarea {
     width: 100%;
+    box-sizing: border-box;
+    /* 确保内边距不影响宽度计算 */
 }
-
 
 .pluginManager-table-header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-end;
+
+    & button {
+        cursor: pointer;
+    }
 }
 
 .pluginManager-table-header div:last-child {

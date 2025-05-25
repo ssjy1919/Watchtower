@@ -288,8 +288,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 <div className="pluginManager-table-header">
                     <GroupView plugin={plugin} />
                     <div>
-                        <button onClick={() => restoreConfig()}>恢复</button>
-                        <button onClick={() => saveConfig()}>保存</button>
+                        <button title="按记录的配置恢复插件状态" onClick={() => restoreConfig()}>恢复</button>
+                        <button title="保存当前插件状态的配置" onClick={() => saveConfig()}>保存</button>
                     </div>
                 </div>
                 <table>
@@ -310,15 +310,15 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                 {storeField === "delayStart" && storeOrder === "asc" && "↑"}
                                 {storeField === "delayStart" && storeOrder === "desc" && "↓"}
                             </th>
-                            <th onClick={() => handleHeaderClick('switchTime')} >
-                                更改时间{" "}
-                                {storeField === "switchTime" && storeOrder === "asc" && "↑"}
-                                {storeField === "switchTime" && storeOrder === "desc" && "↓"}
-                            </th>
                             <th onClick={() => handleHeaderClick('tags')} >
                                 标签{" "}
                                 {storeField === "tags" && storeOrder === "asc" && "↑"}
                                 {storeField === "tags" && storeOrder === "desc" && "↓"}
+                            </th>
+                            <th onClick={() => handleHeaderClick('switchTime')} >
+                                更改时间{" "}
+                                {storeField === "switchTime" && storeOrder === "asc" && "↑"}
+                                {storeField === "switchTime" && storeOrder === "desc" && "↓"}
                             </th>
                             <th onClick={() => handleHeaderClick('comment')} >
                                 备注{" "}
@@ -358,13 +358,13 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                             /> : "0"}
                                     </td>
                                     <td>
+                                        {/* 标签组件 */}
+                                        <MakeTagsView Iplugin={Iplugin} plugin={plugin} />
+                                    </td>
+                                    <td>
                                         {getSwitchTimeByPluginId(Iplugin.id) === 0
                                             ? 0
                                             : new Date(getSwitchTimeByPluginId(Iplugin.id)).toLocaleString()}
-                                    </td>
-                                    <td>
-                                        {/* 标签组件 */}
-                                        <MakeTagsView Iplugin={Iplugin} plugin={plugin} />
                                     </td>
                                     <td>
                                         <textarea

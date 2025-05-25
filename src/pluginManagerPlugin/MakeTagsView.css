@@ -1,8 +1,10 @@
 .MakeTagsView {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap; 
+    min-width: 11em;
+    /* flex-direction: row;
     width: fit-content;
-    flex-wrap: wrap;
+    */
 }
 
  .MakeTagsView .dropdown {
@@ -37,7 +39,7 @@
     cursor: pointer;
     border-radius: 1em;
     margin: 2px 0;
-    margin-right: 0.5em;
+    /* margin-right: 0.5em; */
     white-space: nowrap; /* 禁止换行 */
 }
 

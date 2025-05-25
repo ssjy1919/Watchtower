@@ -96,7 +96,9 @@ export interface WatchtowerSettings {
 	/** 控制首次安装插件时打开插件标签叶 */
 	isFirstInstall: boolean;
 	/** 是否启动文件监控功能 */
-	watchtowerPlugin: boolean;
+    watchtowerPlugin: boolean;
+    /** 是否添加底部状态栏图标 */
+    statusBarIcon: boolean;
 	/** 是否启动插件管理功能 */
 	pluginManagerPlugin: boolean;
 	/** 插件的设置页面是否在新窗口打开 */
@@ -122,7 +124,8 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: "记录时间为空",
 	fileStats: [settingsFileStats],
 	isFirstInstall: true,
-	watchtowerPlugin: true,
+    watchtowerPlugin: true,
+    statusBarIcon: true,
 	pluginManagerPlugin: true,
 	pluginSettingNewWindow: true,
 	recentFilesOpenMode: false,
