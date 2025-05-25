@@ -141,6 +141,13 @@
   flex-direction: row;
   width: 100%;
   flex-wrap: nowrap;
+  & .markdown-rendered {
+    max-height: 3em;
+    overflow: auto;
+  }
+  & .markdown-rendered * {
+    margin: 5px 0;
+  }
 }
 .PluginManagerView .grouping {
   display: flex;
