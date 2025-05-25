@@ -71,4 +71,5 @@ export function renderStatusBarView(container: HTMLElement, plugin: WatchtowerPl
             <StatusBarView container={container} plugin={plugin} />
         </Provider>
     );
+    return root;
 }

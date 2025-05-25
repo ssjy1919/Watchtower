@@ -17,22 +17,25 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
     const recentFilesMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
     const pluginManagerMode = useSelector((state: RootState) => state.settings.pluginManagerPlugin);
     const pluginSettingNewWindow = useSelector((state: RootState) => state.settings.pluginSettingNewWindow);
+    const statusBarIcon = useSelector((state: RootState) => state.settings.statusBarIcon);
     const dispatch = useDispatch();
     const handleChangeFileSupervision = async (value: boolean) => {
         setIsSwitchOn(value);
-
         const newSettings = { ...storeSettings, watchtowerPlugin: value };
         await plugin.saveData(newSettings);
         if (value) {
             init(plugin);
         }
     };
-
-
-
-
-    const handleChange = async (value: boolean) => {
+    /**最近文件在新标签页打开*/
+    const handleRecentFilesModeChange = async (value: boolean) => {
         const newSettings = { ...storeSettings, recentFilesOpenMode: value };
+        dispatch(setSettings(newSettings));
+        await plugin.saveData(newSettings);
+    };
+    /**添加底部状态栏图标*/
+    const handleStatusBarIconChange = async (value: boolean) => {
+        const newSettings = { ...storeSettings, statusBarIcon: value };
         dispatch(setSettings(newSettings));
         await plugin.saveData(newSettings);
     };
@@ -57,7 +60,7 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                 <div className="file-Supervision">
                     <Switch
                         label="文件监控功能"
-                        description="文件监控功能开关（开启时重启obsidian生效）"
+                        description="文件监控功能开关（重启obsidian生效）"
                         value={isSwitchOn}
                         onChange={handleChangeFileSupervision}
                     />
@@ -66,10 +69,17 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                             label="最近文件在新标签页打开"
                             description="开启按钮时，打开历史文件在新页面打开。"
                             value={recentFilesMode}
-                            onChange={handleChange}
+                            onChange={handleRecentFilesModeChange}
                         />
+                        <Switch
+                            label="添加底部状态栏图标"
+                            description="开启按钮时，添加在底部添加一个可交互的状态栏图标。当插件记录中的文件信息与当前文件信息一致时会显示 √ ，否则显示 🐾 。（重启obsidian生效）"
+                            value={statusBarIcon}
+                            onChange={handleStatusBarIconChange}
+                        />
+                    </div>
 
-                    </div>}
+                    }
 
                 </div>
                 <div className="plugin-manager">
@@ -82,8 +92,8 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
                 </div>
                 {pluginManagerMode && <div className="plugin-setting-new-window-switch setting-item-2">
                     <Switch
-                        label="插件设置页面在新窗口打开"
-                        description="开启时，插件的设置页面在新窗口打开。(只有桌面端有效)"
+                        label="插件管理页面在新窗口打开"
+                        description="开启时，插件管理的页面在新窗口打开。(只有桌面端有效)"
                         value={pluginSettingNewWindow}
                         onChange={handlePluginSettingNewWindowChange}
                     />

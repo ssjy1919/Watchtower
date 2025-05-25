@@ -2,7 +2,6 @@
     width: auto;
     max-width: 100%;
     margin-left: 0.5em;
-    font-size: 0.8em;
 }
 
 .file-supervision-table-none {
@@ -11,8 +10,7 @@
 
 .recent-open-file-table {
     margin-bottom: 1em;
-    border: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
-    ;
+    /* border: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color); */
 }
 
 /* 表格整体样式 */
@@ -53,20 +51,25 @@
 
 
 
+
 .file-supervision-table-show.tips,
 .file-supervision-table-none.tips {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     min-height: 1.5em;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+    margin-left: 0.1em;
+    margin-right: 0;
+    padding: 3px 0 3px 8px;
+    font-size: 1em;
 
 }
 
 .file-supervision .save-file-info,
 .file-supervision .show-table {
-
     font-size: 0.8em;
-
 }
 
 .file-supervision .save-file-info:hover,
@@ -78,11 +81,6 @@
 
 }
 
-.file-supervision .file-supervision-table-show.tips,
-.file-supervision .file-supervision-table-none.tips {
-    margin: 0.1em;
-    padding: 3px 8px;
-}
 
 .file-supervision-table-show table {
     margin: 0 0.5em 0.5em 0;
@@ -93,13 +91,7 @@
 }
 
 .file-supervision .markTime {
-    font-size: 0.5em;
+    font-size: 0.8em;
 }
 
 
-
-
-/*  状态栏 */
-/* .watchtowerPlugin-status-bar-item.is-dirty {
-    color: #de0909;
-} */

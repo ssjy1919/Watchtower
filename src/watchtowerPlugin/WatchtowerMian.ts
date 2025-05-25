@@ -3,8 +3,6 @@ import {
 	activateView,
 	registerFileEventHandlers,
 } from "src/watchtowerPlugin/toolsFC";
-import { renderStatusBarView } from "src/watchtowerPlugin/view/statusBarView";
-
 export interface WatchtowerMain {
 	plugin: WatchtowerPlugin;
 }
@@ -44,8 +42,5 @@ export class WatchtowerMain {
 			},
 		});
 
-		// 添加状态栏项目
-		const statusBarItemEl = this.plugin.addStatusBarItem();
-		renderStatusBarView(statusBarItemEl, this.plugin);
 	}
 }
