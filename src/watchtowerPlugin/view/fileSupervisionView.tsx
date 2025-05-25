@@ -12,7 +12,7 @@ interface FileSupervisionProps {
 
 const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     const stoerSettings = useSelector((state: RootState) => state.settings);
-    const fileStats = useSelector((state: RootState) => state.settings.fileStats);
+    const fileStats = useSelector((state: RootState) => state.settings.fileSupervision.fileStats);
     const [className, setClassName] = useState('file-supervision-table-none');
 
     const differentFiles = useMemo(() => {
@@ -46,7 +46,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         <div className="file-supervision">
             <div className={`${className} tips`} >
                 <div className="show-table" onClick={handleClick}>
-                    {differentFiles.length == 0 ? `${stoerSettings.markTime} √` : <div>{stoerSettings.markTime}  🐾{differentFiles.length}</div>}
+                    {differentFiles.length == 0 ? `${stoerSettings.fileSupervision.markTime} √` : <div>{stoerSettings.fileSupervision.markTime}  🐾{differentFiles.length}</div>}
                 </div>
                 <div className="save-file-info" onClick={() => { HandleSaveFileInfo() }}>🔄️</div>
             </div>
@@ -86,7 +86,7 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
                             ))}
                         </tbody>
                     </table>
-                    : <div className="markTime">笔记库文件完整，记录时间：<br />{stoerSettings.markTime}</div>}
+                    : <div className="markTime">笔记库文件完整，记录时间：<br />{stoerSettings.fileSupervision.markTime}</div>}
             </div>
             <RecentOpenFileTable plugin={plugin} />
         </div>

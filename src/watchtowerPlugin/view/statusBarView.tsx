@@ -8,7 +8,7 @@ import { activateMiddleView } from "src/pluginManagerPlugin/PMtools";
 import { useMemo } from "react";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ plugin }) => {
-    const fileStats = useSelector((state: RootState) => state.settings.fileStats);
+    const fileStats = useSelector((state: RootState) => state.settings.fileSupervision.fileStats);
 
     const differentFiles = useMemo(() => {
         return fileStats.filter((file) => file.differents !== "");

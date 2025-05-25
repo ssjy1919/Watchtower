@@ -14,7 +14,7 @@ export const selectPluginSettings = createSelector(
 // Memoized selector：获取 fileStats
 export const selectFileStats = createSelector(
     [selectSettings],
-    (settings) => settings.fileStats
+    (settings) => settings.fileSupervision.fileStats
 );
 
 // Memoized selector：获取 pluginManager
@@ -32,5 +32,5 @@ export const selectDifferentFiles = createSelector(
 // Memoized selector：获取 markTime
 export const selectMarkTime = createSelector(
     [selectSettings],
-    (settings) => settings.markTime
+    (settings) => settings.fileSupervision.markTime
 );
