@@ -10,7 +10,7 @@ import { useMemo, useEffect, useState } from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
 import { Notice, MarkdownRenderer } from "obsidian";
-
+import PluginCommentCell from "./PluginCommentCell";
 
 interface PluginManagerView {
     plugin: WatchtowerPlugin;
@@ -335,26 +335,27 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                             .map((Iplugin) => {
                                 useEffect(() => {
                                     if (!pluginNote[Iplugin.id]) {
-                                        const el = document.getElementById(`plugin-comment-${Iplugin.id}`);
-                                        if (el) {
-                                            el.innerHTML = "";
-                                            MarkdownRenderer.render(
-                                                plugin.app,
-                                                Iplugin.comment === "" ? Iplugin.description : Iplugin.comment,
-                                                el,
-                                                "",
-                                                plugin
-                                            ).then(() => {
-                                                // 绑定所有内部链接的点击事件
-                                                el.querySelectorAll('a.internal-link').forEach(a => {
-                                                    a.addEventListener('click', (evt) => {
-                                                        evt.stopPropagation(); // 阻止冒泡，防止切换为 textarea
-                                                        // Obsidian 内部跳转
-                                                        plugin.app.workspace.openLinkText(a.getAttribute('href') as string, '', false);
+                                        // 延迟执行，确保新窗口下 DOM 已挂载
+                                        setTimeout(() => {
+                                            const el = document.getElementById(`plugin-comment-${Iplugin.id}`);
+                                            if (el && plugin?.app && plugin?.app.workspace) {
+                                                el.innerHTML = "";
+                                                MarkdownRenderer.render(
+                                                    plugin.app,
+                                                    Iplugin.comment === "" ? Iplugin.description : Iplugin.comment,
+                                                    el,
+                                                    "",
+                                                    plugin
+                                                ).then(() => {
+                                                    el.querySelectorAll('a.internal-link').forEach(a => {
+                                                        a.addEventListener('click', (evt) => {
+                                                            evt.stopPropagation();
+                                                            plugin.app.workspace.openLinkText(a.getAttribute('href') as string, '', false);
+                                                        });
                                                     });
                                                 });
-                                            });
-                                        }
+                                            }
+                                        }, 0); // 0ms 延迟，等 DOM 挂载
                                     }
                                 }, [pluginNote[Iplugin.id], Iplugin.comment, Iplugin.description]);
                                 return (
@@ -395,28 +396,16 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                                                 : new Date(getSwitchTimeByPluginId(Iplugin.id)).toLocaleString()}
                                         </td>
                                         <td>
-                                            {pluginNote[Iplugin.id] ? (
-                                                <textarea
-                                                    value={Iplugin.comment}
-                                                    placeholder={Iplugin.description}
-                                                    rows={2}
-                                                    onChange={(e) => handleCommentChange(Iplugin, e.target.value)}
-                                                    onBlur={() => setPluginNote({ ...pluginNote, [Iplugin.id]: false })}
-                                                    autoFocus
-                                                />
-                                            ) : (
-                                                <div
-                                                    className="markdown-rendered"
-                                                    id={`plugin-comment-${Iplugin.id}`}
-                                                    style={{ minWidth: 120, cursor: "pointer" }}
-                                                    onClick={e => {
-                                                        // 只要不是点击 a 标签就切换
-                                                        if (!(e.target instanceof HTMLElement && e.target.closest('a'))) {
-                                                            setPluginNote({ ...pluginNote, [Iplugin.id]: true });
-                                                        }
-                                                    }}
-                                                />
-                                            )}
+                                            <PluginCommentCell
+                                                plugin={plugin}
+                                                Iplugin={Iplugin}
+                                                editing={!!pluginNote[Iplugin.id]}
+                                                value={Iplugin.comment}
+                                                placeholder={Iplugin.description}
+                                                onChange={v => handleCommentChange(Iplugin, v)}
+                                                onEdit={() => setPluginNote({ ...pluginNote, [Iplugin.id]: true })}
+                                                onBlur={() => setPluginNote({ ...pluginNote, [Iplugin.id]: false })}
+                                            />
                                         </td>
                                     </tr>
                                 );
