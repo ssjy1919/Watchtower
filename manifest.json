@@ -1,7 +1,7 @@
 {
 	"id": "watchtower",
 	"name": "Watchtower",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"minAppVersion": "0.15.0",
 	"description": "obsidian 的瞭望塔，插件管理、最近打开文件、笔记文件完整性验证",
 	"author": "ssjy1919",
