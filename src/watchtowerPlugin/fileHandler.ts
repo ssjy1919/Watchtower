@@ -1,7 +1,8 @@
 import { Notice } from "obsidian";
-import { SettingsFileStats, settingsFileStats } from "../types";
+import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
 import { setSettings, store } from "src/store";
+import { FileService } from "src/FileService";
 
 export class FileHandler {
 	plugin: WatchtowerPlugin;
@@ -19,17 +20,17 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	loadFileStats(fileStats:SettingsFileStats[]): SettingsFileStats[] {
+	loadFileStats(fileStats: SettingsFileStats[]): SettingsFileStats[] {
 		// 获取所有 Markdown 文件
 		const markdownFiles = this.plugin.app.vault.getMarkdownFiles();
 
-        // const fileStats = store.getState().settings.fileStats;
-		// 将 settings.fileStats 转换为 Map，提高查找效率，得到 [{path:fileStat}]
+		// const fileStats = store.getState().settings.fileSupervision.fileStats;
+		// 将 settings.fileSupervision.fileStats 转换为 Map，提高查找效率，得到 [{path:fileStat}]
 		const fileStatsMap = new Map(
 			fileStats.map((file) => [file.path, file])
 		);
 		// 遍历文件列表，收集所有文件的信息
-        const filesInfo = markdownFiles.map((file) => {
+		const filesInfo = markdownFiles.map((file) => {
 			const fileStat = fileStatsMap.get(file.path) || settingsFileStats;
 			return {
 				basename: file.basename,
@@ -53,7 +54,7 @@ export class FileHandler {
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
 	compareFiles(): SettingsFileStats[] {
-		const fileStats = this.plugin.settings.fileStats;
+		const fileStats = this.plugin.settings.fileSupervision.fileStats;
 		const currentFiles = this.loadFileStats(fileStats);
 		const fileStatLists = fileStats
 			.map((settingFile) => {
@@ -69,7 +70,7 @@ export class FileHandler {
 								: "未找到",
 					};
 				}
-                if (settingFile.stat.size !== currentFile.stat.size) {
+				if (settingFile.stat.size !== currentFile.stat.size) {
 					if (settingFile.stat.size > currentFile.stat.size) {
 						return {
 							...settingFile,
@@ -93,7 +94,7 @@ export class FileHandler {
 		const missingFiles = currentFiles
 			.map((currentFile) => {
 				if (
-					!this.plugin.settings.fileStats.find(
+					!this.plugin.settings.fileSupervision.fileStats.find(
 						(settingFile) => settingFile.path === currentFile.path
 					)
 				) {
@@ -106,24 +107,25 @@ export class FileHandler {
 		// 合并并去重
 		const combinedFiles = [...fileStatLists, ...missingFiles];
 		const uniqueFiles = Array.from(
-            new Map(
-                combinedFiles.map((item) => [
-                    item.path,
-                    item.differents ? item : combinedFiles.find(f => f.path === item.path),
-                ])
-            ).values() 
-        ) as SettingsFileStats[];
+			new Map(
+				combinedFiles.map((item) => [
+					item.path,
+					item.differents
+						? item
+						: combinedFiles.find((f) => f.path === item.path),
+				])
+			).values()
+		) as SettingsFileStats[];
 
 		return uniqueFiles;
 	}
 	/** 保存文件信息到插件存储，并刷新文件差异信息。 */
 	saveFileInfo = async (): Promise<void> => {
-        try {
-            
-            const storeSettings = store.getState().settings
+		try {
+			const storeSettings = store.getState().settings;
+			const storeFileStats = storeSettings.fileSupervision.fileStats;
 			// 加载文件信息
-			const storeFileStats = storeSettings.fileStats;
-            const currentFiles = this.loadFileStats(storeFileStats);
+			const currentFiles = this.loadFileStats(storeFileStats);
 			// 遍历 fileStats 并将 differents 设置为空字符串
 			const updatedFileStats = currentFiles.map((file) => ({
 				...file,
@@ -136,6 +138,14 @@ export class FileHandler {
 			};
 			store.dispatch(setSettings(newSettings));
 			await this.plugin.saveData(newSettings);
+
+			FileService.getInstance(this.plugin).debounceUpdate(
+				CONFIG_FILES.FILE_SUPERVISION,
+				{
+					fileStats: updatedFileStats,
+					markTime: new Date().toLocaleString(),
+				}
+			);
 		} catch (error) {
 			console.error("保存文件信息失败：", error);
 			new Notice("保存文件信息失败，请检查控制台日志。");

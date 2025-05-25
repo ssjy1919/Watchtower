@@ -31,10 +31,10 @@ const settingsSlice = createSlice({
 			return { ...state, ...action.payload };
 		},
 		updateMarkTime: (state, action) => {
-			state.markTime = action.payload;
+			state.fileSupervision.markTime = action.payload;
 		},
 		updateFileStats: (state, action) => {
-			state.fileStats = action.payload;
+			state.fileSupervision.fileStats = action.payload;
 		},
 		updatePluginManager: (state, action) => {
 			state.pluginManager = action.payload;

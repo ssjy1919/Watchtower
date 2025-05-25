@@ -13,7 +13,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
     const [className, setClassName] = React.useState('');
     const recentFilesOpenMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
 
-    const fileStats = useSelector((state: RootState) => state.settings.fileStats);
+    const fileStats = useSelector((state: RootState) => state.settings.fileSupervision.fileStats);
 
     const sortedFileStats = useMemo(() => {
         return fileStats.filter(
