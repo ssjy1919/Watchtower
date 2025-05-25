@@ -47,10 +47,9 @@
     border-collapse: collapse;
     /* width: fit-content; */
     /* 让表格宽度由内容决定 */
-
     width: 100%;
+    min-width: 50em;
 }
-
 
 .PluginManagerView .initial-tag:hover {
     background-color: var(--background-modifier-border-hover);
@@ -147,12 +146,12 @@
 
 .PluginManagerView td:nth-child(odd) {
     /* 单数行 */
-    background-color: #e1e1e159;
+    background-color: #d3d3d346;
 }
 
 .PluginManagerView td:nth-child(even) {
 
-    background-color: #f9f9f9;
+    background-color: #e8e8e814;
 }
 
 
@@ -242,7 +241,6 @@
 
 .PluginManagerView th:nth-child(6),
 .PluginManagerView td:nth-child(6) {
-
     width: 100%;
 }
 
@@ -256,7 +254,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-
+    min-width: 50em;
     & button {
         cursor: pointer;
     }
