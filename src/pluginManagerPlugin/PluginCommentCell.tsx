@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { MarkdownRenderer } from "obsidian";
+import { MarkdownRenderer, Notice } from "obsidian";
 import { PluginManager } from "../types";
 import WatchtowerPlugin from "../main";
 
@@ -30,15 +30,27 @@ const PluginCommentCell: React.FC<Props> = ({
                 plugin
             ).then(() => {
                 divRef.current?.querySelectorAll('a.internal-link').forEach(a => {
-                    a.addEventListener('click', (evt) => {
+                    a.addEventListener('click', async (evt) => {
                         evt.stopPropagation();
-                        plugin.app.workspace.openLinkText(a.getAttribute('href') as string, '', false);
+                        const href = a.getAttribute('href') as string;
+                        // 获取所有 md 文件
+                        const files = plugin.app.vault.getMarkdownFiles();
+                        // 统计匹配的文件
+                        const matches = files.filter(f => {
+                            // 去掉 .md 后缀再比对，只采用  .md 前面的文件路径进行匹配
+                            const filePath = f.path.replace(/\.md$/, '');
+                            return filePath === href || f.name.replace(/\.md$/, '') === href;
+                        });
+                        if (matches.length >= 1) {
+                            new Notice(`有多个名为 "${href}" 的笔记，obsidian默认打开最短路径的笔记，请指定完整路径`);
+                        } if (matches.length === 0)
+                            new Notice(`未找到名为 "${href}" 的笔记`);
+                        plugin.app.workspace.openLinkText(href, '', false);
                     });
                 });
             });
         }
     }, [editing, value, placeholder, plugin, Iplugin]);
-
     if (editing) {
         return (
             <textarea
