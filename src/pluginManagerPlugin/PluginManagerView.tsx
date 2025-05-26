@@ -6,11 +6,11 @@ import { RootState, setSettings, updatePluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
 import { Notice } from "obsidian";
-
+import PluginCommentCell from "./PluginCommentCell";
 
 interface PluginManagerView {
     plugin: WatchtowerPlugin;
@@ -22,6 +22,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const storeField = useSelector((state: RootState) => state.settings.sortField.field);
     const storeOrder = useSelector((state: RootState) => state.settings.sortField.order);
     const showPluginInitial = useSelector((state: RootState) => state.settings.showPluginInitial);
+    const [pluginNote, setPluginNote] = useState<{ [id: string]: boolean }>({}); // 每个插件独立
+
     const dispatch = useDispatch();
     // 根据 showPluginGroups 过滤插件列表
     const filteredPlugins = pluginManager.filter(Iplugin => {
@@ -328,54 +330,61 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedPlugins.filter(Iplugin => showPluginInitial == "#" || showPluginInitial == Iplugin.name.at(0))
-                            .map((Iplugin) => (
-                                <tr key={Iplugin.id}>
-                                    <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
-                                        {/* @ts-ignore */}
-                                        <div className={`plugin-name ${plugin.app.isMobile && Iplugin.isDesktopOnly ? "isDesktopOnly" : ""}`}>
-                                            <div>{Iplugin.name}</div>
+                        {sortedPlugins
+                            .filter(Iplugin => showPluginInitial == "#" || showPluginInitial == Iplugin.name.at(0))
+                            .map((Iplugin) => {
+                                return (
+                                    <tr key={Iplugin.id}>
+                                        <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
+                                            {/* @ts-ignore */}
+                                            <div className={`plugin-name ${plugin.app.isMobile && Iplugin.isDesktopOnly ? "isDesktopOnly" : ""}`}>
+                                                <div>{Iplugin.name}</div>
 
-                                            <div className="plugin-setting">{Iplugin.enabled && Iplugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{Iplugin.version}</div></div>
-                                        </div>
-                                    </td>
-                                    <td>{Iplugin.id != "watchtower" ? <Switch
-                                        label=""
-                                        description=""
-                                        value={Iplugin.enabled}
-                                        onChange={() => { handleChange(Iplugin) }}
-                                    /> : "⚪"}
-                                    </td>
-                                    <td>
-                                        {Iplugin.id != "watchtower" ?
-                                            <input
-                                                type="number"
-                                                defaultValue={Iplugin.delayStart || ""}
-                                                min="0"
-                                                max="999"
-                                                placeholder="0"
-                                                onBlur={(e) => handleDelayStartChange(Iplugin, parseInt(e.target.value))}
-                                            /> : "0"}
-                                    </td>
-                                    <td>
-                                        {/* 标签组件 */}
-                                        <MakeTagsView Iplugin={Iplugin} plugin={plugin} />
-                                    </td>
-                                    <td>
-                                        {getSwitchTimeByPluginId(Iplugin.id) === 0
-                                            ? 0
-                                            : new Date(getSwitchTimeByPluginId(Iplugin.id)).toLocaleString()}
-                                    </td>
-                                    <td>
-                                        <textarea
-                                            value={Iplugin.comment}
-                                            placeholder={Iplugin.description}
-                                            rows={2}
-                                            onChange={(e) => handleCommentChange(Iplugin, e.target.value)}
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
+                                                <div className="plugin-setting">{Iplugin.enabled && Iplugin.haveSettingTab ? "  ⚙️" : "   "}<div className="version">{Iplugin.version}</div></div>
+                                            </div>
+                                        </td>
+                                        <td>{Iplugin.id != "watchtower" ? <Switch
+                                            label=""
+                                            description=""
+                                            value={Iplugin.enabled}
+                                            onChange={() => { handleChange(Iplugin) }}
+                                        /> : "⚪"}
+                                        </td>
+                                        <td>
+                                            {Iplugin.id != "watchtower" ?
+                                                <input
+                                                    type="number"
+                                                    defaultValue={Iplugin.delayStart || ""}
+                                                    min="0"
+                                                    max="999"
+                                                    placeholder="0"
+                                                    onBlur={(e) => handleDelayStartChange(Iplugin, parseInt(e.target.value))}
+                                                /> : "0"}
+                                        </td>
+                                        <td>
+                                            {/* 标签组件 */}
+                                            <MakeTagsView Iplugin={Iplugin} plugin={plugin} />
+                                        </td>
+                                        <td>
+                                            {getSwitchTimeByPluginId(Iplugin.id) === 0
+                                                ? 0
+                                                : new Date(getSwitchTimeByPluginId(Iplugin.id)).toLocaleString()}
+                                        </td>
+                                        <td>
+                                            <PluginCommentCell
+                                                plugin={plugin}
+                                                Iplugin={Iplugin}
+                                                editing={!!pluginNote[Iplugin.id]}
+                                                value={Iplugin.comment}
+                                                placeholder={Iplugin.description}
+                                                onChange={v => handleCommentChange(Iplugin, v)}
+                                                onEdit={() => setPluginNote({ ...pluginNote, [Iplugin.id]: true })}
+                                                onBlur={() => setPluginNote({ ...pluginNote, [Iplugin.id]: false })}
+                                            />
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                     </tbody>
                 </table>
 

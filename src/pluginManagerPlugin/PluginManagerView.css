@@ -3,6 +3,16 @@
     flex-direction: row;
     width: 100%;
     flex-wrap: nowrap;
+
+    & .markdown-rendered {
+        max-height: 3em;
+        overflow: auto;
+        /* 超出显示滚动条 */
+    }
+
+    & .markdown-rendered * {
+        margin: 5px 0;
+    }
 }
 
 .PluginManagerView .grouping {
@@ -255,6 +265,7 @@
     justify-content: space-between;
     align-items: flex-end;
     min-width: 50em;
+
     & button {
         cursor: pointer;
     }

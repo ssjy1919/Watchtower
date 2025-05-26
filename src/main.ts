@@ -78,10 +78,8 @@ export default class WatchtowerPlugin extends Plugin {
 		}
 	}
 	async onExternalSettingsChange() {
-		new Notice("Watchtower：插件配置被大量修改,重载插件配置。");
 		await loadSettings(this);
 		init(this);
 		getAllPlugins();
-		new Notice("Watchtower：重载完毕。", 10000);
 	}
 }

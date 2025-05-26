@@ -1,6 +1,6 @@
 {
 	"name": "watchtower",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"description": "obsidian 的瞭望塔，插件管理、最近打开文件、笔记文件完整性验证",
 	"main": "main.js",
 	"type": "module",
