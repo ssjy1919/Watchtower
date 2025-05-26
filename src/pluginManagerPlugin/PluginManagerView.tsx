@@ -6,10 +6,10 @@ import { RootState, setSettings, updatePluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import GroupView from "./GroupView";
 import MakeTagsView from "./MakeTagsView";
-import { Notice, MarkdownRenderer } from "obsidian";
+import { Notice } from "obsidian";
 import PluginCommentCell from "./PluginCommentCell";
 
 interface PluginManagerView {
@@ -333,31 +333,6 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                         {sortedPlugins
                             .filter(Iplugin => showPluginInitial == "#" || showPluginInitial == Iplugin.name.at(0))
                             .map((Iplugin) => {
-                                useEffect(() => {
-                                    if (!pluginNote[Iplugin.id]) {
-                                        // 延迟执行，确保新窗口下 DOM 已挂载
-                                        setTimeout(() => {
-                                            const el = document.getElementById(`plugin-comment-${Iplugin.id}`);
-                                            if (el && plugin?.app && plugin?.app.workspace) {
-                                                el.innerHTML = "";
-                                                MarkdownRenderer.render(
-                                                    plugin.app,
-                                                    Iplugin.comment === "" ? Iplugin.description : Iplugin.comment,
-                                                    el,
-                                                    "",
-                                                    plugin
-                                                ).then(() => {
-                                                    el.querySelectorAll('a.internal-link').forEach(a => {
-                                                        a.addEventListener('click', (evt) => {
-                                                            evt.stopPropagation();
-                                                            plugin.app.workspace.openLinkText(a.getAttribute('href') as string, '', false);
-                                                        });
-                                                    });
-                                                });
-                                            }
-                                        }, 0); // 0ms 延迟，等 DOM 挂载
-                                    }
-                                }, [pluginNote[Iplugin.id], Iplugin.comment, Iplugin.description]);
                                 return (
                                     <tr key={Iplugin.id}>
                                         <td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
