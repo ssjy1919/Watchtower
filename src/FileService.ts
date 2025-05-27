@@ -1,7 +1,12 @@
 import { join } from "path";
 import { normalizePath, Notice } from "obsidian";
 import WatchtowerPlugin from "./main";
-import { ConfigFileMap, ConfigFileName } from "./types";
+import {
+	CONFIG_FILES,
+	ConfigFileMap,
+	ConfigFileName,
+	FILE_SUPERVISION_STATE,
+} from "./types";
 
 /** 配置文件文件服务类 */
 export class FileService {
@@ -13,17 +18,42 @@ export class FileService {
 		ConfigFileName,
 		(data: ConfigFileMap[keyof ConfigFileMap]) => void
 	> = new Map();
-
 	// 防抖定时器集合
 	private debouncedUpdates: Map<ConfigFileName, number> = new Map();
-
 	// 缓存数据（内存中）
 	private cache: Map<ConfigFileName, ConfigFileMap[keyof ConfigFileMap]> =
 		new Map();
+	private autoSaveCallback?: (
+		fileName: ConfigFileName,
+		data: ConfigFileMap[keyof ConfigFileMap]
+	) => Promise<void>;
+
 	private constructor(plugin: WatchtowerPlugin) {
 		this.plugin = plugin;
 	}
+	/** 初始化自动保存功能，并注册监听器 */
+	initializeAutoSave(
+		fileName: ConfigFileName,
+		callback: (
+			fileName: ConfigFileName,
+			data: ConfigFileMap[keyof ConfigFileMap]
+		) => Promise<void>
+	) {
+		this.autoSaveCallback = callback;
 
+		// 注册监听器，非obsidian API 提供，不能使用 this.registerEvent，需要手动清理
+		this.onFileChange(fileName, async (data) => {
+			if (this.autoSaveCallback) {
+				await this.autoSaveCallback(fileName, data);
+			}
+		});
+	}
+
+	// 新增清理方法
+	clearAllListeners() {
+		this.listeners.clear();
+		this.autoSaveCallback = undefined;
+	}
 	/**
 	 * 获取配置文件文件服务类单例实例
 	 * @param plugin 插件实例（仅第一次调用时需要）
@@ -62,7 +92,7 @@ export class FileService {
 	// =======================
 
 	/**
-	 * 带防抖的更新方法
+	 * 带防抖的更新方法, 需要设置监听器 {@link onFileChange}
 	 * @param fileName 文件名
 	 * @param data 新数据
 	 * @param delay 防抖延迟（ms，默认 300ms）
@@ -91,10 +121,10 @@ export class FileService {
 	 * @param fileName 文件名
 	 * @param data 新数据
 	 */
-	async forceUpdate<T extends ConfigFileMap[keyof ConfigFileMap]>(
+	forceUpdate<T extends ConfigFileMap[keyof ConfigFileMap]>(
 		fileName: ConfigFileName,
 		data: T
-	): Promise<void> {
+	): void {
 		// 立即清除防抖
 		if (this.debouncedUpdates.has(fileName)) {
 			clearTimeout(this.debouncedUpdates.get(fileName));
@@ -102,7 +132,7 @@ export class FileService {
 		}
 
 		// 立即更新
-		await this.updateAndNotify(fileName, data);
+		this.updateAndNotify(fileName, data);
 	}
 
 	// =======================
@@ -145,36 +175,53 @@ export class FileService {
 		T extends ConfigFileMap[keyof ConfigFileMap]
 	>(fileName: ConfigFileName, newData: T): Promise<void> {
 		const cached = await this.getCachedFile<T>(fileName);
-		const merged = this.mergeDeep<T>(cached || {}, newData as Partial<T>);
+
+		// 根据文件类型选择默认值
+		let defaultValue: T;
+		if (fileName === CONFIG_FILES.FILE_SUPERVISION_STATE) {
+			defaultValue = FILE_SUPERVISION_STATE as T;
+			// } else if (fileName === CONFIG_FILES.NEW_DATA) {
+			// 	defaultValue = DEFAULT_NEW_DATA_FORMAT as T;
+		} else {
+			throw new Error(`未知配置文件类型: ${fileName}`);
+		}
+
+		// 使用默认值替代空对象 {}
+		const merged = this.deepMerge(cached || defaultValue, newData);
 		this.debounceUpdate(fileName, merged);
 	}
-	/**
-	 * 深合并两个对象（用于防抖更新时防止数据丢失）
-	 */
-	private mergeDeep<T extends ConfigFileMap[keyof ConfigFileMap]>(
-		target: Partial<T>,
-		source: Partial<T>
-	): T {
-		const output = { ...target };
+
+	private deepMerge<T>(target: T, source: Partial<T>): T {
+		// 处理基本类型和 null
+		if (source === null || typeof source !== "object") {
+			return source as T;
+		}
+
+		// 处理数组（直接覆盖）
+		if (Array.isArray(source)) {
+			return source.map((item, i) => {
+				const targetArray = Array.isArray(target) ? target : [];
+				return this.deepMerge(targetArray[i] || {}, item);
+			}) as unknown as T;
+		}
+
+		// 处理对象（递归合并）
+		const result: any = { ...(target as any) };
 		for (const key in source) {
-			const value = source[key];
-			if (
-				value !== undefined &&
-				typeof value === "object" &&
-				!Array.isArray(value) &&
-				target[key] !== undefined &&
-				typeof target[key] === "object" &&
-				!Array.isArray(target[key])
-			) {
-				output[key] = this.mergeDeep(
-					target[key] || {},
-					value as Partial<T>
-				) as T[Extract<keyof T, string>];
-			} else {
-				output[key] = value as T[Extract<keyof T, string>];
+			if (source.hasOwnProperty(key)) {
+				const value = source[key];
+				if (value === undefined) continue; // 跳过 undefined 值
+				if (typeof value === "object" && !Array.isArray(value)) {
+					result[key] = this.deepMerge(
+						result[key] || {},
+						value as Partial<any>
+					);
+				} else {
+					result[key] = value;
+				}
 			}
 		}
-		return output as T;
+		return result as T;
 	}
 
 	// =======================
@@ -230,7 +277,8 @@ export class FileService {
 
 		try {
 			const exists = await this.plugin.app.vault.adapter.exists(filePath);
-			if (!exists) {
+            if (!exists) {
+                
 				console.warn(`文件不存在: ${filePath}`);
 				return null;
 			}

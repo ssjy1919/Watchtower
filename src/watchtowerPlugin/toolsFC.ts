@@ -207,7 +207,10 @@ export function init(plugin: WatchtowerPlugin) {
 	const differentFiles = plugin.fileHandler.compareFiles();
 	const newSettings = {
 		...plugin.settings,
-		fileStats: differentFiles,
+		fileSupervision: {
+			...plugin.settings.fileSupervision,
+			fileStats: differentFiles,
+		},
 	};
 	store.dispatch(setSettings(newSettings));
 }
