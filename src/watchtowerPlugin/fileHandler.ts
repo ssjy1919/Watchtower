@@ -1,15 +1,7 @@
 import { Notice } from "obsidian";
 import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
-import {
-	store,
-	updataFileStats,
-	updataFsFileStats,
-	updataFsMarkTime,
-	updataFSstates,
-	updataSettings,
-} from "src/store";
-import { init } from "./toolsFC";
+import { store, updataFileStats, updataFSstates } from "src/store";
 
 export class FileHandler {
 	plugin: WatchtowerPlugin;
@@ -127,8 +119,8 @@ export class FileHandler {
 					item.differents
 						? item
 						: combinedFiles.find(
-								(f) => f.path === item.path && f.differents
-						  ) || item, // 如果没有带 differents 的条目，保留当前项
+							(f) => f.path === item.path && f.differents
+						) || item, // 如果没有带 differents 的条目，保留当前项
 				])
 			).values()
 		) as SettingsFileStats[];
