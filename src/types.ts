@@ -140,6 +140,8 @@ export interface WatchtowerSettings {
 	secondPluginManager: PluginManager[];
 	/** 新旧标签页打开历史文件方式 */
 	recentFilesOpenMode: boolean;
+	/** 需要排除的历史文件后缀 */
+	excludeFileSuffix:string[];
 	/** 插件配置信息 */
 	pluginManager: PluginManager[];
 	/** 插件管理页面的排序字段 */
@@ -162,6 +164,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	pluginManagerPlugin: true,
 	pluginSettingNewWindow: true,
 	recentFilesOpenMode: false,
+	excludeFileSuffix:["png"],
 	pluginManager: [pluginManager],
 	secondPluginManager: [pluginManager],
 	pluginGroups: [],

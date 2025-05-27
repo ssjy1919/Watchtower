@@ -206,11 +206,11 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 	);
 }
 /** 初始化 */
-export function init(plugin: WatchtowerPlugin) {
+export async function init(plugin: WatchtowerPlugin) {
 	const fileSupervisionFileStats = plugin.fileSupervision.fileStats;
 
 	// 比较文件差异
-	const differentFiles = plugin.fileHandler.compareFiles(fileSupervisionFileStats);
+	const differentFiles = await plugin.fileHandler.compareFiles(fileSupervisionFileStats);
 	const finalFileStats = differentFiles.map((file) => {
 		const settingFile = plugin.settings.fileStats?.find(
 			(f) => f.path === file.path
