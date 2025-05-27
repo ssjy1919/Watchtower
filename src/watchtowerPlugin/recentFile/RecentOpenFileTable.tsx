@@ -82,7 +82,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                     onContextMenu={(event) => handleContextMenu(event, index)}
                 >
                     <div className={`tree-item-self nav-file-title tappable is-clickable${className}`}>
-                        <div className="tree-item-inner nav-file-title-content">{fileStat.name}</div>
+                        <div className="tree-item-inner nav-file-title-content">{fileStat.extension==="md"?fileStat.basename:fileStat.name}</div>
                     </div>
                 </div>
                 // 限制历史文件的数量

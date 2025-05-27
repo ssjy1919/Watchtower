@@ -19,33 +19,22 @@ import { VIEW_TYPE_PLUGIN_MANAGER } from "./pluginManagerPlugin/PluginManagerLef
 import { getAllPlugins } from "./pluginManagerPlugin/PMtools";
 import { renderStatusBarView } from "./watchtowerPlugin/view/statusBarView";
 import { FileService } from "./FileService";
-
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;
 	public fileSupervision: FileSupervisionData;
 	public fileHandler: FileHandler;
-	public FileService: FileService;
 	private statusBarRoot?: import("react-dom/client").Root;
 	async onload() {
 		// 加载设置
 		await loadSettings(this);
+		FileService.getInstance(this);
+		// 加载 JSON 文件
+		await this.loadSettingsDataFile(CONFIG_FILES.FILE_STATE_DATA);
 
-		this.FileService = FileService.getInstance(this);
-		// 初始化自动保存
-		this.FileService.initializeAutoSave(
-			CONFIG_FILES.FILE_SUPERVISION_STATE,
-			async (fileName, data) => {
-				await this.FileService.createOrUpdateFile(fileName, data);
-			}
-		);
 		// 等待应用初始化完成
-		this.app.workspace.onLayoutReady(async () => {
+		this.app.workspace.onLayoutReady(() => {
 			this.fileHandler = new FileHandler(this);
 
-			// 加载 JSON 文件
-			await this.loadSettingsDataFile(
-				CONFIG_FILES.FILE_SUPERVISION_STATE
-			);
 			init(this);
 			if (this.settings.watchtowerPlugin) {
 				const watchtowerMain = new WatchtowerMain(this);
@@ -69,15 +58,12 @@ export default class WatchtowerPlugin extends Plugin {
 		this.addSettingTab(new WatchtowerSettingTab(this.app, this));
 	}
 	onunload() {
-		// 新增：清除文件状态监听器
-		this.FileService.clearAllListeners();
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_FILE_SUPERVISION);
 		this.app.workspace.detachLeavesOfType(VIEW_TYPE_PLUGIN_MANAGER);
 		if (this.statusBarRoot && this.settings.watchtowerPlugin) {
 			this.statusBarRoot.unmount();
 		}
 	}
-	// main.ts
 	private async loadSettingsDataFile(
 		configFileName: ConfigFileName
 	): Promise<void> {
@@ -87,19 +73,18 @@ export default class WatchtowerPlugin extends Plugin {
 			type DataType = ConfigFileMap[typeof configFileName];
 			const data = await fileService.readFile<DataType>(configFileName);
 			if (data) {
-				console.log(`成功加载 ${configFileName}:`, data);
 				// 根据类型执行差异化处理
-				if (configFileName === CONFIG_FILES.FILE_SUPERVISION_STATE) {
+				if (configFileName === CONFIG_FILES.FILE_STATE_DATA) {
 					this.fileSupervision = data as FileSupervisionData;
 				}
-			} 
+			}
 		} catch (error) {
 			console.error(`读取 ${configFileName} 失败:`, error);
 		}
 	}
 	async onExternalSettingsChange() {
 		await loadSettings(this);
-		await this.loadSettingsDataFile(CONFIG_FILES.FILE_SUPERVISION_STATE);
+		await this.loadSettingsDataFile(CONFIG_FILES.FILE_STATE_DATA);
 		init(this);
 		getAllPlugins();
 	}

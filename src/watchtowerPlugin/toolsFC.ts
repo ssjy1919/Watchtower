@@ -3,7 +3,12 @@ import { TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
 import WatchtowerPlugin from "../main";
 import { VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import { DEFAULT_SETTINGS, SettingsFileStats } from "../types";
-import { store, updataFsFileStats, updataFSstates, updataSettings } from "../store";
+import {
+	store,
+	updataFsFileStats,
+	updataFSstates,
+	updataSettings,
+} from "../store";
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 	const fileEventHandler = async (
@@ -67,17 +72,17 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 					return {
 						...fileStat,
 						differents:
-                            // fileStat.differents != "新建文件" ?
-                                file.stat.size > fileStat.stat.size
-									? `增加${
-											file.stat.size - fileStat.stat.size
-									  }字节`
-									: file.stat.size < fileStat.stat.size
-									? `减少${
-											fileStat.stat.size - file.stat.size
-									  }字节`
-									: ""
-								// : fileStat.differents,
+							// fileStat.differents != "新建文件" ?
+							file.stat.size > fileStat.stat.size
+								? `增加${
+										file.stat.size - fileStat.stat.size
+								  }字节`
+								: file.stat.size < fileStat.stat.size
+								? `减少${
+										fileStat.stat.size - file.stat.size
+								  }字节`
+								: "",
+						// : fileStat.differents,
 					};
 				}
 
@@ -202,8 +207,10 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 }
 /** 初始化 */
 export function init(plugin: WatchtowerPlugin) {
+	const fileSupervisionFileStats = plugin.fileSupervision.fileStats;
+
 	// 比较文件差异
-	const differentFiles = plugin.fileHandler.compareFiles();
+	const differentFiles = plugin.fileHandler.compareFiles(fileSupervisionFileStats);
 	const finalFileStats = differentFiles.map((file) => {
 		const settingFile = plugin.settings.fileStats?.find(
 			(f) => f.path === file.path
@@ -212,11 +219,11 @@ export function init(plugin: WatchtowerPlugin) {
 			...file,
 			recentOpen: settingFile?.recentOpen || file.recentOpen,
 		};
-    });
+	});
 	const newSettings = {
 		...plugin.settings,
 		fileStats: finalFileStats,
-    };
-    store.dispatch(updataFSstates( plugin.fileSupervision));
+	};
+	store.dispatch(updataFSstates(plugin.fileSupervision));
 	store.dispatch(updataSettings(newSettings));
 }

@@ -89,7 +89,7 @@ export interface SortField {
 }
 
 export const CONFIG_FILES = {
-	FILE_SUPERVISION_STATE: "file_supervision_state.json",
+	FILE_STATE_DATA: "file_state.json",
 	// NEW_DATA: "newdata.json",
 } as const;
 
@@ -117,7 +117,7 @@ export interface FileSupervisionData {
 
 // 配置文件类型映射
 export type ConfigFileMap = {
-	[CONFIG_FILES.FILE_SUPERVISION_STATE]: FileSupervisionData;
+	[CONFIG_FILES.FILE_STATE_DATA]: FileSupervisionData;
 	// [CONFIG_FILES.NEW_DATA]: NewDataFormat;
 };
 
@@ -172,12 +172,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 		order: "desc",
 	},
 };
-export const FILE_SUPERVISION_STATE: FileSupervisionData = {
+export const FILE_STATE_DATA: FileSupervisionData = {
     markTime: "记录时间为空",
     fileStats: [settingsFileStats],
 }
-// 默认 NewDataFormat
-// export const DEFAULT_NEW_DATA_FORMAT: NewDataFormat = {
-//     version: 1,
-//     items: [],
-// };

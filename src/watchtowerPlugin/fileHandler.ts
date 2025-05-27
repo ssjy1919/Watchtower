@@ -2,6 +2,7 @@ import { Notice } from "obsidian";
 import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
 import { store, updataFileStats, updataFSstates } from "src/store";
+import { FileService } from "src/FileService";
 
 export class FileHandler {
 	plugin: WatchtowerPlugin;
@@ -50,8 +51,9 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	compareFiles(): SettingsFileStats[] {
-		const fileSupervisionFileStats = this.plugin.fileSupervision.fileStats;
+	compareFiles(
+		fileSupervisionFileStats: SettingsFileStats[]
+	): SettingsFileStats[] {
 		const currentFiles = this.loadFileStats(fileSupervisionFileStats);
 		const fileSupervisionFileStatsLists = fileSupervisionFileStats
 			.map((fileSupervisionFile) => {
@@ -119,8 +121,8 @@ export class FileHandler {
 					item.differents
 						? item
 						: combinedFiles.find(
-							(f) => f.path === item.path && f.differents
-						) || item, // 如果没有带 differents 的条目，保留当前项
+								(f) => f.path === item.path && f.differents
+						  ) || item, // 如果没有带 differents 的条目，保留当前项
 				])
 			).values()
 		) as SettingsFileStats[];
@@ -157,9 +159,9 @@ export class FileHandler {
 				markTime: newSettings.markTime,
 				fileStats: updatadFileStats,
 			};
-			// 写入 file_supervision_state.json
-			this.plugin.FileService.debounceUpdate(
-				CONFIG_FILES.FILE_SUPERVISION_STATE,
+			// 写入 file_state.json
+			FileService.getInstance(this.plugin).createOrUpdateFile(
+				CONFIG_FILES.FILE_STATE_DATA,
 				this.plugin.fileSupervision
 			);
 			store.dispatch(updataFSstates(this.plugin.fileSupervision));

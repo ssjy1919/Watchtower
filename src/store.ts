@@ -4,7 +4,7 @@ import {
 	DEFAULT_SETTINGS,
 	WatchtowerSettings,
 	FileSupervisionData,
-    FILE_SUPERVISION_STATE,
+    FILE_STATE_DATA,
 } from "./types";
 
 const settingsSlice = createSlice({
@@ -28,7 +28,7 @@ const settingsSlice = createSlice({
 
 const FsStateSlice = createSlice({
 	name: "fileSupervision",
-	initialState: FILE_SUPERVISION_STATE,
+	initialState: FILE_STATE_DATA,
 	reducers: {
 		updataFSstates: (state, action) => {
 			return { ...state, ...action.payload };
@@ -73,7 +73,7 @@ export const {
     updataPluginGroups,
 } = settingsSlice.actions;
 export const {
-    /** file_supervision_state 文件完整更新 */
+    /** file_state 文件完整更新 */
     updataFSstates,
 	updataFsFileStats,
 	updataFsMarkTime,
