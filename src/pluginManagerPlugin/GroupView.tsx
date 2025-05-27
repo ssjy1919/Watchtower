@@ -2,7 +2,7 @@ import WatchtowerPlugin from "src/main";
 import "./GroupView.css";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, setSettings, updatePluginGroups } from "src/store";
+import { RootState, updataSettings, updataPluginGroups } from "src/store";
 
 interface GroupView {
     plugin: WatchtowerPlugin;
@@ -19,7 +19,7 @@ const GroupView: React.FC<GroupView> = ({ plugin }) => {
     // 切换输入框显示状态的函数
     const handleAddItemClik = () => {
         if (pluginGroup && !storePluginGroups.includes(pluginGroup)) {
-            dispatch(updatePluginGroups([...storePluginGroups, pluginGroup]));
+            dispatch(updataPluginGroups([...storePluginGroups, pluginGroup]));
             const newSettings = {
                 ...storeSettings,
                 pluginGroups: [...storePluginGroups, pluginGroup],
@@ -40,17 +40,17 @@ const GroupView: React.FC<GroupView> = ({ plugin }) => {
     };
 
     const handleDeleteItemClick = (group: string) => {
-        const updatedGroups = storePluginGroups.filter((item) => item !== group);
+        const updatadGroups = storePluginGroups.filter((item) => item !== group);
         const newSettings = {
             ...storeSettings,
-            pluginGroups: updatedGroups,
+            pluginGroups: updatadGroups,
             pluginManager: storeSettings.pluginManager.map((plugin) => ({
                 ...plugin,
                 tags: plugin.tags.filter((tag) => tag !== group),
             })),
         };
         plugin.saveData(newSettings);
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
     };
 
     /** 分组按钮 */
@@ -61,7 +61,7 @@ const GroupView: React.FC<GroupView> = ({ plugin }) => {
             showPluginInitial: "#",
         };
         plugin.saveData(newSettings);
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
     };
     return (
         <div className="GroupView">

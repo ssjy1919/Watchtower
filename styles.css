@@ -136,6 +136,9 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
+.workspace-leaf-content[data-type=file-supervision-left-view] .view-content {
+  padding-top: 0;
+}
 .PluginManagerView {
   display: inline-flex;
   flex-direction: row;

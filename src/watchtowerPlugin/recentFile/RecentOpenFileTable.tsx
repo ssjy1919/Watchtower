@@ -12,14 +12,14 @@ interface RecentOpenFileTableProps {
 export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin }) => {
     const [className, setClassName] = React.useState('');
     const recentFilesOpenMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
-
     const fileStats = useSelector((state: RootState) => state.settings.fileStats);
-
+    
     const sortedFileStats = useMemo(() => {
         return fileStats.filter(
             (fileStat) => fileStat.differents !== "未找到" && fileStat.differents !== "已删除"
         ).sort((a, b) => b.recentOpen - a.recentOpen);
     }, [fileStats]);
+   
     const handleClick = (index: number) => {
         setClassName((prevClassName) =>
             prevClassName === 'is-active' ? '' : 'is-active'
@@ -82,7 +82,7 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
                     onContextMenu={(event) => handleContextMenu(event, index)}
                 >
                     <div className={`tree-item-self nav-file-title tappable is-clickable${className}`}>
-                        <div className="tree-item-inner nav-file-title-content">{fileStat.name}</div>
+                        <div className="tree-item-inner nav-file-title-content">{fileStat.extension==="md"?fileStat.basename:fileStat.name}</div>
                     </div>
                 </div>
                 // 限制历史文件的数量

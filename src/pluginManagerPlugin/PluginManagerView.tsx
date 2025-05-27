@@ -2,7 +2,7 @@ import WatchtowerPlugin from "src/main";
 import { Switch } from "src/setting/components/Switch";
 import "./PluginManagerView.css"
 import { useDispatch } from "react-redux";
-import { RootState, setSettings, updatePluginManager } from "src/store";
+import { RootState, updataSettings, updataPluginManager } from "src/store";
 import { useSelector } from "react-redux";
 import { PluginManager } from "src/types";
 import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
@@ -41,7 +41,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     /**处理开关 */
     const handleChange = async (iPlugin: PluginManager) => {
 
-        const updatedPlugins = pluginManager.map(p => {
+        const updatadPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 //@ts-ignore
                 if (plugin.app.isMobile && iPlugin.isDesktopOnly) {
@@ -59,7 +59,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
-        updatedPlugins.forEach(async p => {
+        updatadPlugins.forEach(async p => {
             if (p.id === iPlugin.id) {
                 //@ts-ignore
                 if (plugin.app.isMobile && iPlugin.isDesktopOnly) {
@@ -76,16 +76,16 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 }
             }
         });
-        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
+        const newSettings = { ...storeSettings, pluginManager: updatadPlugins };
         await plugin.saveData(newSettings);
-        dispatch(updatePluginManager(updatedPlugins));
+        dispatch(updataPluginManager(updatadPlugins));
         getAllPlugins();
     }
     /**处理延时启动*/
     const handleDelayStartChange = async (iPlugin: PluginManager, newDelayStart: number) => {
         if (iPlugin.delayStart === newDelayStart || (!iPlugin.delayStart && !newDelayStart)) return;
         //记录到设置的启动状态，下次重启obsidian使用这个配置显示
-        const updatedPlugins = pluginManager.map(p => {
+        const updatadPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
                     ...p,
@@ -126,14 +126,14 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 //通知ob启动插件，并保存插件信息
                 enablePlugin(iPlugin.id);
         }
-        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        dispatch(updatePluginManager(upStoreDatedPlugins));
+        const newSettings = { ...storeSettings, pluginManager: updatadPlugins };
+        dispatch(updataPluginManager(upStoreDatedPlugins));
         await plugin.saveData(newSettings);
         getAllPlugins();
     }
     // 处理备注
     const handleCommentChange = async (iPlugin: PluginManager, newComment: string) => {
-        const updatedPlugins = pluginManager.map(p => {
+        const updatadPlugins = pluginManager.map(p => {
             if (p.id === iPlugin.id) {
                 return {
                     ...p,
@@ -143,8 +143,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
-        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        dispatch(setSettings(newSettings));
+        const newSettings = { ...storeSettings, pluginManager: updatadPlugins };
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
         getAllPlugins();
     }
@@ -153,7 +153,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 
         openPluginSettings(Iplugin, plugin);
         if (!Iplugin.enabled) return;
-        const updatedPlugins = pluginManager.map(p => {
+        const updatadPlugins = pluginManager.map(p => {
             if (p.id === Iplugin.id) {
                 return {
                     ...p,
@@ -162,8 +162,8 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
             }
             return p;
         });
-        const newSettings = { ...storeSettings, pluginManager: updatedPlugins };
-        dispatch(setSettings(newSettings));
+        const newSettings = { ...storeSettings, pluginManager: updatadPlugins };
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
         getAllPlugins();
     }
@@ -171,11 +171,11 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const handleSortChange = async (field: keyof PluginManager, order: "asc" | "desc") => {
         const newSortField = { field, order };
 
-        const updatedSettings = { ...storeSettings, sortField: newSortField };
+        const updatadSettings = { ...storeSettings, sortField: newSortField };
         // 更新插件配置和 Redux 状态
-        plugin.settings = updatedSettings;
-        dispatch(setSettings(updatedSettings));
-        await plugin.saveData(updatedSettings);
+        plugin.settings = updatadSettings;
+        dispatch(updataSettings(updatadSettings));
+        await plugin.saveData(updatadSettings);
         getAllPlugins();
     };
 
@@ -237,17 +237,17 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
     const handleLetterClick = async (initial: string | undefined) => {
         if (initial) {
             const newSettings = { ...storeSettings, showPluginInitial: initial };
-            dispatch(setSettings(newSettings));
+            dispatch(updataSettings(newSettings));
             await plugin.saveData(newSettings);
             getAllPlugins();
         }
     }
     const saveConfig = async () => {
         const newSettings = { ...storeSettings, secondPluginManager: storeSettings.pluginManager };
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
         getAllPlugins();
-        new Notice('插件配置保存成功');
+        new Notice('插件配置保存成功',3000);
     }
     const restoreConfig = () => {
         storeSettings.secondPluginManager.forEach(async (p) => {
@@ -263,7 +263,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
                 p.enabled ? enablePlugin(p.id) : disablePlugin(p.id);
             }
             const newSettings = { ...storeSettings, pluginManager: storeSettings.secondPluginManager };
-            dispatch(setSettings(newSettings));
+            dispatch(updataSettings(newSettings));
             await plugin.saveData(newSettings);
             getAllPlugins();
         });

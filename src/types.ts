@@ -83,10 +83,43 @@ export const settingsFileStats: SettingsFileStats = {
 
 export interface SortField {
 	/** 排序字段 */
-	field: keyof PluginManager ;
+	field: keyof PluginManager;
 	/** 排序顺序 */
-	order: "asc" | "desc" ;
+	order: "asc" | "desc";
 }
+
+export const CONFIG_FILES = {
+	FILE_STATE_DATA: "file_state.json",
+	// NEW_DATA: "newdata.json",
+} as const;
+
+export type ConfigFileName = (typeof CONFIG_FILES)[keyof typeof CONFIG_FILES];
+
+// /**
+//  * 类型守卫：用于运行时验证字符串是否为合法配置文件名
+//  * 当前场景未使用，预留用于未来动态加载场景
+//  */
+//  export function isConfigFile(name: string): name is ConfigFileName {
+//   return Object.values(CONFIG_FILES).includes(name as ConfigFileName);
+// }
+
+export interface FileSupervisionData {
+	/** 保存文件信息的时间 */
+	markTime: string;
+	/** 文件信息 */
+	fileStats: SettingsFileStats[];
+}
+
+// export interface NewDataFormat {
+// 	version: number;
+// 	items: string[];
+// }
+
+// 配置文件类型映射
+export type ConfigFileMap = {
+	[CONFIG_FILES.FILE_STATE_DATA]: FileSupervisionData;
+	// [CONFIG_FILES.NEW_DATA]: NewDataFormat;
+};
 
 export interface WatchtowerSettings {
 	/** 保存文件信息的时间 */
@@ -96,16 +129,16 @@ export interface WatchtowerSettings {
 	/** 控制首次安装插件时打开插件标签叶 */
 	isFirstInstall: boolean;
 	/** 是否启动文件监控功能 */
-    watchtowerPlugin: boolean;
-    /** 是否添加底部状态栏图标 */
-    statusBarIcon: boolean;
+	watchtowerPlugin: boolean;
+	/** 是否添加底部状态栏图标 */
+	statusBarIcon: boolean;
 	/** 是否启动插件管理功能 */
 	pluginManagerPlugin: boolean;
 	/** 插件的设置页面是否在新窗口打开 */
-    pluginSettingNewWindow: boolean;
-    /** 保存第二套插件配置信息 */
-    secondPluginManager: PluginManager[];
-	/** 历史文件列表配置 */
+	pluginSettingNewWindow: boolean;
+	/** 保存第二套插件配置信息 */
+	secondPluginManager: PluginManager[];
+	/** 新旧标签页打开历史文件方式 */
 	recentFilesOpenMode: boolean;
 	/** 插件配置信息 */
 	pluginManager: PluginManager[];
@@ -114,8 +147,8 @@ export interface WatchtowerSettings {
 	/** 插件分组标签 */
 	pluginGroups: string[];
 	/** 显示插件分组标签 */
-    showPluginGroups: string;
-    /** 插件首字母分组 */
+	showPluginGroups: string;
+	/** 插件首字母分组 */
 	showPluginInitial: string;
 }
 
@@ -124,18 +157,22 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: "记录时间为空",
 	fileStats: [settingsFileStats],
 	isFirstInstall: true,
-    watchtowerPlugin: true,
-    statusBarIcon: true,
+	watchtowerPlugin: true,
+	statusBarIcon: true,
 	pluginManagerPlugin: true,
 	pluginSettingNewWindow: true,
 	recentFilesOpenMode: false,
-    pluginManager: [pluginManager],
-    secondPluginManager:[pluginManager],
-    pluginGroups: [],
-    showPluginGroups: "",
-    showPluginInitial:"#",
+	pluginManager: [pluginManager],
+	secondPluginManager: [pluginManager],
+	pluginGroups: [],
+	showPluginGroups: "",
+	showPluginInitial: "#",
 	sortField: {
 		field: "enabled",
 		order: "desc",
 	},
 };
+export const FILE_STATE_DATA: FileSupervisionData = {
+    markTime: "记录时间为空",
+    fileStats: [settingsFileStats],
+}

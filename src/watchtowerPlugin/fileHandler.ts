@@ -1,7 +1,8 @@
 import { Notice } from "obsidian";
-import { SettingsFileStats, settingsFileStats } from "../types";
+import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
-import { setSettings, store } from "src/store";
+import { store, updataFileStats, updataFSstates } from "src/store";
+import { FileService } from "src/FileService";
 
 export class FileHandler {
 	plugin: WatchtowerPlugin;
@@ -11,25 +12,23 @@ export class FileHandler {
 	}
 
 	/**
-	 * 获取文件信息
-	 * 获取所有 Markdown 文件的路径和状态信息如果找不到任何文件，
-	 * 则返回一个包含空路径和默认状态值的对象数组此函数主要用于获取文件的基本信息
-	 *
+	 * 获取所有 Markdown 文件的路径和状态信息，
+	 * 如果找不到任何文件，则返回一个包含空路径和默认状态值的对象数组
 	 * @returns {Array} 包含文件路径和状态的对象数组
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	loadFileStats(fileStats:SettingsFileStats[]): SettingsFileStats[] {
+	loadFileStats(fileStats: SettingsFileStats[]): SettingsFileStats[] {
 		// 获取所有 Markdown 文件
 		const markdownFiles = this.plugin.app.vault.getMarkdownFiles();
 
-        // const fileStats = store.getState().settings.fileStats;
+		// const fileStats = store.getState().settings.fileStats;
 		// 将 settings.fileStats 转换为 Map，提高查找效率，得到 [{path:fileStat}]
 		const fileStatsMap = new Map(
 			fileStats.map((file) => [file.path, file])
 		);
 		// 遍历文件列表，收集所有文件的信息
-        const filesInfo = markdownFiles.map((file) => {
+		const filesInfo = markdownFiles.map((file) => {
 			const fileStat = fileStatsMap.get(file.path) || settingsFileStats;
 			return {
 				basename: file.basename,
@@ -52,36 +51,41 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	compareFiles(): SettingsFileStats[] {
-		const fileStats = this.plugin.settings.fileStats;
-		const currentFiles = this.loadFileStats(fileStats);
-		const fileStatLists = fileStats
-			.map((settingFile) => {
+	compareFiles(
+		fileSupervisionFileStats: SettingsFileStats[]
+	): SettingsFileStats[] {
+		const currentFiles = this.loadFileStats(fileSupervisionFileStats);
+		const fileSupervisionFileStatsLists = fileSupervisionFileStats
+			.map((fileSupervisionFile) => {
 				const currentFile = currentFiles.find(
-					(file) => file.path === settingFile.path
+					(file) => file.path === fileSupervisionFile.path
 				);
 				if (!currentFile) {
 					return {
-						...settingFile,
+						...fileSupervisionFile,
 						differents:
-							settingFile.differents === "已删除"
+							fileSupervisionFile.differents === "已删除"
 								? "已删除"
 								: "未找到",
 					};
 				}
-                if (settingFile.stat.size !== currentFile.stat.size) {
-					if (settingFile.stat.size > currentFile.stat.size) {
+				if (fileSupervisionFile.stat.size !== currentFile.stat.size) {
+					if (fileSupervisionFile.stat.size > currentFile.stat.size) {
 						return {
-							...settingFile,
+							...fileSupervisionFile,
 							differents: `减少${
-								settingFile.stat.size - currentFile.stat.size
+								fileSupervisionFile.stat.size -
+								currentFile.stat.size
 							} 字节`,
 						};
-					} else if (settingFile.stat.size < currentFile.stat.size) {
+					} else if (
+						fileSupervisionFile.stat.size < currentFile.stat.size
+					) {
 						return {
-							...settingFile,
+							...fileSupervisionFile,
 							differents: `增加${
-								currentFile.stat.size - settingFile.stat.size
+								currentFile.stat.size -
+								fileSupervisionFile.stat.size
 							} 字节`,
 						};
 					}
@@ -90,51 +94,78 @@ export class FileHandler {
 			})
 			.filter(Boolean) as SettingsFileStats[];
 
+		// 创建原始监控文件路径的 Set
+		const supervisionPaths = new Set(
+			fileSupervisionFileStats.map((file) => file.path)
+		);
+
+		// 检查 currentFile 是否存在于原始监控列表
 		const missingFiles = currentFiles
 			.map((currentFile) => {
-				if (
-					!this.plugin.settings.fileStats.find(
-						(settingFile) => settingFile.path === currentFile.path
-					)
-				) {
+				if (!supervisionPaths.has(currentFile.path)) {
 					return { ...currentFile, differents: "新建文件" };
 				}
 				return currentFile;
 			})
 			.filter(Boolean) as SettingsFileStats[];
-
 		// 合并并去重
-		const combinedFiles = [...fileStatLists, ...missingFiles];
+		const combinedFiles = [
+			...fileSupervisionFileStatsLists,
+			...missingFiles,
+		];
 		const uniqueFiles = Array.from(
-            new Map(
-                combinedFiles.map((item) => [
-                    item.path,
-                    item.differents ? item : combinedFiles.find(f => f.path === item.path),
-                ])
-            ).values() 
-        ) as SettingsFileStats[];
+			new Map(
+				combinedFiles.map((item) => [
+					item.path,
+					// 优先保留有 differents 的条目
+					item.differents
+						? item
+						: combinedFiles.find(
+								(f) => f.path === item.path && f.differents
+						  ) || item, // 如果没有带 differents 的条目，保留当前项
+				])
+			).values()
+		) as SettingsFileStats[];
+		/** 通常设置文件里面的 recentOpen 会是最新的时间，所以优先使用设置文件里面的 recentOpen */
+		uniqueFiles.forEach((item) => {
+			const settingFile = this.plugin.settings.fileStats.find(
+				(file) => file.path === item.path
+			);
+			item.recentOpen = settingFile?.recentOpen || item.recentOpen;
+		});
 
-		return uniqueFiles;
+		return uniqueFiles.length > 0 ? uniqueFiles : [];
 	}
 	/** 保存文件信息到插件存储，并刷新文件差异信息。 */
 	saveFileInfo = async (): Promise<void> => {
-        try {
-            
-            const storeSettings = store.getState().settings
-			// 加载文件信息
-			const storeFileStats = storeSettings.fileStats;
-            const currentFiles = this.loadFileStats(storeFileStats);
+		try {
+			const storeSettingState = store.getState().settings;
+			/** 加载当前文件信息 */
+			const currentFiles = this.loadFileStats(
+				storeSettingState.fileStats
+			);
 			// 遍历 fileStats 并将 differents 设置为空字符串
-			const updatedFileStats = currentFiles.map((file) => ({
+			const updatadFileStats = currentFiles.map((file) => ({
 				...file,
 				differents: "",
 			}));
+			const markTime = new Date().toLocaleString();
 			const newSettings = {
-				...storeSettings,
-				fileStats: updatedFileStats,
-				markTime: new Date().toLocaleString(),
+				...storeSettingState,
+				markTime: markTime,
+				fileStats: updatadFileStats,
 			};
-			store.dispatch(setSettings(newSettings));
+			this.plugin.fileSupervision = {
+				markTime: newSettings.markTime,
+				fileStats: updatadFileStats,
+			};
+			// 写入 file_state.json
+			FileService.getInstance(this.plugin).createOrUpdateFile(
+				CONFIG_FILES.FILE_STATE_DATA,
+				this.plugin.fileSupervision
+			);
+			store.dispatch(updataFSstates(this.plugin.fileSupervision));
+			store.dispatch(updataFileStats(updatadFileStats));
 			await this.plugin.saveData(newSettings);
 		} catch (error) {
 			console.error("保存文件信息失败：", error);

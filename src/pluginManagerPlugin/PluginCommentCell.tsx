@@ -41,11 +41,11 @@ const PluginCommentCell: React.FC<Props> = ({
                             const filePath = f.path.replace(/\.md$/, '');
                             return filePath === href || f.name.replace(/\.md$/, '') === href;
                         });
-                        if (matches.length >= 1) {
-                            new Notice(`有多个名为 "${href}" 的笔记，obsidian默认打开最短路径的笔记，请指定完整路径`);
+                        if (matches.length > 1) {
+                            new Notice(`有多个名为 "${href}" 的笔记，请指定完整路径`);
                         } if (matches.length === 0)
                             new Notice(`未找到名为 "${href}" 的笔记`);
-                        plugin.app.workspace.openLinkText(href, '', false);
+                        await plugin.app.workspace.openLinkText(href, '', false);
                     });
                 });
             });

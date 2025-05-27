@@ -3,22 +3,25 @@ import { TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
 import WatchtowerPlugin from "../main";
 import { VIEW_TYPE_FILE_SUPERVISION } from "./view/leafView";
 import { DEFAULT_SETTINGS, SettingsFileStats } from "../types";
-import { store, setSettings } from "../store";
-
+import {
+	store,
+	updataFsFileStats,
+	updataFSstates,
+	updataSettings,
+} from "../store";
 // 注册文件事件处理程序
 export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
-	const fileEventHandler = (
+	const fileEventHandler = async (
 		event: string,
 		file: TAbstractFile,
 		oldPath?: string
 	) => {
-		// console.log("文件事件：", event, file);
 		if (!(file instanceof TFile) || !file) return;
 		const state = store.getState();
 		let newSettings = state.settings;
 		if (event === "opened") {
 			const fileStatLists = newSettings.fileStats;
-			const updatedFileStats = fileStatLists.map((fileStat) => {
+			const updatadFileStats = fileStatLists.map((fileStat) => {
 				if (fileStat.path === file.path) {
 					return {
 						...fileStat,
@@ -29,7 +32,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			});
 			newSettings = {
 				...newSettings,
-				fileStats: updatedFileStats,
+				fileStats: updatadFileStats,
 			};
 		}
 		if (event === "created") {
@@ -39,7 +42,7 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			);
 			if (!addfile) {
 				// 创建新的数组并添加新文件信息
-				const updatedFileStats = [
+				const updatadFileStats = [
 					...fileStatLists,
 					{
 						basename: file.basename,
@@ -57,29 +60,29 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 				];
 				newSettings = {
 					...newSettings,
-					fileStats: updatedFileStats,
+					fileStats: updatadFileStats,
 				};
 			}
 		}
 		if (event === "modified") {
 			// 找到 path 匹配的对象
 			const fileStatLists = newSettings.fileStats;
-			const updatedFileStats = fileStatLists.map((fileStat) => {
+			const updatadFileStats = fileStatLists.map((fileStat) => {
 				if (fileStat.path === file.path) {
 					return {
 						...fileStat,
 						differents:
-							fileStat.differents != "新建文件"
-								? file.stat.size > fileStat.stat.size
-									? `增加${
-											file.stat.size - fileStat.stat.size
-									  }字节`
-									: file.stat.size < fileStat.stat.size
-									? `减少${
-											fileStat.stat.size - file.stat.size
-									  }字节`
-									: ""
-								: fileStat.differents,
+							// fileStat.differents != "新建文件" ?
+							file.stat.size > fileStat.stat.size
+								? `增加${
+										file.stat.size - fileStat.stat.size
+								  }字节`
+								: file.stat.size < fileStat.stat.size
+								? `减少${
+										fileStat.stat.size - file.stat.size
+								  }字节`
+								: "",
+						// : fileStat.differents,
 					};
 				}
 
@@ -87,12 +90,12 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			});
 			newSettings = {
 				...newSettings,
-				fileStats: updatedFileStats,
+				fileStats: updatadFileStats,
 			};
 		}
 		if (event === "deleted") {
 			const fileStatLists = newSettings.fileStats;
-			const updatedFileStats = fileStatLists.map((fileStat) => {
+			const updatadFileStats = fileStatLists.map((fileStat) => {
 				if (fileStat.path === file.path) {
 					return {
 						...fileStat,
@@ -103,12 +106,12 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			});
 			newSettings = {
 				...newSettings,
-				fileStats: updatedFileStats,
+				fileStats: updatadFileStats,
 			};
 		}
 		if (event === "renamed") {
 			const fileStatLists = newSettings.fileStats;
-			const updatedFileStats = fileStatLists.map((fileStat) => {
+			const updatadFileStats = fileStatLists.map((fileStat) => {
 				if (fileStat.path === oldPath) {
 					return {
 						...fileStat,
@@ -125,11 +128,12 @@ export function registerFileEventHandlers(plugin: WatchtowerPlugin) {
 			});
 			newSettings = {
 				...newSettings,
-				fileStats: updatedFileStats,
+				fileStats: updatadFileStats,
 			};
 		}
-		store.dispatch(setSettings(newSettings));
-		// await plugin.saveData(newSettings);
+		store.dispatch(updataSettings(newSettings));
+		store.dispatch(updataFsFileStats(newSettings.fileStats));
+		await plugin.saveData(newSettings);
 	};
 
 	plugin.registerEvent(
@@ -203,11 +207,23 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 }
 /** 初始化 */
 export function init(plugin: WatchtowerPlugin) {
+	const fileSupervisionFileStats = plugin.fileSupervision.fileStats;
+
 	// 比较文件差异
-	const differentFiles = plugin.fileHandler.compareFiles();
+	const differentFiles = plugin.fileHandler.compareFiles(fileSupervisionFileStats);
+	const finalFileStats = differentFiles.map((file) => {
+		const settingFile = plugin.settings.fileStats?.find(
+			(f) => f.path === file.path
+		);
+		return {
+			...file,
+			recentOpen: settingFile?.recentOpen || file.recentOpen,
+		};
+	});
 	const newSettings = {
 		...plugin.settings,
-		fileStats: differentFiles,
+		fileStats: finalFileStats,
 	};
-	store.dispatch(setSettings(newSettings));
+	store.dispatch(updataFSstates(plugin.fileSupervision));
+	store.dispatch(updataSettings(newSettings));
 }

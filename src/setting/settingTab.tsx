@@ -4,7 +4,7 @@ import WatchtowerPlugin from 'src/main';
 import "./settingTab.css";
 import { Switch } from './components/Switch';
 import * as React from 'react';
-import { RootState, setSettings, store } from 'src/store';
+import { RootState, updataSettings, store } from 'src/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
 import { init } from 'src/watchtowerPlugin/toolsFC';
@@ -30,23 +30,23 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
     /**最近文件在新标签页打开*/
     const handleRecentFilesModeChange = async (value: boolean) => {
         const newSettings = { ...storeSettings, recentFilesOpenMode: value };
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
     };
     /**添加底部状态栏图标*/
     const handleStatusBarIconChange = async (value: boolean) => {
         const newSettings = { ...storeSettings, statusBarIcon: value };
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
     };
     const handlePluginManagerChange = async (value: boolean) => {
         const newSettings = { ...storeSettings, pluginManagerPlugin: value };
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
     };
     const handlePluginSettingNewWindowChange = async (value: boolean) => {
         const newSettings = { ...storeSettings, pluginSettingNewWindow: value };
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
     };
 
