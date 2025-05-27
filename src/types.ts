@@ -89,8 +89,8 @@ export interface SortField {
 }
 
 export const CONFIG_FILES = {
-	FILE_SUPERVISION: "fileSupervision.json",
-	NEW_DATA: "newdata.json",
+	FILE_SUPERVISION_STATE: "file_supervision_state.json",
+	// NEW_DATA: "newdata.json",
 } as const;
 
 export type ConfigFileName = (typeof CONFIG_FILES)[keyof typeof CONFIG_FILES];
@@ -110,20 +110,18 @@ export interface FileSupervisionData {
 	fileStats: SettingsFileStats[];
 }
 
-export interface NewDataFormat {
-	version: number;
-	items: string[];
-}
+// export interface NewDataFormat {
+// 	version: number;
+// 	items: string[];
+// }
 
 // 配置文件类型映射
 export type ConfigFileMap = {
-	[CONFIG_FILES.FILE_SUPERVISION]: FileSupervisionData;
-	[CONFIG_FILES.NEW_DATA]: NewDataFormat;
+	[CONFIG_FILES.FILE_SUPERVISION_STATE]: FileSupervisionData;
+	// [CONFIG_FILES.NEW_DATA]: NewDataFormat;
 };
 
 export interface WatchtowerSettings {
-	/** 文件信息 */
-	fileSupervision: FileSupervisionData;
 	/** 保存文件信息的时间 */
 	markTime: string;
 	/** 文件信息 */
@@ -156,10 +154,6 @@ export interface WatchtowerSettings {
 
 // 定义默认的 WatchtowerSettings 值
 export const DEFAULT_SETTINGS: WatchtowerSettings = {
-	fileSupervision: {
-		markTime: "记录时间为空",
-		fileStats: [settingsFileStats],
-	},
 	markTime: "记录时间为空",
 	fileStats: [settingsFileStats],
 	isFirstInstall: true,
@@ -178,3 +172,12 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 		order: "desc",
 	},
 };
+export const FILE_SUPERVISION_STATE: FileSupervisionData = {
+    markTime: "记录时间为空",
+    fileStats: [settingsFileStats],
+}
+// 默认 NewDataFormat
+// export const DEFAULT_NEW_DATA_FORMAT: NewDataFormat = {
+//     version: 1,
+//     items: [],
+// };

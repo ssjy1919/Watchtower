@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import WatchtowerPlugin from "src/main";
-import { RootState, setSettings, updatePluginManager } from "src/store";
+import { RootState, updataSettings, updataPluginManager } from "src/store";
 import { PluginManager } from "src/types";
 import "./MakeTagsView.css";
 
@@ -26,19 +26,19 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
     // 确定按钮 切换下拉选单显示状态的函数 
     const handleAddTagClick = async () => {
         if (selectedTag && !currentTags.includes(selectedTag)) {
-            const updatedTags = [...currentTags, selectedTag];
+            const updatadTags = [...currentTags, selectedTag];
 
-            // 定义 updatedPlugin
-            const updatedPlugin = {
+            // 定义 updatadPlugin
+            const updatadPlugin = {
                 ...Iplugin,
-                tags: updatedTags,
+                tags: updatadTags,
                 switchTime: new Date().getTime(),
             };
 
             const newPluginManager = storeSettings.pluginManager.map((p) =>
-                p.id === Iplugin.id ? updatedPlugin : p
+                p.id === Iplugin.id ? updatadPlugin : p
             );
-            dispatch(updatePluginManager(newPluginManager));
+            dispatch(updataPluginManager(newPluginManager));
             const newSettings = {
                 ...storeSettings,
                 pluginManager: newPluginManager,
@@ -56,23 +56,23 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
 
     // 删除标签
     const handleDeleteTagClick = async (tag: string) => {
-        const updatedTags = currentTags.filter((item) => item !== tag);
+        const updatadTags = currentTags.filter((item) => item !== tag);
 
-        // 定义 updatedPlugin
-        const updatedPlugin = {
+        // 定义 updatadPlugin
+        const updatadPlugin = {
             ...Iplugin,
-            tags: updatedTags,
+            tags: updatadTags,
             switchTime: new Date().getTime(),
         };
 
         const newPluginManager = storeSettings.pluginManager.map((p) =>
-            p.id === Iplugin.id ? updatedPlugin : p
+            p.id === Iplugin.id ? updatadPlugin : p
         );
-        dispatch(updatePluginManager(newPluginManager));
+        dispatch(updataPluginManager(newPluginManager));
         const newSettings = {
             ...storeSettings,
             pluginManager: storeSettings.pluginManager.map((p) =>
-                p.id === Iplugin.id ? updatedPlugin : p
+                p.id === Iplugin.id ? updatadPlugin : p
             ),
         };
         await plugin.saveData(newSettings);
@@ -85,7 +85,7 @@ const MakeTagsView: React.FC<MakeTagsViewProps> = ({ Iplugin, plugin }) => {
             showPluginGroups: tag,
             showPluginInitial: "#",
         };
-        dispatch(setSettings(newSettings));
+        dispatch(updataSettings(newSettings));
         await plugin.saveData(newSettings);
     };
 

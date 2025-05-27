@@ -7,6 +7,7 @@ import {
 	ConfigFileName,
 	FILE_SUPERVISION_STATE,
 } from "./types";
+import { init } from "./watchtowerPlugin/toolsFC";
 
 /** 配置文件文件服务类 */
 export class FileService {
@@ -273,19 +274,32 @@ export class FileService {
 	async readFile<T extends ConfigFileMap[keyof ConfigFileMap]>(
 		fileName: ConfigFileName
 	): Promise<T | null> {
+        
 		const filePath = this.buildFilePath(fileName);
-
 		try {
 			const exists = await this.plugin.app.vault.adapter.exists(filePath);
-            if (!exists) {
-                
+			if (!exists) {
 				console.warn(`文件不存在: ${filePath}`);
-				return null;
-			}
+				// return null;
 
+				//
+				// TODO:  没有fileSupervision也没有加入其它数据的时候先用settings.fileStats初始化文件状态
+				// 需要添加一个安全迁移数据的初始化文件状态的方法
+                //
+                //
+				this.cache.set(fileName, {
+					markTime: this.plugin.settings.markTime,
+					fileStats: this.plugin.settings.fileStats,
+				}); // 更新缓存
+				return {
+					markTime: this.plugin.settings.markTime,
+					fileStats: this.plugin.settings.fileStats,
+				} as T;
+				//
+				//
+			}
 			const data = await this.plugin.app.vault.adapter.read(filePath);
 			const parsed = JSON.parse(data) as T;
-
 			this.cache.set(fileName, parsed); // 更新缓存
 			return parsed;
 		} catch (error) {

@@ -2,7 +2,7 @@ import WatchtowerPlugin from "src/main";
 import { VIEW_TYPE_PLUGIN_MANAGER } from "./PluginManagerLeft";
 import { Notice, PluginManifest, WorkspaceLeaf } from "obsidian";
 import { pluginManager, PluginManager } from "src/types";
-import { setSettings, store } from "src/store";
+import { updataSettings, store } from "src/store";
 
 /**
  * 激活中间区域的视图。
@@ -58,7 +58,7 @@ export function getAllPlugins() {
 		app.plugins.manifests
 	);
 	// 更新插件信息：新增插件或更新已有插件
-	const updatedPlugins = installedPluginIds.map((id) => {
+	const updatadPlugins = installedPluginIds.map((id) => {
 		//@ts-ignore
 		const manifest = app.plugins.manifests[id] as PluginManifest;
 		const storePlugin =
@@ -94,7 +94,7 @@ export function getAllPlugins() {
 	}) as PluginManager[];
 
 	// 仅保留当前安装的插件
-	const finalPlugins = updatedPlugins.filter((p) =>
+	const finalPlugins = updatadPlugins.filter((p) =>
 		installedPluginIds.includes(p.id)
 	);
 
@@ -104,7 +104,7 @@ export function getAllPlugins() {
 		pluginManager: finalPlugins,
 	};
 	// plugin.saveData(newSettings);
-	store.dispatch(setSettings(newSettings));
+	store.dispatch(updataSettings(newSettings));
 }
 
 /** 彻底关闭插件 */
