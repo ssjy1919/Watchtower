@@ -1,4 +1,4 @@
-import { normalizePath, Notice } from "obsidian";
+import { normalizePath, Notice, TFolder } from "obsidian";
 import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
 import { store, updataFileStats, updataFSstates } from "src/store";
@@ -27,12 +27,18 @@ export class FileHandler {
 			const extMatch = file.name.match(/\.([^.]+)$/);
 			const fileExt = extMatch ? extMatch[1] : "";
 			if (fileExt === "" || !MonitoredFileExcludes.includes(fileExt))
-				return fileExt === "" || !MonitoredFileExcludes.includes(fileExt);
+				return (
+					fileExt === "" || !MonitoredFileExcludes.includes(fileExt)
+				);
 		});
 		const files = this.plugin.app.vault.getAllLoadedFiles().filter((f) => {
 			const extMatch = f.name.match(/\.([^.]+)$/);
 			const fileExt = extMatch ? extMatch[1] : "";
-			return fileExt === "" || !MonitoredFileExcludes.includes(fileExt);
+			return (
+				(fileExt === "" && !(f instanceof TFolder)) ||
+				(!MonitoredFileExcludes.includes(fileExt) &&
+					!(f instanceof TFolder))
+			);
 		});
 		const fileStatsMap = new Map(
 			storeFiles.map((file) => [file.path, file])
@@ -190,7 +196,7 @@ export class FileHandler {
 			await this.plugin.saveData(newSettings);
 		} catch (error) {
 			console.error("保存文件信息失败：", error);
-			new Notice("保存文件信息失败，请检查控制台日志。");
+			new Notice("保存文件信息失败");
 		}
 	};
 }

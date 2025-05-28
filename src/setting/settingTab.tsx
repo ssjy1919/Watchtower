@@ -80,13 +80,14 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 								};
 								dispatch(updataSettings(newSettings));
 							}}
-							onBlur={async (newValue) => {
+							onBlur={ (newValue) => {
 								const newSettings = {
 									...storeSettings,
 									MonitoredFileExcludes: newValue.filter(s => s !== '')
 								};
 								dispatch(updataSettings(newSettings));
-								await plugin.saveData(newSettings);
+								plugin.fileHandler.saveFileInfo()
+								// await plugin.saveData(newSettings);
 							}}
 						/>
 						<Switch
