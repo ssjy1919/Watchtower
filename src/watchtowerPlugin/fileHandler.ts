@@ -1,4 +1,4 @@
-import { Notice } from "obsidian";
+import { normalizePath, Notice, TFolder } from "obsidian";
 import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
 import { store, updataFileStats, updataFSstates } from "src/store";
@@ -12,36 +12,62 @@ export class FileHandler {
 	}
 
 	/**
-	 * 获取所有 Markdown 文件的路径和状态信息，
+	 * 获取所有文件的路径和状态信息，
 	 * 如果找不到任何文件，则返回一个包含空路径和默认状态值的对象数组
 	 * @returns {Array} 包含文件路径和状态的对象数组
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	loadFileStats(fileStats: SettingsFileStats[]): SettingsFileStats[] {
-		// 获取所有 Markdown 文件
-		const markdownFiles = this.plugin.app.vault.getMarkdownFiles();
-
-		// const fileStats = store.getState().settings.fileStats;
-		// 将 settings.fileStats 转换为 Map，提高查找效率，得到 [{path:fileStat}]
+	async loadFileStats(
+		fileStats: SettingsFileStats[]
+	): Promise<SettingsFileStats[]> {
+		const state = store.getState();
+		const MonitoredFileExcludes = state.settings.MonitoredFileExcludes;
+		const storeFiles = fileStats.filter((file) => {
+			const extMatch = file.name.match(/\.([^.]+)$/);
+			const fileExt = extMatch ? extMatch[1] : "";
+			if (fileExt === "" || !MonitoredFileExcludes.includes(fileExt))
+				return (
+					fileExt === "" || !MonitoredFileExcludes.includes(fileExt)
+				);
+		});
+		const files = this.plugin.app.vault.getAllLoadedFiles().filter((f) => {
+			const extMatch = f.name.match(/\.([^.]+)$/);
+			const fileExt = extMatch ? extMatch[1] : "";
+			return (
+				(fileExt === "" && !(f instanceof TFolder)) ||
+				(!MonitoredFileExcludes.includes(fileExt) &&
+					!(f instanceof TFolder))
+			);
+		});
 		const fileStatsMap = new Map(
-			fileStats.map((file) => [file.path, file])
+			storeFiles.map((file) => [file.path, file])
 		);
-		// 遍历文件列表，收集所有文件的信息
-		const filesInfo = markdownFiles.map((file) => {
-			const fileStat = fileStatsMap.get(file.path) || settingsFileStats;
+		const filesInfoPromise = await files.map(async (file) => {
+			const stat = await this.plugin.app.vault.adapter.stat(
+				normalizePath(file.path)
+			);
+			const extMatch = file.name.match(/^(.+)\.([^.]+)$/);
+			const basename = extMatch ? extMatch[1] : file.name;
+			const extension = extMatch ? extMatch[2] : "";
+			const fileStat = fileStatsMap.get(file.path);
 			return {
-				basename: file.basename,
-				extension: file.extension,
+				basename: basename,
+				extension: extension,
 				name: file.name,
 				path: file.path,
-				stat: file.stat,
-				differents: fileStat.differents,
-				recentOpen: fileStat.recentOpen,
+				stat: {
+					size: stat?.size || 0,
+					ctime: stat?.ctime || 0,
+					mtime: stat?.mtime || 0,
+				},
+				differents: fileStat?.differents,
+				recentOpen: fileStat?.recentOpen,
 			} as SettingsFileStats;
 		});
-		// 如果没有找到文件，返回一个空数组
-		return filesInfo.length > 0 ? filesInfo : [settingsFileStats];
+		return Promise.all(filesInfoPromise).then((results) =>
+			results.length > 0 ? results : [settingsFileStats]
+		);
 	}
 	/**
 	 * 对比 getSettingInfo() 和 getFileInfo() 得到的数据
@@ -51,10 +77,10 @@ export class FileHandler {
 	 *         - path: 文件路径
 	 *         - stat: 文件状态，包括大小、创建时间和修改时间
 	 */
-	compareFiles(
+	async compareFiles(
 		fileSupervisionFileStats: SettingsFileStats[]
-	): SettingsFileStats[] {
-		const currentFiles = this.loadFileStats(fileSupervisionFileStats);
+	): Promise<SettingsFileStats[]> {
+		const currentFiles = await this.loadFileStats(fileSupervisionFileStats);
 		const fileSupervisionFileStatsLists = fileSupervisionFileStats
 			.map((fileSupervisionFile) => {
 				const currentFile = currentFiles.find(
@@ -141,9 +167,10 @@ export class FileHandler {
 		try {
 			const storeSettingState = store.getState().settings;
 			/** 加载当前文件信息 */
-			const currentFiles = this.loadFileStats(
+			const currentFiles = await this.loadFileStats(
 				storeSettingState.fileStats
 			);
+
 			// 遍历 fileStats 并将 differents 设置为空字符串
 			const updatadFileStats = currentFiles.map((file) => ({
 				...file,
@@ -169,7 +196,7 @@ export class FileHandler {
 			await this.plugin.saveData(newSettings);
 		} catch (error) {
 			console.error("保存文件信息失败：", error);
-			new Notice("保存文件信息失败，请检查控制台日志。");
+			new Notice("保存文件信息失败");
 		}
 	};
 }

@@ -52,6 +52,15 @@
 .file-Supervision-setting-container .setting-item-2 {
   margin-left: 2em;
 }
+.file-Supervision-setting-container .exclude-suffix-input {
+  width: 8em;
+  padding: 0 8px;
+  font-family: var(--font-monospace);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  resize: vertical;
+  height: 3em;
+}
 .setting-item .setting-item-description {
   font-size: 0.7em;
 }

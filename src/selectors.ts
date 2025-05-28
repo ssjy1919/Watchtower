@@ -1,36 +1,38 @@
-import { createSelector } from 'reselect';
-import { RootState } from './store';
-//使用memoized selectors可以优化状态读取逻辑，留着备用
-// 原始 selector：获取 settings
-const selectSettings = (state: RootState) => state.settings;
+import { createSelector } from "reselect";
+import { RootState } from "src/store";
 
-// Memoized selector：获取 settings
-export const selectPluginSettings = createSelector(
-    [selectSettings],
-    (settings) => settings
+const getSettings = (state: RootState) => state.settings;
+
+export const getNormalizedExcludeSuffixes = createSelector(
+	[getSettings],
+	(settings) => {
+		return (settings.recentFileExcludes || []).map((s) =>
+			s.trim().toLowerCase()
+		);
+	}
 );
 
+// export const getNormalizedMonitoredExcludes = createSelector(
+// 	[getSettings],
+// 	(settings) => {
+// 		return (settings.MonitoredFileExcludes || []).map(s => 
+// 			s.trim().toLowerCase()
+// 		);
+// 	}
+// );
 
-// Memoized selector：获取 fileStats
-export const selectFileStats = createSelector(
-    [selectSettings],
-    (settings) => settings.fileStats
-);
 
-// Memoized selector：获取 pluginManager
-export const selectPluginManager = createSelector(
-    [selectSettings],
-    (settings) => settings.pluginManager
-);
-
-// 新增：Memoized selector：获取 differents 不为空的文件列表
-export const selectDifferentFiles = createSelector(
-    [selectFileStats],
-    (fileStats) => fileStats.filter((file) => file.differents !== "")
-);
-
-// Memoized selector：获取 markTime
-export const selectMarkTime = createSelector(
-    [selectSettings],
-    (settings) => settings.markTime
+export const getFilteredFileStats = createSelector(
+	[getSettings, getNormalizedExcludeSuffixes],
+	(settings, normalizedSuffixes) => {
+		return settings.fileStats.filter((fileStat) => {
+			const extMatch = fileStat.name.match(/\.([^.]+)$/);
+			const fileExt = extMatch ? extMatch[1].toLowerCase() : "";
+			return (
+				fileStat.differents !== "未找到" &&
+				fileStat.differents !== "已删除" &&
+				!normalizedSuffixes.some((suffix) => suffix === fileExt)
+			);
+		});
+	}
 );

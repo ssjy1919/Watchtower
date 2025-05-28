@@ -1,7 +1,7 @@
 import WatchtowerPlugin from "src/main";
 import { VIEW_TYPE_PLUGIN_MANAGER } from "./PluginManagerLeft";
 import { Notice, PluginManifest, WorkspaceLeaf } from "obsidian";
-import { pluginManager, PluginManager } from "src/types";
+import { PluginManager } from "src/types";
 import { updataSettings, store } from "src/store";
 
 /**
@@ -12,8 +12,9 @@ import { updataSettings, store } from "src/store";
 export async function activateMiddleView(plugin: WatchtowerPlugin) {
 	const { workspace } = plugin.app;
 	const storeSettings = store.getState().settings;
-	//@ts-ignore
-	const isNewWindow = !plugin.app.isMobile && storeSettings.pluginSettingNewWindow;
+	const isNewWindow =
+		//@ts-ignore
+		!plugin.app.isMobile && storeSettings.pluginSettingNewWindow;
 
 	let existingLeaf: WorkspaceLeaf | undefined;
 
@@ -52,12 +53,12 @@ export async function activateMiddleView(plugin: WatchtowerPlugin) {
 /** 刷新所有插件信息 */
 export function getAllPlugins() {
 	const storeSettings = store.getState().settings;
+
 	// 获取当前安装的所有插件 ID
 	const installedPluginIds = Object.keys(
 		//@ts-ignore
 		app.plugins.manifests
 	);
-	// 更新插件信息：新增插件或更新已有插件
 	const updatadPlugins = installedPluginIds.map((id) => {
 		//@ts-ignore
 		const manifest = app.plugins.manifests[id] as PluginManifest;
@@ -65,24 +66,18 @@ export function getAllPlugins() {
 			storeSettings.pluginManager.find((p) => {
 				const isMatch = p.id === id;
 				return isMatch;
-			}) || pluginManager;
+			});
 
 		return {
 			id,
-			haveSettingTab:
-				//@ts-ignore 获取已启动的插件
-				Object.keys(app.plugins.plugins).includes(id)
-					? //@ts-ignore 查找设置页面的存在
-					app.setting.pluginTabs.some((p) => p.id === id)
-					: storePlugin.haveSettingTab,
 			name: manifest.name || "",
 			enabled:
-				//@ts-ignore 获取已启动的插件
+				//@ts-ignore
 				Object.keys(app.plugins.plugins).includes(id) ? true : false,
-			switchTime: storePlugin.switchTime || 0,
-			tags: storePlugin.tags || [],
-			comment: storePlugin.comment || "",
-			delayStart: storePlugin.delayStart || 0,
+			switchTime: storePlugin?.switchTime||0,
+			tags: storePlugin?.tags || [],
+			comment: storePlugin?.comment||"" ,
+			delayStart: storePlugin?.delayStart ||0,
 			author: manifest.author || "",
 			authorUrl: manifest.authorUrl || "",
 			description: manifest.description || "",

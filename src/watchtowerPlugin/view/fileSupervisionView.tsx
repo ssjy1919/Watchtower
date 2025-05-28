@@ -12,11 +12,12 @@ interface FileSupervisionProps {
 
 const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
     const stoerFsState = useSelector((state: RootState) => state.fsState);
-    const fileStats = useSelector((state: RootState) => state.settings.fileStats);
+	const fileStats = useSelector((state: RootState) => state.settings.fileStats);
+	const MonitoredFileExcludes = useSelector((state: RootState) => state.settings.MonitoredFileExcludes);
     const [className, setClassName] = useState('file-supervision-table-none');
-
+	
     const differentFiles = useMemo(() => {
-        return fileStats.filter((file) => file.differents !== "");
+        return fileStats.filter((file) => file.differents !== "" && !MonitoredFileExcludes.includes(file.extension));
     }, [fileStats]);
     const handleClick = () => {
         setClassName((prevClassName) =>
