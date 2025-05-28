@@ -8,6 +8,7 @@ import { RootState, updataSettings, store } from 'src/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
 import { init } from 'src/watchtowerPlugin/toolsFC';
+import { InputList } from './components/inputList';
 interface SettingComponentProps {
 	plugin: WatchtowerPlugin;
 }
@@ -18,13 +19,18 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 	const pluginManagerMode = useSelector((state: RootState) => state.settings.pluginManagerPlugin);
 	const pluginSettingNewWindow = useSelector((state: RootState) => state.settings.pluginSettingNewWindow);
 	const statusBarIcon = useSelector((state: RootState) => state.settings.statusBarIcon);
+	const excludeSuffixes = useSelector((state: RootState) => state.settings.recentFileExcludes);
+	const MonitoredFileExcludes = useSelector((state: RootState) => state.settings.MonitoredFileExcludes);
+	const recentFilesCount = useSelector((state: RootState) => state.settings.recentFilesCount);
+
 	const dispatch = useDispatch();
+
 	const handleChangeFileSupervision = async (value: boolean) => {
 		setIsSwitchOn(value);
 		const newSettings = { ...storeSettings, watchtowerPlugin: value };
 		await plugin.saveData(newSettings);
 		if (value) {
-			init(plugin);
+			await init(plugin);
 		}
 	};
 	/**最近文件在新标签页打开*/
@@ -49,8 +55,6 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 		dispatch(updataSettings(newSettings));
 		await plugin.saveData(newSettings);
 	};
-
-
 	return (
 		<>
 			<div className="file-Supervision-setting-container">
@@ -65,49 +69,88 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 						onChange={handleChangeFileSupervision}
 					/>
 					{isSwitchOn && <div className="setting-item-2">
+						<InputList
+							label="文件监控功能排除文件"
+							description="文件监控功能需要排除的文件后缀，每行一个"
+							value={MonitoredFileExcludes}
+							onChange={(newValue) => {
+								const newSettings = {
+									...storeSettings,
+									MonitoredFileExcludes: newValue
+								};
+								dispatch(updataSettings(newSettings));
+							}}
+							onBlur={async (newValue) => {
+								const newSettings = {
+									...storeSettings,
+									MonitoredFileExcludes: newValue.filter(s => s !== '')
+								};
+								dispatch(updataSettings(newSettings));
+								await plugin.saveData(newSettings);
+							}}
+						/>
 						<Switch
-							label="最近文件在新标签页打开"
-							description="开启按钮时，打开历史文件在新页面打开。"
+							label="在新标签页打开"
+							description="开启按钮时，点击最近打开的历史文件将会总是在新的标签页面打开。"
 							value={recentFilesMode}
 							onChange={handleRecentFilesModeChange}
 						/>
-
-						<div className='setting-item'>
-							<div className='setting-item-info'>
-								<div className="setting-item-name">历史文件视图排除文件</div>
-								<div className='setting-item-description'>输入历史文件视图需要排除文件后缀，每行一个</div>
-							</div>
-							<div className='setting-item-control'>
-								{/* 写一个输入框 */}
-								<textarea
-									className="textarea"
-									placeholder=".md"
-									value={
-										(plugin.settings.excludeFileSuffix ?? [])
-											.filter(Boolean)
-											.map(s => s.trim())
-											.join('\n')
-									} // 显示的时候用换行拼接
-									onChange={(e) => {
-										const newValue = e.target.value;
-										const newSuffixArray = newValue.split('\n').map(s => s.trim()).filter(s => s); // 去除空行和前后空格
-										plugin.settings.excludeFileSuffix = newSuffixArray; // 更新插件设置中的数组
-										const newSettings = { ...storeSettings, excludeFileSuffix: newSuffixArray };
-										dispatch(updataSettings(newSettings));
-										plugin.saveData(newSettings);
-									}}
-								/>
-							</div>
-						</div>
+						<InputList
+							label="最近打开的历史文件视图排除文件"
+							description="最近打开的历史文件视图需要排除文件后缀，每行一个"
+							value={excludeSuffixes}
+							onChange={(newValue) => {
+								const newSettings = {
+									...storeSettings,
+									recentFileExcludes: newValue
+								};
+								dispatch(updataSettings(newSettings));
+							}}
+							onBlur={async (newValue) => {
+								const newSettings = {
+									...storeSettings,
+									recentFileExcludes: newValue.filter(s => s !== '')
+								};
+								dispatch(updataSettings(newSettings));
+								await plugin.saveData(newSettings);
+							}}
+						/>
+						<InputList
+							label="最近历史文件数量"
+							description="最近历史文件视图显示的最大数量"
+							placeholder="50"
+							value={[recentFilesCount.toString()]} // 改为字符串数组
+							allowNumbersOnly={true}
+							onChange={(newValue) => {
+								const numValue = parseInt(newValue[0]); // 取数组第一个元素
+								if (!isNaN(numValue) && numValue >= 1 && numValue <= 999999) {
+									const newSettings = {
+										...storeSettings,
+										recentFilesCount: numValue
+									};
+									dispatch(updataSettings(newSettings));
+								}
+							}}
+							onBlur={async (newValue) => {
+								const numValue = parseInt(newValue[0]); // 取数组第一个元素
+								if (!isNaN(numValue) && numValue >= 1 && numValue <= 999999) {
+									const newSettings = {
+										...storeSettings,
+										recentFilesCount: numValue
+									};
+									dispatch(updataSettings(newSettings));
+									await plugin.saveData(newSettings);
+								}
+							}}
+							rows={1}
+						/>
 					</div>
-
 					}
-
 				</div>
-				<div className="plugin-manager">
+				<div className="plugin-manager ">
 					<Switch
 						label="插件管理功能"
-						description="插件管理功能开关。（开启时重启obsidian生效）"
+						description="插件管理功能开关。（重启obsidian生效）"
 						value={pluginManagerMode}
 						onChange={handlePluginManagerChange}
 					/>

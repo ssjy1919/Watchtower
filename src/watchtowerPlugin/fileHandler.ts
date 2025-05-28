@@ -1,4 +1,4 @@
-import { Notice, TFolder } from "obsidian";
+import { normalizePath, Notice } from "obsidian";
 import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
 import { store, updataFileStats, updataFSstates } from "src/store";
@@ -21,29 +21,42 @@ export class FileHandler {
 	async loadFileStats(
 		fileStats: SettingsFileStats[]
 	): Promise<SettingsFileStats[]> {
-		// 获取所有 Markdown 文件
-		const files = this.plugin.app.vault
-			.getAllLoadedFiles()
-			.filter((f) => !(f instanceof TFolder));
-
-		// const fileStats = store.getState().settings.fileStats;
-		// 将 settings.fileStats 转换为 Map，提高查找效率，得到 [{path:fileStat}]
+		const state = store.getState();
+		const MonitoredFileExcludes = state.settings.MonitoredFileExcludes;
+		const storeFiles = fileStats.filter((file) => {
+			const extMatch = file.name.match(/\.([^.]+)$/);
+			const fileExt = extMatch ? extMatch[1] : "";
+			if (fileExt === "" || !MonitoredFileExcludes.includes(fileExt))
+				return fileExt === "" || !MonitoredFileExcludes.includes(fileExt);
+		});
+		const files = this.plugin.app.vault.getAllLoadedFiles().filter((f) => {
+			const extMatch = f.name.match(/\.([^.]+)$/);
+			const fileExt = extMatch ? extMatch[1] : "";
+			return fileExt === "" || !MonitoredFileExcludes.includes(fileExt);
+		});
 		const fileStatsMap = new Map(
-			fileStats.map((file) => [file.path, file])
+			storeFiles.map((file) => [file.path, file])
 		);
-
-		// 遍历文件列表，收集所有文件的信息
 		const filesInfoPromise = await files.map(async (file) => {
-			const stat = await this.plugin.app.vault.adapter.stat(file.path);
-			const fileStat = fileStatsMap.get(file.path) || settingsFileStats;
+			const stat = await this.plugin.app.vault.adapter.stat(
+				normalizePath(file.path)
+			);
+			const extMatch = file.name.match(/^(.+)\.([^.]+)$/);
+			const basename = extMatch ? extMatch[1] : file.name;
+			const extension = extMatch ? extMatch[2] : "";
+			const fileStat = fileStatsMap.get(file.path);
 			return {
-				basename: file.name.split(".")[0],
-				extension: file.name.split(".")[1],
+				basename: basename,
+				extension: extension,
 				name: file.name,
 				path: file.path,
-				stat: stat,
-				differents: fileStat.differents,
-				recentOpen: fileStat.recentOpen,
+				stat: {
+					size: stat?.size || 0,
+					ctime: stat?.ctime || 0,
+					mtime: stat?.mtime || 0,
+				},
+				differents: fileStat?.differents,
+				recentOpen: fileStat?.recentOpen,
 			} as SettingsFileStats;
 		});
 		return Promise.all(filesInfoPromise).then((results) =>
@@ -151,6 +164,7 @@ export class FileHandler {
 			const currentFiles = await this.loadFileStats(
 				storeSettingState.fileStats
 			);
+
 			// 遍历 fileStats 并将 differents 设置为空字符串
 			const updatadFileStats = currentFiles.map((file) => ({
 				...file,

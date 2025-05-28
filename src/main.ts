@@ -32,10 +32,10 @@ export default class WatchtowerPlugin extends Plugin {
 		await this.loadSettingsDataFile(CONFIG_FILES.FILE_STATE_DATA);
 
 		// 等待应用初始化完成
-		this.app.workspace.onLayoutReady(() => {
+		this.app.workspace.onLayoutReady(async () => {
 			this.fileHandler = new FileHandler(this);
 
-			init(this);
+			await init(this);
 			if (this.settings.watchtowerPlugin) {
 				const watchtowerMain = new WatchtowerMain(this);
 				watchtowerMain.initialize();
@@ -85,7 +85,7 @@ export default class WatchtowerPlugin extends Plugin {
 	async onExternalSettingsChange() {
 		await loadSettings(this);
 		await this.loadSettingsDataFile(CONFIG_FILES.FILE_STATE_DATA);
-		init(this);
+		await init(this);
 		getAllPlugins();
 	}
 }

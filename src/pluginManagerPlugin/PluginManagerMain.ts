@@ -31,7 +31,6 @@ export class PluginManagerPlugin {
 			VIEW_TYPE_PLUGIN_MANAGER,
 			(leaf) => new PluginManagerLeft(leaf, this.plugin)
 		);
-
 		this.plugin.app.workspace.onLayoutReady( () => {
 			store.getState().settings.pluginManager.forEach((plugin) => {
 				if (plugin.delayStart > 0) {
