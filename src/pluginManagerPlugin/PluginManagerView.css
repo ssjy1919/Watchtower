@@ -1,278 +1,424 @@
 .PluginManagerView {
-    display: inline-flex;
-    flex-direction: row;
-    width: 100%;
-    flex-wrap: nowrap;
+	display: inline-flex;
+	flex-direction: row;
+	width: 100%;
+	flex-wrap: nowrap;
 
-    & .markdown-rendered {
-        max-height: 3em;
-        overflow: auto;
-        /* 超出显示滚动条 */
-    }
+	& .markdown-rendered {
+		max-height: 3em;
+		/* 超出显示滚动条 */
+		overflow: auto;
 
-    & .markdown-rendered * {
-        margin: 5px 0;
-    }
+		&:hover {
+			background: var(--color-base-25);
+		}
+
+		& * {
+			margin: 5px 0;
+		}
+	}
+
 }
 
 .PluginManagerView .grouping {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
 }
 
 .PluginManagerView .tag-container {
-    padding: 0;
-    /* 字体加粗 */
-    font-weight: bold;
-    padding-top: 2em;
-    width: 3em;
+	padding: 0;
+	/* 字体加粗 */
+	font-weight: bold;
+	padding-top: 2em;
+	width: 3em;
 }
 
 .pluginManager-table {
-    width: inherit;
+	width: inherit;
 }
 
 .PluginManagerView .initial-tag {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    text-align: center;
-    line-height: 24px;
-    margin: 2px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.2s;
-    margin-bottom: 3px;
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	text-align: center;
+	line-height: 24px;
+	margin: 2px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: 0.2s;
+	margin-bottom: 3px;
 }
 
 .PluginManagerView .initial-tag.active-initial {
-    background-color: var(--background-modifier-border-hover);
+	background-color: var(--color-base-25);
 }
 
 .PluginManagerView table {
-    table-layout: auto;
-    /* 替代原来的 fixed */
-    /* 使列宽由 CSS 控制 */
-    border-collapse: collapse;
-    /* width: fit-content; */
-    /* 让表格宽度由内容决定 */
-    width: 100%;
-    min-width: 50em;
+	table-layout: auto;
+	/* 替代原来的 fixed */
+	/* 使列宽由 CSS 控制 */
+	border-collapse: collapse;
+	/* width: fit-content; */
+	/* 让表格宽度由内容决定 */
+	width: 100%;
+	min-width: 50em;
 }
 
 .PluginManagerView .initial-tag:hover {
-    background-color: var(--background-modifier-border-hover);
+	background-color: var(--background-modifier-border-hover);
 }
 
 .PluginManagerView .GroupView {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 /* 开关按钮样式 */
 .PluginManagerView .switch {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 20px;
+	position: relative;
+	display: inline-block;
+	width: 40px;
+	height: 20px;
 }
 
 .PluginManagerView .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+	opacity: 0;
+	width: 0;
+	height: 0;
 }
 
 .PluginManagerView .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--background-modifier-border-hover);
-    transition: 0.4s;
-    border-radius: 20px;
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: var(--background-modifier-border-hover);
+	transition: 0.4s;
+	border-radius: 20px;
 }
 
 .PluginManagerView .slider:before {
-    position: absolute;
-    content: '';
-    height: 16px;
-    width: 16px;
-    left: 2px;
-    bottom: 2px;
-    background-color: var(--toggle-thumb-color);
-    transition: 0.4s;
-    border-radius: 50%;
+	position: absolute;
+	content: '';
+	height: 16px;
+	width: 16px;
+	left: 2px;
+	bottom: 2px;
+	background-color: var(--toggle-thumb-color);
+	transition: 0.4s;
+	border-radius: 50%;
 }
 
 .PluginManagerView input:checked+.slider {
-    background-color: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
-    /* 开启时的背景颜色 */
+	background-color: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+	/* 开启时的背景颜色 */
 }
 
 .PluginManagerView input:checked+.slider:before {
-    transform: translateX(20px);
-    /* 滑块移动的距离 */
+	transform: translateX(20px);
+	/* 滑块移动的距离 */
 }
 
 .PluginManagerView .setting-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75em 0;
-    flex-direction: column;
-    justify-content: center;
+	display: flex;
+	align-items: center;
+	padding: 0.75em 0;
+	flex-direction: column;
+	justify-content: center;
 }
 
 
 
 /* 表格样式 */
 
+.PluginManagerView thead {
 
+	background-color: var(--color-base-25);
+
+
+}
+
+.PluginManagerView thead>tr>th:hover {
+	background-color: var(--color-base-20);
+}
 
 .PluginManagerView tr {
-    border: 1px solid #ddd;
-    /* 添加下边框作为分割线 */
+	border: 1px solid var(--color-base-30);
+	/* 添加下边框作为分割线 */
 }
 
 
 .PluginManagerView td {
-    padding: 0 5px;
-    min-width: 0;
-    /* 允许单元格宽度自由收缩 */
+	padding: 0 5px;
+	min-width: 0;
+	/* 允许单元格宽度自由收缩 */
 }
 
 .PluginManagerView th {
-    background-color: #9e9d9d51;
-    height: 3em;
-    cursor: pointer;
-    border: #333 solid 1px;
-    font-size: 0.8em;
+	height: 3em;
+	cursor: pointer;
+	border: var(--color-base-35) solid 1px;
+	;
+	font-size: 0.8em;
 }
 
 
-.PluginManagerView td:nth-child(odd) {
-    /* 单数行 */
+/* .PluginManagerView td:nth-child(odd) {
     background-color: #d3d3d346;
-}
+} */
 
 .PluginManagerView td:nth-child(even) {
 
-    background-color: #e8e8e814;
+	background-color: #6666660f;
 }
 
 
 .PluginManagerView .plugin-name {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 
 .PluginManagerView .version {
-    color: #b6b6b6;
-    font-size: 0.7em;
+	color: var(--nav-heading-color-collapsed);
+	font-size: 0.7em;
 }
 
 .PluginManagerView .plugin-name.isDesktopOnly {
-    color: var(--background-modifier-border-hover);
+	color: var(--background-modifier-border-hover);
 }
 
+/* .theme-light {
+    color-scheme: light;
+    --highlight-mix-blend-mode: darken;
+    --mono-rgb-0: 255, 255, 255;
+    --mono-rgb-100: 0, 0, 0;
+    --color-red-rgb: 233, 49, 71;
+    --color-red: #e93147;
+    --color-orange-rgb: 236, 117, 0;
+    --color-orange: #ec7500;
+    --color-yellow-rgb: 224, 172, 0;
+    --color-yellow: #e0ac00;
+    --color-green-rgb: 8, 185, 78;
+    --color-green: #08b94e;
+    --color-cyan-rgb: 0, 191, 188;
+    --color-cyan: #00bfbc;
+    --color-blue-rgb: 8, 109, 221;
+    --color-blue: #086ddd;
+    --color-purple-rgb: 120, 82, 238;
+    --color-purple: #7852ee;
+    --color-pink-rgb: 213, 57, 132;
+    --color-pink: #d53984;
+    --color-base-00: #ffffff;
+    --color-base-05: #fcfcfc;
+    --color-base-10: #fafafa;
+    --color-base-20: #f6f6f6;
+    --color-base-25: #e3e3e3;
+    --color-base-30: #e0e0e0;
+    --color-base-35: #d4d4d4;
+    --color-base-40: #bdbdbd;
+    --color-base-50: #ababab;
+    --color-base-60: #707070;
+    --color-base-70: #5c5c5c;
+    --color-base-100: #222222;
+    --color-accent-hsl: var(--accent-h),
+			var(--accent-s),
+			var(--accent-l);
+    --color-accent: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+    --color-accent-1: hsl(calc(var(--accent-h) - 1), calc(var(--accent-s) * 1.01), calc(var(--accent-l) * 1.075));
+    --color-accent-2: hsl(calc(var(--accent-h) - 3), calc(var(--accent-s) * 1.02), calc(var(--accent-l) * 1.15));
+    --background-secondary-alt: var(--color-base-05);
+    --background-modifier-box-shadow: rgba(0, 0, 0, 0.1);
+    --background-modifier-cover: rgba(220, 220, 220, 0.4);
+    --input-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12),
+		0 2px 3px 0 rgba(0,0,0,.05),
+		0 1px 1.5px 0 rgba(0,0,0,.03),
+		0 1px 2px 0 rgba(0,0,0,.04),
+		0 0 0 0 transparent;
+    --input-shadow-hover: inset 0 0 0 1px rgba(0, 0, 0, 0.17),
+		0 2px 3px 0 rgba(0,0,0,.1),
+		0 1px 1.5px 0 rgba(0,0,0,.03),
+		0 1px 2px 0 rgba(0,0,0,.04),
+		0 0 0 0 transparent;
+    --shadow-s: 0px 1px 2px rgba(0, 0, 0, 0.028),
+		0px 3.4px 6.7px rgba(0, 0, 0, .042),
+		0px 15px 30px rgba(0, 0, 0, .07);
+    --shadow-l: 0px 1.8px 7.3px rgba(0, 0, 0, 0.071),
+		0px 6.3px 24.7px rgba(0, 0, 0, 0.112),
+		0px 30px 90px rgba(0, 0, 0, 0.2);
+} 
+.theme-dark {
+    color-scheme: dark;
+    --highlight-mix-blend-mode: lighten;
+    --mono-rgb-0: 0, 0, 0;
+    --mono-rgb-100: 255, 255, 255;
+    --color-red-rgb: 251, 70, 76;
+    --color-red: #fb464c;
+    --color-orange-rgb: 233, 151, 63;
+    --color-orange: #e9973f;
+    --color-yellow-rgb: 224, 222, 113;
+    --color-yellow: #e0de71;
+    --color-green-rgb: 68, 207, 110;
+    --color-green: #44cf6e;
+    --color-cyan-rgb: 83, 223, 221;
+    --color-cyan: #53dfdd;
+    --color-blue-rgb: 2, 122, 255;
+    --color-blue: #027aff;
+    --color-purple-rgb: 168, 130, 255;
+    --color-purple: #a882ff;
+    --color-pink-rgb: 250, 153, 205;
+    --color-pink: #fa99cd;
+    --color-base-00: #1e1e1e;
+    --color-base-05: #212121;
+    --color-base-10: #242424;
+    --color-base-20: #262626;
+    --color-base-25: #2a2a2a;
+    --color-base-30: #363636;
+    --color-base-35: #3f3f3f;
+    --color-base-40: #555555;
+    --color-base-50: #666666;
+    --color-base-60: #999999;
+    --color-base-70: #b3b3b3;
+    --color-base-100: #dadada;
+    --color-accent-hsl: var(--accent-h),
+			var(--accent-s),
+			var(--accent-l);
+    --color-accent: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+    --color-accent-1: hsl(calc(var(--accent-h) - 3), calc(var(--accent-s) * 1.02), calc(var(--accent-l) * 1.15));
+    --color-accent-2: hsl(calc(var(--accent-h) - 5), calc(var(--accent-s) * 1.05), calc(var(--accent-l) * 1.29));
+    --background-modifier-form-field: var(--color-base-30);
+    --background-secondary-alt: var(--color-base-30);
+    --interactive-normal: var(--color-base-30);
+    --interactive-hover: var(--color-base-35);
+    --text-accent: var(--color-accent-1);
+    --interactive-accent: var(--color-accent);
+    --interactive-accent-hover: var(--color-accent-1);
+    --background-modifier-box-shadow: rgba(0, 0, 0, 0.3);
+    --background-modifier-cover: rgba(10, 10, 10, 0.4);
+    --text-selection: hsla(var(--interactive-accent-hsl), 0.25);
+    --input-shadow: inset 0 0.5px 0.5px 0.5px rgba(255, 255, 255, 0.09),
+		0 2px 4px 0 rgba(0,0,0,.15),
+		0 1px 1.5px 0 rgba(0,0,0,.1),
+		0 1px 2px 0 rgba(0,0,0,.2),
+		0 0 0 0 transparent;
+    --input-shadow-hover: inset 0 0.5px 1px 0.5px rgba(255, 255, 255, 0.16),
+		0 2px 3px 0 rgba(0,0,0,.3),
+		0 1px 1.5px 0 rgba(0,0,0,.2),
+		0 1px 2px 0 rgba(0,0,0,.4),
+		0 0 0 0 transparent;
+    --shadow-s: 0px 1px 2px rgba(0, 0, 0, 0.121),
+		0px 3.4px 6.7px rgba(0, 0, 0, 0.179),
+		0px 15px 30px rgba(0, 0, 0, 0.3);
+    --shadow-l: 0px 1.8px 7.3px rgba(0, 0, 0, 0.071),
+		0px 6.3px 24.7px rgba(0, 0, 0, 0.112),
+		0px 30px 90px rgba(0, 0, 0, 0.2);
+    --pdf-shadow: 0 0 0 1px var(--background-modifier-border);
+    --pdf-thumbnail-shadow: 0 0 0 1px var(--background-modifier-border);
+}		
+*/
 .PluginManagerView .enabled {
-    background-color: #f9f9f9;
-    color: #333;
-    cursor: pointer;
+	/* background-color: #f9f9f9; */
+	color: var(--color-base-100);
+	cursor: pointer;
+}
+
+.PluginManagerView .disable {
+	color: var(--color-base-50);
 }
 
 .PluginManagerView .plugin-setting {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 }
 
 
 .PluginManagerView .enabled:hover {
-    background-color: #ffffff;
-    color: #333;
+	background-color: var(--color-base-25);
+	color: var(--text-normal);
 }
 
 .PluginManagerView table th:nth-child(1),
 .PluginManagerView table td:nth-child(1) {
-    width: 9.5em;
-    min-width: 9.5em;
+	width: 9.5em;
+	min-width: 9.5em;
 }
 
 .PluginManagerView th:nth-child(2),
 .PluginManagerView td:nth-child(2) {
-    text-align: center;
-    /* 让单元格内的文本居中 */
-    vertical-align: middle;
-    /* 让单元格内的内容垂直居中 */
-    width: 3em;
-    min-width: 3em;
+	text-align: center;
+	/* 让单元格内的文本居中 */
+	vertical-align: middle;
+	/* 让单元格内的内容垂直居中 */
+	width: 3em;
+	min-width: 3em;
 }
 
 .PluginManagerView th:nth-child(3),
 .PluginManagerView td:nth-child(3) {
-    width: 3em;
-    min-width: 3em;
-    text-align: center;
-    /* 让单元格内的文本居中 */
-    vertical-align: middle;
+	width: 3em;
+	min-width: 3em;
+	text-align: center;
+	/* 让单元格内的文本居中 */
+	vertical-align: middle;
 }
 
 .PluginManagerView td:nth-child(3) input {
-    display: inline-block;
-    box-sizing: border-box;
-    width: 3em;
-    min-width: 3em;
-    padding: 0;
-    border: 0;
+	display: inline-block;
+	box-sizing: border-box;
+	width: 3em;
+	min-width: 3em;
+	padding: 0;
+	border: 0;
 }
 
 .PluginManagerView th:nth-child(4),
 .PluginManagerView td:nth-child(4) {
-    min-width: 0em;
-    padding: 0;
+	min-width: 0em;
+	padding: 0;
 }
 
 .PluginManagerView th:nth-child(5),
 .PluginManagerView td:nth-child(5) {
-    min-width: 5.5em;
-    /* 设置第三列的宽度 */
-    text-align: center;
-    /* 让单元格内的文本居中 */
-    vertical-align: middle;
-    /* 让单元格内的内容垂直居中 */
-    font-size: 0.8em;
+	min-width: 5.5em;
+	/* 设置第三列的宽度 */
+	text-align: center;
+	/* 让单元格内的文本居中 */
+	vertical-align: middle;
+	/* 让单元格内的内容垂直居中 */
+	font-size: 0.8em;
 }
 
 
 .PluginManagerView th:nth-child(6),
 .PluginManagerView td:nth-child(6) {
-    width: 100%;
+	width: 100%;
 }
 
 .PluginManagerView textarea {
-    width: 100%;
-    box-sizing: border-box;
-    /* 确保内边距不影响宽度计算 */
+	width: 100%;
+	box-sizing: border-box;
+	/* 确保内边距不影响宽度计算 */
 }
 
 .pluginManager-table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    min-width: 50em;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	min-width: 50em;
 
-    & button {
-        cursor: pointer;
-    }
+	& button {
+		cursor: pointer;
+		margin: 0.2em;
+	}
 }
 
 .pluginManager-table-header div:last-child {
-    display: flex;
-    justify-content: space-between;
-    margin-left: 2em;
+	display: flex;
+	justify-content: space-between;
+	margin-left: 2em;
 }

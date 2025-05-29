@@ -321,7 +321,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 							.map((Iplugin) => {
 								return (
 									<tr key={Iplugin.id}>
-										<td className={Iplugin.enabled ? "enabled" : ""} onClick={() => { handleSettingClick(Iplugin) }}>
+										<td className={Iplugin.enabled ? "enabled" : "disable"} onClick={() => { handleSettingClick(Iplugin) }}>
 											{/* @ts-ignore */}
 											<div className={`plugin-name ${plugin.app.isMobile && Iplugin.isDesktopOnly ? "isDesktopOnly" : ""}`}>
 												<div>{Iplugin.name}</div>

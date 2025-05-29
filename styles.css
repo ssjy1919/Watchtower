@@ -83,7 +83,7 @@
 }
 .file-supervision th,
 .file-supervision td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-base-30);
   padding: 3px;
   white-space: nowrap;
   overflow: hidden;
@@ -156,9 +156,12 @@
   & .markdown-rendered {
     max-height: 3em;
     overflow: auto;
-  }
-  & .markdown-rendered * {
-    margin: 5px 0;
+    &:hover {
+      background: var(--color-base-25);
+    }
+    & * {
+      margin: 5px 0;
+    }
   }
 }
 .PluginManagerView .grouping {
@@ -188,7 +191,7 @@
   margin-bottom: 3px;
 }
 .PluginManagerView .initial-tag.active-initial {
-  background-color: var(--background-modifier-border-hover);
+  background-color: var(--color-base-25);
 }
 .PluginManagerView table {
   table-layout: auto;
@@ -250,41 +253,45 @@
   flex-direction: column;
   justify-content: center;
 }
+.PluginManagerView thead {
+  background-color: var(--color-base-25);
+}
+.PluginManagerView thead > tr > th:hover {
+  background-color: var(--color-base-20);
+}
 .PluginManagerView tr {
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-base-30);
 }
 .PluginManagerView td {
   padding: 0 5px;
   min-width: 0;
 }
 .PluginManagerView th {
-  background-color: #9e9d9d51;
   height: 3em;
   cursor: pointer;
-  border: #333 solid 1px;
+  border: var(--color-base-35) solid 1px;
   font-size: 0.8em;
 }
-.PluginManagerView td:nth-child(odd) {
-  background-color: #d3d3d346;
-}
 .PluginManagerView td:nth-child(even) {
-  background-color: #e8e8e814;
+  background-color: #6666660f;
 }
 .PluginManagerView .plugin-name {
   display: flex;
   justify-content: space-between;
 }
 .PluginManagerView .version {
-  color: #b6b6b6;
+  color: var(--nav-heading-color-collapsed);
   font-size: 0.7em;
 }
 .PluginManagerView .plugin-name.isDesktopOnly {
   color: var(--background-modifier-border-hover);
 }
 .PluginManagerView .enabled {
-  background-color: #f9f9f9;
-  color: #333;
+  color: var(--color-base-100);
   cursor: pointer;
+}
+.PluginManagerView .disable {
+  color: var(--color-base-50);
 }
 .PluginManagerView .plugin-setting {
   display: flex;
@@ -292,8 +299,8 @@
   align-items: flex-end;
 }
 .PluginManagerView .enabled:hover {
-  background-color: #ffffff;
-  color: #333;
+  background-color: var(--color-base-25);
+  color: var(--text-normal);
 }
 .PluginManagerView table th:nth-child(1),
 .PluginManagerView table td:nth-child(1) {
@@ -349,6 +356,7 @@
   min-width: 50em;
   & button {
     cursor: pointer;
+    margin: 0.2em;
   }
 }
 .pluginManager-table-header div:last-child {
@@ -373,7 +381,7 @@
   align-items: center;
 }
 .GroupView .GroupView-group:hover {
-  background-color: var(--background-modifier-hover);
+  background-color: var(--color-base-25);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 .GroupView .GroupView-delete {
@@ -383,10 +391,11 @@
   left: 5px;
 }
 .GroupView .GroupView-delete:hover {
-  background-color: var(--titlebar-background-focused);
+  background-color: var(--color-base-00);
+  border-radius: 50%;
 }
-.GroupView .GroupView-active {
-  background-color: var(--background-modifier-hover);
+div.GroupView .GroupView-active {
+  background-color: var(--color-base-25);
 }
 div.GroupView div.GroupView-container {
   display: flex;
@@ -402,14 +411,14 @@ div.GroupView div.GroupView-container {
 }
 .GroupView-setting button {
   color: var(--icon-color);
-  border: none;
   border-radius: 30%;
+  box-shadow: none;
   width: 1.5em;
   height: 1.5em;
   cursor: pointer;
 }
 .GroupView-setting button:hover {
-  background-color: var(--titlebar-background-focused);
+  background-color: var(--color-base-25);
 }
 div.GroupView div.GroupView-setting {
   display: flex;
@@ -419,20 +428,26 @@ div.GroupView div.GroupView-setting {
   margin-left: 0;
 }
 .GroupView-setting button {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 0;
   margin-left: 1em;
+  padding: 15px;
 }
 .MakeTagsView {
   display: flex;
   flex-wrap: wrap;
-  min-width: 11em;
+  min-width: 12em;
 }
 .MakeTagsView .dropdown {
   max-width: 8em;
-  background-color: var(--titlebar-background-focused);
+  background-color: var(--color-base-25);
   padding: 0 0.3em;
   height: 2em;
 }
 .MakeTagsView select {
+  margin-left: 1em;
+  margin-top: 1em;
   max-width: 8em;
   padding: 0 0.3em;
   height: 2em;
@@ -443,11 +458,11 @@ div.GroupView div.GroupView-setting {
   border-radius: 50%;
 }
 .MakeTagsView .MakeTagsView-setting span:hover {
-  background-color: var(--titlebar-background-focused);
+  background-color: var(--color-base-25);
 }
 .MakeTagsView .MakeTagsView-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 }
 .MakeTagsView .MakeTagsView-tag {
   padding: 0 0.5em;
@@ -458,7 +473,7 @@ div.GroupView div.GroupView-setting {
   white-space: nowrap;
 }
 .MakeTagsView .MakeTagsView-tag:hover {
-  background-color: var(--background-modifier-hover);
+  background-color: var(--color-base-25);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 .MakeTagsView .MakeTagsView-delete {
@@ -467,7 +482,8 @@ div.GroupView div.GroupView-setting {
   left: 5px;
 }
 .MakeTagsView .MakeTagsView-delete:hover {
-  background-color: var(--titlebar-background-focused);
+  background-color: var(--color-base-00);
+  border-radius: 50%;
 }
 .MakeTagsView .MakeTagsView-enter {
   display: flex;
@@ -475,7 +491,7 @@ div.GroupView div.GroupView-setting {
 }
 .MakeTagsView .MakeTagsView-enter span {
   border: 1px solid rgba(103, 108, 108, 0.313);
-  background-color: var(--titlebar-background-focused);
+  background-color: var(--color-base-05);
   border-radius: 0.5em;
   display: flex;
   flex-direction: row;
@@ -488,7 +504,7 @@ div.GroupView div.GroupView-setting {
   align-items: center;
 }
 .MakeTagsView .MakeTagsView-enter span:hover {
-  background: var(--background-modifier-hover);
+  background: var(--color-base-25);
 }
 .MakeTagsView .MakeTagsView-setting span {
   background-color: transparent;
@@ -496,14 +512,14 @@ div.GroupView div.GroupView-setting {
   font-size: unset;
   display: block;
   align-items: center;
-  padding-left: 3px;
-  padding-right: 3px;
-  color: #0000004c;
+  padding-left: 6px;
+  padding-right: 6px;
+  color: var(--color-base-50);
 }
 .MakeTagsView .MakeTagsView-setting {
   display: flex;
   justify-content: space-around;
 }
 .MakeTagsView .GroupView-active {
-  background-color: var(--background-modifier-hover);
+  background-color: var(--color-base-25);
 }

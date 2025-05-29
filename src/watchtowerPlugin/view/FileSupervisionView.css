@@ -23,7 +23,7 @@
 
 .file-supervision th,
 .file-supervision td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-base-30);
     padding: 3px;
     white-space: nowrap;
     overflow: hidden;

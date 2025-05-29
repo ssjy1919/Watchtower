@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu } from "obsidian";
+import { Menu, Notice } from "obsidian";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import WatchtowerPlugin from "src/main";
@@ -25,12 +25,12 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
 			})
 			.sort((a, b) => b.recentOpen - a.recentOpen);
 	}, [fileStats, excludeFileSuffix]);
-	const handleClick = (index: number) => {
+	const handleClick = async (index: number) => {
 		setClassName((prevClassName) =>
 			prevClassName === 'is-active' ? '' : 'is-active'
 		);
 
-		plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", recentFilesOpenMode);
+		await plugin.app.workspace.openLinkText(sortedFileStats[index].path, "", recentFilesOpenMode);
 
 	};
 	// 右键菜单处理函数
@@ -46,8 +46,8 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
 		menu.addItem((item) => {
 			item.setTitle("在当前标签页打开")
 				.setIcon("document")
-				.onClick(() => {
-					plugin.app.workspace.openLinkText(fileStat.path, "", false);
+				.onClick(async () => {
+					await plugin.app.workspace.openLinkText(fileStat.path, "", false);
 				});
 		});
 
@@ -55,8 +55,8 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
 		menu.addItem((item) => {
 			item.setTitle("在新标签页中打开")
 				.setIcon("lucide-file-plus")
-				.onClick(() => {
-					plugin.app.workspace.openLinkText(fileStat.path, "", true);
+				.onClick(async () => {
+					await plugin.app.workspace.openLinkText(fileStat.path, "", true);
 				});
 		});
 
@@ -64,8 +64,9 @@ export const RecentOpenFileTable: React.FC<RecentOpenFileTableProps> = ({ plugin
 		menu.addItem((item) => {
 			item.setTitle("复制路径")
 				.setIcon("clipboard-copy")
-				.onClick(() => {
-					navigator.clipboard.writeText(fileStat.path);
+				.onClick(async () => {
+					await navigator.clipboard.writeText(fileStat.path);
+					new  Notice("已复制到剪贴板");
 				});
 		});
 		// 显示菜单
