@@ -15,10 +15,14 @@ import {
 	VIEW_TYPE_FILE_SUPERVISION,
 } from "./watchtowerPlugin/view/leafView";
 import { PluginManagerPlugin } from "./pluginManagerPlugin/PluginManagerMain";
-import { VIEW_TYPE_PLUGIN_MANAGER } from "./pluginManagerPlugin/PluginManagerLeft";
+import {
+	PluginManagerLeft,
+	VIEW_TYPE_PLUGIN_MANAGER,
+} from "./pluginManagerPlugin/PluginManagerLeft";
 import { getAllPlugins } from "./pluginManagerPlugin/PMtools";
 import { renderStatusBarView } from "./watchtowerPlugin/view/statusBarView";
 import { FileService } from "./FileService";
+import { store, updataFSstates, updataSettings } from "./store";
 export default class WatchtowerPlugin extends Plugin {
 	public settings: WatchtowerSettings;
 	public fileSupervision: FileSupervisionData;
@@ -30,7 +34,8 @@ export default class WatchtowerPlugin extends Plugin {
 		FileService.getInstance(this);
 		// 加载 JSON 文件
 		await this.loadSettingsDataFile(CONFIG_FILES.FILE_STATE_DATA);
-
+		store.dispatch(updataFSstates(this.fileSupervision));
+		store.dispatch(updataSettings(this.settings));
 		// 等待应用初始化完成
 		this.app.workspace.onLayoutReady(async () => {
 			this.fileHandler = new FileHandler(this);
@@ -44,12 +49,17 @@ export default class WatchtowerPlugin extends Plugin {
 				new PluginManagerPlugin(this);
 			}
 		});
-		if (this.settings.watchtowerPlugin) {
+		if (this.settings.watchtowerPlugin)
 			this.registerView(
 				VIEW_TYPE_FILE_SUPERVISION,
 				(leaf) => new File_supervision(leaf, this)
 			);
-		}
+
+		if (this.settings.pluginManagerPlugin)
+			this.registerView(
+				VIEW_TYPE_PLUGIN_MANAGER,
+				(leaf) => new PluginManagerLeft(leaf, this)
+			);
 		if (this.settings.statusBarIcon && this.settings.watchtowerPlugin) {
 			const container = this.addStatusBarItem();
 			this.statusBarRoot = renderStatusBarView(container, this);
@@ -75,7 +85,7 @@ export default class WatchtowerPlugin extends Plugin {
 			if (data) {
 				// 根据类型执行差异化处理
 				if (configFileName === CONFIG_FILES.FILE_STATE_DATA) {
-					this.fileSupervision = data as FileSupervisionData;
+					this.fileSupervision = data;
 				}
 			}
 		} catch (error) {
