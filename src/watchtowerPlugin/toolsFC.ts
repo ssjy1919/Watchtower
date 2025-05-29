@@ -248,8 +248,7 @@ export async function loadSettings(plugin: WatchtowerPlugin) {
 }
 /** 初始化 */
 export async function init(plugin: WatchtowerPlugin) {
-	store.dispatch(updataFSstates(plugin.fileSupervision));
-	store.dispatch(updataSettings(plugin.settings));
+
 	const fileSupervisionFileStats = plugin.fileSupervision.fileStats;
 	// 比较文件差异
 	const differentFiles = await plugin.fileHandler.compareFiles(

@@ -1,9 +1,5 @@
 import WatchtowerPlugin from "src/main";
 import { activateMiddleView, getAllPlugins } from "./PMtools";
-import {
-	PluginManagerLeft,
-	VIEW_TYPE_PLUGIN_MANAGER,
-} from "./PluginManagerLeft";
 import { store } from "src/store";
 
 export interface PluginManagerPlugin {
@@ -26,11 +22,7 @@ export class PluginManagerPlugin {
 		this.plugin.addRibbonIcon("blocks", "插件管理",  () => {
 			activateMiddleView(this.plugin);
 		});
-		// 注册插件管理视图
-		this.plugin.registerView(
-			VIEW_TYPE_PLUGIN_MANAGER,
-			(leaf) => new PluginManagerLeft(leaf, this.plugin)
-		);
+		
 		this.plugin.app.workspace.onLayoutReady( () => {
 			store.getState().settings.pluginManager.forEach((plugin) => {
 				if (plugin.delayStart > 0) {
