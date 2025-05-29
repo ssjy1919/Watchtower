@@ -35,9 +35,9 @@ const FileSupervision: React.FC<FileSupervisionProps> = ({ plugin }) => {
         setClassName(() => 'file-supervision-table-none');
     };
 
-    const handleOpenLink = (path: string, differents: string) => {
+    const handleOpenLink = async (path: string, differents: string) => {
         if (differents != "未找到" && differents != "已删除") {
-            plugin.app.workspace.openLinkText(path, '', false);
+            await plugin.app.workspace.openLinkText(path, '', false);
         } else {
             new Notice(`文件不存在：${path}`)
         }

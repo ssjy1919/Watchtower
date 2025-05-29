@@ -1,107 +1,113 @@
 .MakeTagsView {
-    display: flex;
-    flex-wrap: wrap; 
-    min-width: 11em;
-    /* flex-direction: row;
+	display: flex;
+	flex-wrap: wrap;
+	min-width: 12em;
+	/* flex-direction: row;
     width: fit-content;
     */
 }
 
- .MakeTagsView .dropdown {
-    max-width: 8em;
-    background-color: var(--titlebar-background-focused);
-    padding: 0 0.3em;
-    height: 2em;
+.MakeTagsView .dropdown {
+	max-width: 8em;
+	background-color: var(--color-base-25);
+	padding: 0 0.3em;
+	height: 2em;
 }
+
 .MakeTagsView select {
-    max-width: 8em;
-    padding: 0 0.3em;
-    height: 2em;
+	margin-left: 1em;
+	margin-top: 1em;
+	max-width: 8em;
+	padding: 0 0.3em;
+	height: 2em;
 }
+
 .MakeTagsView .MakeTagsView-setting span {
-    background-color: transparent;
-    cursor: pointer;
-    border-radius: 50%;
+	background-color: transparent;
+	cursor: pointer;
+	border-radius: 50%;
 }
 
 .MakeTagsView .MakeTagsView-setting span:hover {
-    background-color: var(--titlebar-background-focused);
+	background-color: var(--color-base-25);
 }
 
 .MakeTagsView .MakeTagsView-container {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: flex-end;
 }
 
 .MakeTagsView .MakeTagsView-tag {
-    padding: 0 0.5em;
-    background-color: transparent;
-    cursor: pointer;
-    border-radius: 1em;
-    margin: 2px 0;
-    /* margin-right: 0.5em; */
-    white-space: nowrap; /* 禁止换行 */
+	padding: 0 0.5em;
+	background-color: transparent;
+	cursor: pointer;
+	border-radius: 1em;
+	margin: 2px 0;
+	/* margin-right: 0.5em; */
+	white-space: nowrap;
+	/* 禁止换行 */
 }
 
 .MakeTagsView .MakeTagsView-tag:hover {
-    background-color: var(--background-modifier-hover);
-    /* 外阴影 */
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+	background-color: var(--color-base-25);
+	/* 外阴影 */
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
 .MakeTagsView .MakeTagsView-delete {
-    cursor: pointer;
-    position: relative;
-    /* 添加相对定位 */
-    left: 5px;
-    /* 向右移动 5px */
+	cursor: pointer;
+	position: relative;
+	/* 添加相对定位 */
+	left: 5px;
+	/* 向右移动 5px */
 }
 
 .MakeTagsView .MakeTagsView-delete:hover {
-    background-color: var(--titlebar-background-focused);
+	background-color: var(--color-base-00);
+	border-radius: 50%;
 }
 
 .MakeTagsView .MakeTagsView-enter {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .MakeTagsView .MakeTagsView-enter span {
-    border: 1px solid rgba(103, 108, 108, 0.313);
-    background-color: var(--titlebar-background-focused);
-    border-radius: 0.5em;
-    display: flex;
-    flex-direction: row;
-    font-size: 0.7em;
-    margin: 2px 0 2px 1em;
-    cursor: pointer;
-    width: 2.5em;
-    line-height: 1.5em;
-    justify-content: center;
-    align-items: center;
+	border: 1px solid rgba(103, 108, 108, 0.313);
+	background-color: var(--color-base-05);
+	border-radius: 0.5em;
+	display: flex;
+	flex-direction: row;
+	font-size: 0.7em;
+	margin: 2px 0 2px 1em;
+	cursor: pointer;
+	width: 2.5em;
+	line-height: 1.5em;
+	justify-content: center;
+	align-items: center;
 }
 
 .MakeTagsView .MakeTagsView-enter span:hover {
-    background: var(--background-modifier-hover);
+	background: var(--color-base-25);
 }
 
 .MakeTagsView .MakeTagsView-setting span {
-    background-color: transparent;
-    border-radius: 50%;
-    font-size: unset;
-    display: block;
-    align-items: center;
-    padding-left: 3px;
-    padding-right: 3px;
-    color: #0000004c;
+	background-color: transparent;
+	border-radius: 50%;
+	font-size: unset;
+	display: block;
+	align-items: center;
+	padding-left: 6px;
+	padding-right: 6px;
+	color: var(--color-base-50);
 }
 
 .MakeTagsView .MakeTagsView-setting {
-    display: flex;
-    justify-content: space-around;
+	display: flex;
+	justify-content: space-around;
 }
 
-.MakeTagsView .GroupView-active{
-    background-color: var(--background-modifier-hover);
+.MakeTagsView .GroupView-active {
+	background-color: var(--color-base-25);
 
 }
