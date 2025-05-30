@@ -67,7 +67,6 @@ const PluginCommentCell: React.FC<Props> = ({
         <div
             className="markdown-rendered"
             ref={divRef}
-            style={{ minWidth: 120, cursor: "pointer" }}
             onClick={e => {
                 if (!(e.target instanceof HTMLElement && e.target.closest('a'))) {
                     onEdit();

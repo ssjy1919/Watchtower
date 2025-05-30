@@ -70,11 +70,7 @@
 	background-color: var(--background-modifier-border-hover);
 }
 
-.PluginManagerView .GroupView {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-}
+
 
 /* 开关按钮样式 */
 .PluginManagerView .switch {
@@ -420,5 +416,13 @@
 .pluginManager-table-header div:last-child {
 	display: flex;
 	justify-content: space-between;
-	margin-left: 2em;
+	margin-left: 10px;
+}
+
+
+
+
+.PluginManagerView .markdown-rendered {
+
+	cursor: pointer;
 }
