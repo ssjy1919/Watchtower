@@ -23,14 +23,22 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 	const storeOrder = useSelector((state: RootState) => state.settings.sortField.order);
 	const showPluginInitial = useSelector((state: RootState) => state.settings.showPluginInitial);
 	const [pluginNote, setPluginNote] = useState<{ [id: string]: boolean }>({});
-
 	const dispatch = useDispatch();
+	const [searchQuery, setSearchQuery] = useState<string>("");
+
 	// 根据 showPluginGroups 过滤插件列表
 	const filteredPlugins = pluginManager.filter(Iplugin => {
-		// 如果 showPluginGroups 为空，则显示所有插件
-		if (!storeSettings.showPluginGroups) return true;
-		// 否则仅显示 tags 包含 showPluginGroups 的插件
-		return Iplugin.tags.includes(storeSettings.showPluginGroups);
+		// 分组过滤（原逻辑）
+		const matchesGroup = !storeSettings.showPluginGroups
+			|| Iplugin.tags.includes(storeSettings.showPluginGroups);
+
+		// 搜索过滤（新逻辑：优先匹配 comment，若为空则匹配 description）
+		const searchLower = searchQuery.trim().toLowerCase();
+		const matchesSearch = !searchQuery
+			|| Iplugin.name.toLowerCase().includes(searchLower)
+			|| (Iplugin.comment.toLowerCase() || Iplugin.description.toLowerCase()).includes(searchLower);
+
+		return matchesGroup && matchesSearch;
 	});
 
 	const [getEnabledPlugins, getDisabledPlugins] = useMemo(() => [
@@ -242,7 +250,7 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 					p.enabled ? await enablePlugin(p.id) : await disablePlugin(p.id);
 				}
 			});
-			await Promise.all(promises); 
+			await Promise.all(promises);
 
 			// 统一更新状态（避免多次 dispatch 和 saveData）
 			const newSettings = { ...storeSettings, pluginManager: storeSettings.secondPluginManager };
@@ -274,10 +282,13 @@ const PluginManagerView: React.FC<PluginManagerView> = ({ plugin }) => {
 			</div>
 			<div className="pluginManager-table">
 				<div className="pluginManager-table-header">
-					<GroupView plugin={plugin} />
+					<GroupView plugin={plugin}
+						searchQuery={searchQuery}
+						setSearchQuery={setSearchQuery}
+					/>
 					<div>
-						<button title="按记录的配置恢复插件状态" onClick={() => restoreConfig()}>恢复</button>
-						<button title="保存当前插件状态的配置" onClick={() => saveConfig()}>保存</button>
+						<button title="恢复所有插件开关状态" onClick={() => restoreConfig()}>恢复</button>
+						<button title="保存所有插件开关状态" onClick={() => saveConfig()}>保存</button>
 					</div>
 				</div>
 				<table>

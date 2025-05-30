@@ -202,11 +202,6 @@
 .PluginManagerView .initial-tag:hover {
   background-color: var(--background-modifier-border-hover);
 }
-.PluginManagerView .GroupView {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
 .PluginManagerView .switch {
   position: relative;
   display: inline-block;
@@ -362,13 +357,17 @@
 .pluginManager-table-header div:last-child {
   display: flex;
   justify-content: space-between;
-  margin-left: 2em;
+  margin-left: 10px;
+}
+.PluginManagerView .markdown-rendered {
+  cursor: pointer;
 }
 .PluginManagerView .GroupView {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   margin-bottom: 5px;
+  align-items: center;
 }
 .GroupView .GroupView-group {
   display: flex;
@@ -401,7 +400,6 @@ div.GroupView div.GroupView-container {
   display: flex;
   align-items: center;
   margin-left: 1em;
-  width: 8em;
 }
 .GroupView-container input {
   padding: 5px;
@@ -422,7 +420,6 @@ div.GroupView div.GroupView-container {
 }
 div.GroupView div.GroupView-setting {
   display: flex;
-  width: 5em;
   flex-direction: row;
   justify-content: space-between;
   margin-left: 0;
@@ -432,7 +429,17 @@ div.GroupView div.GroupView-setting {
   margin-bottom: 0;
   margin-right: 0;
   margin-left: 1em;
-  padding: 15px;
+}
+.GroupView .GroupView-search {
+  width: 100%;
+  max-width: 6em;
+  box-sizing: border-box;
+  padding: 0;
+  margin-right: 1em;
+  &::placeholder {
+    color: var(--color-base-40);
+    opacity: 1;
+  }
 }
 .MakeTagsView {
   display: flex;
