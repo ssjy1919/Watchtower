@@ -1,10 +1,10 @@
-import WatchtowerPlugin from "src/main";
-import { Switch } from "src/setting/components/Switch";
+import WatchtowerPlugin from "../main";
+import { Switch } from "../setting/components/Switch";
 import "./PluginManagerView.css"
 import { useDispatch } from "react-redux";
-import { RootState, updataSettings, updataPluginManager } from "src/store";
+import { RootState, updataSettings, updataPluginManager } from "../store";
 import { useSelector } from "react-redux";
-import { PluginManager } from "src/types";
+import { PluginManager } from "../types";
 import { disablePlugin, enablePlugin, getAllPlugins, getSwitchTimeByPluginId, openPluginSettings } from "./PMtools";
 import { useMemo, useState } from "react";
 import GroupView from "./GroupView";

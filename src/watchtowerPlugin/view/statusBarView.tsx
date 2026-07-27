@@ -1,10 +1,10 @@
 import { Provider, useSelector } from "react-redux";
 import { RootState, store } from "../../store";
 import { createRoot } from "react-dom/client";
-import WatchtowerPlugin from "src/main";
-import { activateView } from "src/watchtowerPlugin/toolsFC";
+import WatchtowerPlugin from "../../main";
+import { activateView } from "../toolsFC";
 import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
-import { activateMiddleView } from "src/pluginManagerPlugin/PMtools";
+import { activateMiddleView } from "../../pluginManagerPlugin/PMtools";
 import { useMemo } from "react";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ plugin }) => {

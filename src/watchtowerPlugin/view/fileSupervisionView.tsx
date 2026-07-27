@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "src/store";
+import { RootState } from "../../store";
 import { Notice } from "obsidian";
 import "./fileSupervisionView.css"
-import WatchtowerPlugin from "src/main";
+import WatchtowerPlugin from "../../main";
 import { RecentOpenFileTable } from "../recentFile/RecentOpenFileTable";
 
 interface FileSupervisionProps {

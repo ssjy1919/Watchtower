@@ -1,8 +1,8 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { Root, createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import WatchtowerPlugin from "src/main";
-import { store } from "src/store";
+import WatchtowerPlugin from "../main";
+import { store } from "../store";
 import PluginManagerView from "./PluginManagerView";
 
 

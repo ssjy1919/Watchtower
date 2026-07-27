@@ -1,8 +1,8 @@
-import WatchtowerPlugin from "src/main";
+import WatchtowerPlugin from "../main";
 import "./GroupView.css";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, updataSettings, updataPluginGroups } from "src/store";
+import { RootState, updataSettings, updataPluginGroups } from "../store";
 
 interface GroupView {
 	plugin: WatchtowerPlugin;

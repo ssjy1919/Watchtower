@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import WatchtowerPlugin from "src/main";
-import { RootState, updataSettings, updataPluginManager } from "src/store";
-import { PluginManager } from "src/types";
+import WatchtowerPlugin from "../main";
+import { RootState, updataSettings, updataPluginManager } from "../store";
+import { PluginManager } from "../types";
 import "./MakeTagsView.css";
 
 interface MakeTagsViewProps {

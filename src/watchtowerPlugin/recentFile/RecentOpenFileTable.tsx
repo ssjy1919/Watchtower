@@ -2,10 +2,10 @@ import * as React from "react";
 import { Menu, Notice } from "obsidian";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import WatchtowerPlugin from "src/main";
+import WatchtowerPlugin from "../../main";
 import "./RecentOpenFileTable.css"
 import { useMemo } from "react";
-import { getNormalizedExcludeSuffixes } from "src/selectors";
+import { getNormalizedExcludeSuffixes } from "../../selectors";
 
 interface RecentOpenFileTableProps {
 	plugin: WatchtowerPlugin,

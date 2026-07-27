@@ -1,8 +1,8 @@
 import { normalizePath, Notice, TFolder } from "obsidian";
 import { CONFIG_FILES, SettingsFileStats, settingsFileStats } from "../types";
 import WatchtowerPlugin from "../main";
-import { store, updataFileStats, updataFSstates } from "src/store";
-import { FileService } from "src/FileService";
+import { store, updataFileStats, updataFSstates } from "../store";
+import { FileService } from "../FileService";
 
 export class FileHandler {
 	plugin: WatchtowerPlugin;

@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { RootState } from "src/store";
+import { RootState } from "./store";
 
 const getSettings = (state: RootState) => state.settings;
 

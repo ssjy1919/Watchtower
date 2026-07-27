@@ -162,6 +162,31 @@ export interface WatchtowerSettings {
 	showPluginGroups: string;
 	/** 插件首字母分组 */
 	showPluginInitial: string;
+	/** 是否启用插件更新调度器 */
+	enableScheduler: boolean;
+}
+
+/** 定时任务接口 */
+export interface IScheduledTask {
+	/** 任务唯一标识 */
+	id: string;
+	/** 关联的插件 ID */
+	pluginId: string;
+	/** 任务类型 */
+	type: "check" | "update" | "backup" | "custom";
+	/** 执行间隔（毫秒） */
+	interval: number;
+	/** 上次执行时间 */
+	lastRun?: number;
+	/** 任务是否启用 */
+	enabled: boolean;
+}
+
+/** 调度器配置接口 */
+export interface ISchedulerConfig {
+	enabled: boolean;
+	defaultInterval: number;
+	maxConcurrent: number;
 }
 
 // 定义默认的 WatchtowerSettings 值
@@ -195,6 +220,7 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 		field: "enabled",
 		order: "desc",
 	},
+	enableScheduler: true,
 };
 export const FILE_STATE_DATA: FileSupervisionData = {
 	markTime: "记录时间为空",

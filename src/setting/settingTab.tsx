@@ -1,13 +1,13 @@
 import { App, PluginSettingTab } from 'obsidian';
 import * as ReactDOM from 'react-dom/client';
-import WatchtowerPlugin from 'src/main';
+import WatchtowerPlugin from '../main';
 import "./settingTab.css";
 import { Switch } from './components/Switch';
 import * as React from 'react';
-import { RootState, updataSettings, store } from 'src/store';
+import { RootState, updataSettings, store } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
-import { init } from 'src/watchtowerPlugin/toolsFC';
+import { init } from '../watchtowerPlugin/toolsFC';
 import { InputList } from './components/inputList';
 interface SettingComponentProps {
 	plugin: WatchtowerPlugin;

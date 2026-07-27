@@ -1,6 +1,6 @@
-import WatchtowerPlugin from "src/main";
+import WatchtowerPlugin from "../main";
 import { activateMiddleView, getAllPlugins } from "./PMtools";
-import { store } from "src/store";
+import { store } from "../store";
 
 export interface PluginManagerPlugin {
 	plugin: WatchtowerPlugin;

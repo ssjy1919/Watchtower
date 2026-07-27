@@ -1,8 +1,8 @@
-import WatchtowerPlugin from "src/main";
+import WatchtowerPlugin from "../main";
 import { VIEW_TYPE_PLUGIN_MANAGER } from "./PluginManagerLeft";
 import { Notice, PluginManifest, WorkspaceLeaf } from "obsidian";
-import { PluginManager } from "src/types";
-import { updataSettings, store } from "src/store";
+import { PluginManager } from "../types";
+import { updataSettings, store } from "../store";
 
 /**
  * 激活中间区域的视图。
