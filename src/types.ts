@@ -17,52 +17,6 @@ export interface SettingsFileStats {
 	recentOpen: number;
 }
 
-/** 已安装的插件对象接口 */
-export interface PluginManager {
-	id: string;
-	name: string;
-	/** obsidian应用捕获的插件启用状态，不包括延时启动的插件 */
-	enabled: boolean;
-	/** 最后更改时间 */
-	switchTime: number;
-	/** 用户备注 */
-	comment: string;
-	/** 插件延时启动 */
-	delayStart: number;
-	/** 作者 */
-	author: string;
-	/** 仓库地址 */
-	authorUrl: string;
-	/** 插件描述 */
-	description: string;
-	/** 插件路径 */
-	dir: string;
-	/** 是否仅桌面端可用 */
-	isDesktopOnly: boolean;
-	/** 最低obsidian版本 */
-	minAppVersion: string;
-	/** 插件版本 */
-	version: string;
-	/** 分组 */
-	tags: string[];
-}
-export const pluginManager: PluginManager = {
-	id: "",
-	name: "",
-	enabled: false,
-	switchTime: 0,
-	comment: "",
-	delayStart: 0,
-	author: "",
-	authorUrl: "",
-	description: "",
-	dir: "",
-	isDesktopOnly: false,
-	minAppVersion: "",
-	version: "",
-	tags: [],
-};
-
 // 定义默认的 FileStatus 值
 export const settingsFileStats: SettingsFileStats = {
 	basename: "",
@@ -77,13 +31,6 @@ export const settingsFileStats: SettingsFileStats = {
 	differents: "",
 	recentOpen: 0,
 };
-
-export interface SortField {
-	/** 排序字段 */
-	field: keyof PluginManager;
-	/** 排序顺序 */
-	order: "asc" | "desc";
-}
 
 export const CONFIG_FILES = {
 	FILE_STATE_DATA: "file_state.json",
@@ -138,12 +85,6 @@ export interface WatchtowerSettings {
 	MonitoredFileExcludes: string[];
 	/** 是否添加底部状态栏图标 */
 	statusBarIcon: boolean;
-	/** 是否启动插件管理功能 */
-	pluginManagerPlugin: boolean;
-	/** 插件的设置页面是否在新窗口打开 */
-	pluginSettingNewWindow: boolean;
-	/** 保存第二套插件配置信息 */
-	secondPluginManager: PluginManager[];
 	/** 最近打开的历史文件 */
 	recentOpenFile: RecentOpenFile[];
 	/** 新旧标签页打开历史文件方式 */
@@ -152,44 +93,8 @@ export interface WatchtowerSettings {
 	recentFileExcludes: string[];
 	/** 显示历史文件的数量 */
 	recentFilesCount: number;
-	/** 插件配置信息 */
-	pluginManager: PluginManager[];
-	/** 插件管理页面的排序字段 */
-	sortField: SortField;
-	/** 插件分组标签 */
-	pluginGroups: string[];
-	/** 显示插件分组标签 */
-	showPluginGroups: string;
-	/** 插件首字母分组 */
-	showPluginInitial: string;
-	/** 是否启用插件更新调度器 */
-	enableScheduler: boolean;
 }
 
-/** 定时任务接口 */
-export interface IScheduledTask {
-	/** 任务唯一标识 */
-	id: string;
-	/** 关联的插件 ID */
-	pluginId: string;
-	/** 任务类型 */
-	type: "check" | "update" | "backup" | "custom";
-	/** 执行间隔（毫秒） */
-	interval: number;
-	/** 上次执行时间 */
-	lastRun?: number;
-	/** 任务是否启用 */
-	enabled: boolean;
-}
-
-/** 调度器配置接口 */
-export interface ISchedulerConfig {
-	enabled: boolean;
-	defaultInterval: number;
-	maxConcurrent: number;
-}
-
-// 定义默认的 WatchtowerSettings 值
 export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	markTime: "记录时间为空",
 	fileStats: [settingsFileStats],
@@ -197,13 +102,9 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 	watchtowerPlugin: true,
 	MonitoredFileExcludes: ["png", "jpg", "jpeg", "gif", "webp"],
 	statusBarIcon: true,
-	pluginManagerPlugin: true,
-	pluginSettingNewWindow: true,
 	recentFilesOpenMode: false,
 	recentFileExcludes: ["png"],
 	recentFilesCount: 50,
-	pluginManager: [pluginManager],
-	secondPluginManager: [pluginManager],
 	recentOpenFile: [
 		{
 			path: "",
@@ -213,14 +114,6 @@ export const DEFAULT_SETTINGS: WatchtowerSettings = {
 			recentOpen: 0,
 		},
 	],
-	pluginGroups: [],
-	showPluginGroups: "",
-	showPluginInitial: "#",
-	sortField: {
-		field: "enabled",
-		order: "desc",
-	},
-	enableScheduler: true,
 };
 export const FILE_STATE_DATA: FileSupervisionData = {
 	markTime: "记录时间为空",

@@ -17,12 +17,6 @@ const settingsSlice = createSlice({
 		updataFileStats: (state, action) => {
 			state.fileStats = action.payload;
 		},
-		updataPluginManager: (state, action) => {
-			state.pluginManager = action.payload;
-		},
-		updataPluginGroups: (state, action) => {
-			state.pluginGroups = action.payload;
-		},
 	},
 });
 
@@ -69,8 +63,6 @@ export const {
     updataSettings,
     /** state.fileStats 文件状态专用更新 */
 	updataFileStats,
-	updataPluginManager,
-    updataPluginGroups,
 } = settingsSlice.actions;
 export const {
     /** file_state 文件完整更新 */

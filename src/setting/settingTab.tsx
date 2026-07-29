@@ -16,8 +16,6 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 	const [isSwitchOn, setIsSwitchOn] = React.useState(plugin.settings.watchtowerPlugin);
 	const storeSettings = useSelector((state: RootState) => state.settings);
 	const recentFilesMode = useSelector((state: RootState) => state.settings.recentFilesOpenMode);
-	const pluginManagerMode = useSelector((state: RootState) => state.settings.pluginManagerPlugin);
-	const pluginSettingNewWindow = useSelector((state: RootState) => state.settings.pluginSettingNewWindow);
 	const statusBarIcon = useSelector((state: RootState) => state.settings.statusBarIcon);
 	const excludeSuffixes = useSelector((state: RootState) => state.settings.recentFileExcludes);
 	const MonitoredFileExcludes = useSelector((state: RootState) => state.settings.MonitoredFileExcludes);
@@ -42,16 +40,6 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 	/**添加底部状态栏图标*/
 	const handleStatusBarIconChange = async (value: boolean) => {
 		const newSettings = { ...storeSettings, statusBarIcon: value };
-		dispatch(updataSettings(newSettings));
-		await plugin.saveData(newSettings);
-	};
-	const handlePluginManagerChange = async (value: boolean) => {
-		const newSettings = { ...storeSettings, pluginManagerPlugin: value };
-		dispatch(updataSettings(newSettings));
-		await plugin.saveData(newSettings);
-	};
-	const handlePluginSettingNewWindowChange = async (value: boolean) => {
-		const newSettings = { ...storeSettings, pluginSettingNewWindow: value };
 		dispatch(updataSettings(newSettings));
 		await plugin.saveData(newSettings);
 	};
@@ -147,22 +135,6 @@ const SettingComponent: React.FC<SettingComponentProps> = ({ plugin }) => {
 						/>
 					</div>
 					}
-				</div>
-				<div className="plugin-manager ">
-					<Switch
-						label="插件管理功能"
-						description="插件管理功能开关。（重启obsidian生效）"
-						value={pluginManagerMode}
-						onChange={handlePluginManagerChange}
-					/>
-					{pluginManagerMode && <div className="plugin-setting-new-window-switch setting-item-2">
-						<Switch
-							label="插件管理页面在新窗口打开"
-							description="开启时，插件管理的页面在新窗口打开。(只有桌面端有效)"
-							value={pluginSettingNewWindow}
-							onChange={handlePluginSettingNewWindowChange}
-						/>
-					</div>}
 				</div>
 				<Switch
 					label="添加底部状态栏图标"
