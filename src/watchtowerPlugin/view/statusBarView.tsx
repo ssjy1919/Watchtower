@@ -1,10 +1,9 @@
 import { Provider, useSelector } from "react-redux";
 import { RootState, store } from "../../store";
 import { createRoot } from "react-dom/client";
-import WatchtowerPlugin from "src/main";
-import { activateView } from "src/watchtowerPlugin/toolsFC";
-import { Menu, Notice } from "obsidian"; // 引入 Obsidian 的 Menu API
-import { activateMiddleView } from "src/pluginManagerPlugin/PMtools";
+import WatchtowerPlugin from "../../main";
+import { activateView } from "../toolsFC";
+import { Menu, Notice } from "obsidian";
 import { useMemo } from "react";
 
 export const StatusBarView: React.FC<{ container: HTMLElement; plugin: WatchtowerPlugin }> = ({ plugin }) => {
@@ -41,13 +40,6 @@ export const StatusBarView: React.FC<{ container: HTMLElement; plugin: Watchtowe
                         console.error("保存文件信息失败：", error);
                         new Notice("保存文件信息失败，请检查控制台日志。");
                     }
-                });
-        });
-        menu.addItem((item) => {
-            item.setTitle("打开插件管理")
-                .setIcon("blocks")
-                .onClick(async () => {
-                    await activateMiddleView(plugin);
                 });
         });
         // 显示菜单

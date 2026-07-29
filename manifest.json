@@ -1,9 +1,9 @@
 {
 	"id": "watchtower",
 	"name": "Watchtower",
-	"version": "0.0.17",
+	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "obsidian 的瞭望塔，插件管理、最近打开文件、文件完整性监控。",
+	"description": "文件完整性监控与最近打开文件管理。插件管理功能已拆分至 Plugin Manager。",
 	"author": "ssjy1919",
 	"authorUrl": "https://github.com/ssjy1919/Watchtower",
 	"isDesktopOnly": false

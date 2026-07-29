@@ -4,7 +4,7 @@ import { Root, createRoot } from 'react-dom/client';
 import FileSupervision from "./fileSupervisionView"
 import { Provider } from 'react-redux';
 import { store } from '../../store';
-import WatchtowerPlugin from 'src/main';
+import WatchtowerPlugin from '../../main';
 import "./leafView.css"
 export const VIEW_TYPE_FILE_SUPERVISION = 'file-supervision-left-view';
 export class File_supervision extends ItemView {

@@ -37,6 +37,8 @@ export default [
 			"@typescript-eslint/explicit-function-return-type": "off", // 不强制显式函数返回类型
 			"@typescript-eslint/no-non-null-assertion": "warn", // 警告非空断言
 			"@typescript-eslint/ban-ts-comment": "off", // 允许使用 @ts-ignore 等 TypeScript 注释
+			"@typescript-eslint/no-unsafe-declaration-merging": "off",
+			"@typescript-eslint/no-unused-expressions": "warn",
 			"no-undef": "off", // 禁用未定义变量的检查
 		},
 	},

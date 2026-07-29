@@ -1,8 +1,8 @@
-import WatchtowerPlugin from "src/main";
+import WatchtowerPlugin from "../main";
 import {
 	activateView,
 	registerFileEventHandlers,
-} from "src/watchtowerPlugin/toolsFC";
+} from "./toolsFC";
 export interface WatchtowerMain {
 	plugin: WatchtowerPlugin;
 }
