@@ -8,7 +8,29 @@
 
 Watchtower 是一个 Obsidian 插件，提供**文件完整性监控**和**最近打开文件**功能。
 
-本项目曾包含"插件管理"功能，但已于 2026-07 拆分为独立插件 **Plugin Manager**（位于 `.obsidian/plugins/PluginManager/`）。拆分后 Watchtower 仅保留文件监控相关功能。
+### 1.1 功能拆分（2026-07）
+
+本项目曾是一个「多功能合一」插件，包含文件监控、插件管理、插件更新调度器等模块。为降低复杂度、便于独立维护，已于 **2026-07** 完成拆分：
+
+| 功能 | 拆分前 | 拆分后归属 |
+|------|--------|------------|
+| 文件完整性监控 | Watchtower | **Watchtower**（本仓库） |
+| 最近打开文件 | Watchtower | **Watchtower**（本仓库） |
+| 状态栏差异提示 | Watchtower | **Watchtower**（本仓库） |
+| 插件列表 / 启停 / 分组 / 备注 | Watchtower | **[Plugin Manager](../PluginManager/)** |
+| 延时启动 / 设备类型控制 | Watchtower | **[Plugin Manager](../PluginManager/)** |
+| 插件更新检查 / 批量更新 / 定时调度 | Watchtower | 已移除，未迁移至 Plugin Manager |
+
+**拆分原则：**
+
+- 两个插件**无代码级依赖**，各自有独立的 `data.json`、构建配置与 Redux store
+- Watchtower 的 `data.json` 中可能仍残留旧版插件管理字段（`pluginManager`、`pluginGroups` 等），加载时会被忽略，不会报错
+- Plugin Manager 的插件 ID 为 `obsidian-plugin-manager`，目录名为 `PluginManager`
+
+**文档对应关系：**
+
+- 用户功能说明 → [README.md](./README.md)
+- Plugin Manager 开发说明 → [../PluginManager/DEVELOPER_NOTES.md](../PluginManager/DEVELOPER_NOTES.md)
 
 ---
 
@@ -51,9 +73,10 @@ src/
 `WatchtowerPlugin extends Plugin` 是 Obsidian 插件的标准入口。
 
 **生命周期：**
+
 - `onload()` → 加载设置 → 初始化 FileService → 读取 file_state.json → 同步到 Redux → 注册视图和状态栏
-- `onunload()` → 清理视图和状态栏 React Root
-- `onExternalSettingsChange()` → 重新加载设置和数据
+- `onunload()` → 清理侧边栏视图和状态栏 React Root
+- `onExternalSettingsChange()` → 重新加载设置和数据（如同步工具修改 data.json 时）
 
 **注意：** `settings`、`fileSupervision`、`fileHandler` 使用 `!` 断言，因为它们在 `onload()` 中异步初始化而非构造函数中。
 
@@ -68,9 +91,12 @@ src/
 | `ConfigFileMap` / `ConfigFileName` | 配置文件类型映射（用于类型安全的文件读写） |
 
 **关键常量：**
+
 - `DEFAULT_SETTINGS` — data.json 的默认设置
 - `FILE_STATE_DATA` — file_state.json 的默认数据
 - `CONFIG_FILES` — 配置文件名映射
+
+**已移除的类型（拆分前遗留，勿再添加）：** `pluginManager`、`pluginGroups`、更新调度相关字段。
 
 ### 3.3 store.ts — Redux 状态管理
 
@@ -104,8 +130,8 @@ src/
 
 | 文件 | 职责 |
 |------|------|
-| `WatchtowerMian.ts` | 注册文件变更监听器（`vault.on('modify')`、`vault.on('delete')` 等），驱动文件状态更新 |
-| `toolsFC.ts` | `loadSettings()` 加载 data.json；`init()` 初始化文件监控；`activateView()` 打开侧边栏视图 |
+| `WatchtowerMian.ts` | 注册文件变更监听器、侧边栏图标、命令面板命令 |
+| `toolsFC.ts` | `loadSettings()` 加载 data.json；`init()` 初始化文件监控；`activateView()` 打开侧边栏视图；`registerFileEventHandlers()` 注册 vault/workspace 事件 |
 | `fileHandler.ts` | 文件信息的读取和保存，计算文件差异（新增/修改/删除/未变化） |
 | `view/leafView.tsx` | `ItemView` 子类，注册视图类型 `file-supervision-left-view` |
 | `view/fileSupervisionView.tsx` | 文件监控主视图（React 组件），展示文件列表和差异状态 |
@@ -126,6 +152,13 @@ file_state.json ──readFile──▶ plugin.fileSupervision ──dispatch─
 
 **关键模式：** 所有状态变更先 dispatch 到 Redux（立即更新 UI），再调用 `plugin.saveData()` 持久化到磁盘。
 
+**数据文件分工：**
+
+| 文件 | 存储内容 | 读写方式 |
+|------|----------|----------|
+| `data.json` | 用户设置、fileStats 快照、recentOpenFile | Obsidian `loadData()` / `saveData()` |
+| `file_state.json` | 文件监控基准数据（markTime、fileStats） | `FileService` 独立读写 |
+
 ---
 
 ## 5. 构建与开发
@@ -142,11 +175,13 @@ npm run build
 ```
 
 **构建工具链：**
+
 - **TypeScript** 4.7.4 — 类型检查（`tsc -noEmit -skipLibCheck`）
 - **esbuild** — JS 打包（src/main.ts → main.js）+ CSS 打包（main.css → styles.css）
 - **React 19** + **react-dom/client** — UI 渲染（使用 `createRoot` API）
 
 **CSS 构建注意：** esbuild.config.mjs 中有两个独立的构建步骤：
+
 1. JS 打包：`src/main.ts` → `main.js`
 2. CSS 打包：`main.css` → `styles.css`（通过 CSS 插件在 onEnd 中触发）
 
@@ -158,7 +193,9 @@ npm run build
 
 ### 6.1 设置数据的向后兼容
 
-`WatchtowerSettings` 曾经包含插件管理相关字段（`pluginManager`、`pluginGroups` 等）。拆分后这些字段已从类型定义中移除，但**用户的 data.json 中可能仍残留这些旧字段**。`Object.assign({}, DEFAULT_SETTINGS, await this.loadData())` 会忽略多余字段，不会报错，但旧数据不会被清理。
+`WatchtowerSettings` 曾经包含插件管理相关字段（`pluginManager`、`pluginGroups` 等）。拆分后这些字段已从类型定义中移除，但**用户的 data.json 中可能仍残留这些旧字段**。`Object.assign({}, DEFAULT_SETTINGS, await this.loadData())` 会忽略多余字段，不会报错，但旧数据不会被自动清理。
+
+如需主动迁移，可在后续版本添加一次性清理逻辑，但当前不影响功能。
 
 ### 6.2 file_state.json 的特殊性
 
@@ -172,17 +209,29 @@ npm run build
 
 视图组件使用 React 19 + `createRoot` API。在 `onunload()` 中必须调用 `root.unmount()` 清理 React 树，否则会导致内存泄漏。
 
+设置页 `WatchtowerSettingTab` 的 React Root 目前未在 `onunload()` 中显式 unmount，依赖 Obsidian 移除 DOM；若出现内存泄漏可补充 `hide()` 清理。
+
 ### 6.5 功能开关
 
-`settings.watchtowerPlugin` 控制文件监控功能的整体开关。设为 `false` 时，`WatchtowerMain` 不会初始化，视图也不会注册。**重启 Obsidian 生效**。
+| 设置项 | 行为 | 生效时机 |
+|--------|------|----------|
+| `watchtowerPlugin` | 控制文件监控总开关；关闭时不注册 `WatchtowerMain`、不注册侧边栏视图 | **重启 Obsidian** |
+| `statusBarIcon` | 控制底部状态栏图标 | **重启 Obsidian** |
 
-### 6.6 与 Plugin Manager 插件的关系
+设置页内切换 `watchtowerPlugin` 为开启时会调用 `init()`，但不会注册事件监听和命令——完整功能仍需重启后由 `WatchtowerMain.initialize()` 完成。
 
-两个插件完全独立，没有代码级依赖。唯一的关联：
+### 6.6 与 Plugin Manager 的关系
 
-- 共享同一个 Obsidian 仓库（vault）
+两个插件完全独立，没有代码级依赖：
+
+- 共享同一个 Obsidian 仓库（vault），各自目录互不干扰
 - 用户可能同时启用两个插件
-- 各自有独立的 data.json 和 file_state.json
+- Watchtower 负责「文件有没有变」；Plugin Manager 负责「插件开不开」
+- 在 Obsidian 设置中启用/禁用任一插件时，该插件的设置页会自动关闭，这是 Obsidian 平台行为，非本插件 bug
+
+### 6.7 插件启停与设置页
+
+在 Obsidian **社区插件列表**或 Plugin Manager 中禁用 Watchtower 时，会触发 `onunload()`，Obsidian 移除已注册的 SettingTab，当前打开的设置页随之关闭。这是预期行为。
 
 ---
 
@@ -192,3 +241,5 @@ npm run build
 2. **拼写不一致** — 部分函数/文件名存在拼写问题（如 `updataSettings` 应为 `updateSettings`，`WatchtowerMian` 应为 `WatchtowerMain`，`toolsFC` 含义不明确），修改时需全局搜索替换
 3. **Redux store 的 `declare module` 扩展** — `store.ts` 中有 `declare module "react-redux"` 的类型扩展，引用了 `WatchtowerSettings`，如果类型变更需同步更新
 4. **eslint 配置重复** — 项目中同时存在 `.eslintrc`（旧格式）和 `eslint.config.mjs`（新 flat config 格式），可能产生冲突
+5. **manifest.json 描述** — 拆分后应仅描述文件监控相关功能，避免继续提及插件管理
+6. **设置页开关与重启** — `watchtowerPlugin` 设置描述写「重启生效」，但开启时会部分调用 `init()`，行为不完全一致，后续可统一为「仅重启生效」或实现热加载

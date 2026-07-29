@@ -3,7 +3,6 @@ import { Menu, Notice } from "obsidian";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import WatchtowerPlugin from "../../main";
-import "./RecentOpenFileTable.css"
 import { useMemo } from "react";
 import { getNormalizedExcludeSuffixes } from "../../selectors";
 
